@@ -1,6 +1,3 @@
-'''
-Authentication token model
-'''
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:mailcraftsystem/features/auth/domain/models/user_profile.dart';
 
@@ -9,8 +6,6 @@ part 'auth_token.g.dart';
 
 /// Authentication token model
 @freezed
-
-/// AuthToken class
 class AuthToken with _$AuthToken {
   /// Creates an authentication token
   const factory AuthToken({
@@ -52,4 +47,3 @@ extension AuthTokenExtension on AuthToken {
   /// Get authorization header value
   String get authorizationHeader => '$tokenType $accessToken';
 }
-
