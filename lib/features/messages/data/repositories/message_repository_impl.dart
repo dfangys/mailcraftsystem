@@ -16,7 +16,7 @@ class MessageRepositoryImpl implements MessageRepository {
     String mailboxPath,
   ) async {
     try {
-      final messages = await mailClientService.client!.fetchMessages(mailboxPath);
+      final messages = await mailClientService.client!.fetchMessages();
       final mappedMessages = messages.map((e) => model.Message.fromEnoughMail(e)).toList();
       return Right(mappedMessages);
     } on MailException catch (e) {
@@ -27,14 +27,17 @@ class MessageRepositoryImpl implements MessageRepository {
   }
 
   @override
-  Future<Either<Failure, model.Message>> fetchMessage(
+  Future<Either<Failure, model.Message>> getMessage(
     String accountId,
     String mailboxPath,
-    int messageId,
+    int uid,
   ) async {
     try {
-      final message = await mailClientService.client!.fetchMessage(mailboxPath, messageId);
-      final mappedMessage = model.Message.fromEnoughMail(message);
+      // First get the message from the list, then fetch its contents
+      final messages = await mailClientService.client!.fetchMessages();
+      final message = messages.firstWhere((m) => m.uid == uid);
+      final fullMessage = await mailClientService.client!.fetchMessageContents(message);
+      final mappedMessage = model.Message.fromEnoughMail(fullMessage);
       return Right(mappedMessage);
     } on MailException catch (e) {
       return Left(Failure.server(message: e.message));

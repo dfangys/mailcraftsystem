@@ -3,6 +3,7 @@ import 'package:enough_mail/enough_mail.dart';
 import 'package:mailcraftsystem/core/error/failures.dart';
 import 'package:mailcraftsystem/features/account/data/datasources/mail_client_service.dart';
 import 'package:mailcraftsystem/features/mailboxes/domain/models/mailbox.dart' as model;
+import 'package:mailcraftsystem/features/mailboxes/domain/models/mailbox_status.dart';
 import 'package:mailcraftsystem/features/mailboxes/domain/repositories/mailbox_repository.dart';
 
 class MailboxRepositoryImpl implements MailboxRepository {
@@ -13,7 +14,7 @@ class MailboxRepositoryImpl implements MailboxRepository {
   @override
   Future<Either<Failure, List<model.Mailbox>>> getMailboxes(String accountId) async {
     try {
-      final mailboxes = await mailClientService.client!.listMailboxes(accountId);
+      final mailboxes = await mailClientService.client!.listMailboxes();
       final mappedMailboxes = mailboxes.map((e) => model.Mailbox.fromEnoughMail(e)).toList();
       return Right(mappedMailboxes);
     } on MailException catch (e) {
@@ -24,9 +25,54 @@ class MailboxRepositoryImpl implements MailboxRepository {
   }
 
   @override
-  Future<Either<Failure, void>> selectMailbox(String accountId, String mailboxPath) async {
+  Future<Either<Failure, model.Mailbox>> getMailbox(String accountId, String path) async {
     try {
-      await mailClientService.client!.selectMailboxByPath(accountId, mailboxPath);
+      final mailboxes = await mailClientService.client!.listMailboxes();
+      final mailbox = mailboxes.firstWhere((box) => box.path == path);
+      return Right(model.Mailbox.fromEnoughMail(mailbox));
+    } on MailException catch (e) {
+      return Left(Failure.server(message: e.message));
+    } catch (e) {
+      return Left(Failure.notFound(message: 'Mailbox not found: $path'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<model.Mailbox>>> refreshMailboxes(String accountId) async {
+    return getMailboxes(accountId);
+  }
+
+  @override
+  Future<Either<Failure, model.Mailbox>> createMailbox(
+    String accountId,
+    String name,
+    String? parentPath,
+  ) async {
+    try {
+      final path = parentPath != null ? '$parentPath/$name' : name;
+      await mailClientService.client!.createMailbox(path);
+      final mailboxes = await mailClientService.client!.listMailboxes();
+      final mailbox = mailboxes.firstWhere((box) => box.path == path);
+      return Right(model.Mailbox.fromEnoughMail(mailbox));
+    } on MailException catch (e) {
+      return Left(Failure.server(message: e.message));
+    } catch (e) {
+      return Left(Failure.unknown(message: 'An unknown error occurred: $e'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> renameMailbox(
+    String accountId,
+    String currentPath,
+    String newName,
+  ) async {
+    try {
+      final parentPath = currentPath.contains('/') 
+          ? currentPath.substring(0, currentPath.lastIndexOf('/'))
+          : '';
+      final newPath = parentPath.isNotEmpty ? '$parentPath/$newName' : newName;
+      await mailClientService.client!.renameMailbox(currentPath, newPath);
       return const Right(null);
     } on MailException catch (e) {
       return Left(Failure.server(message: e.message));
@@ -34,5 +80,143 @@ class MailboxRepositoryImpl implements MailboxRepository {
       return Left(Failure.unknown(message: 'An unknown error occurred: $e'));
     }
   }
-}
 
+  @override
+  Future<Either<Failure, void>> deleteMailbox(String accountId, String path) async {
+    try {
+      await mailClientService.client!.deleteMailbox(path);
+      return const Right(null);
+    } on MailException catch (e) {
+      return Left(Failure.server(message: e.message));
+    } catch (e) {
+      return Left(Failure.unknown(message: 'An unknown error occurred: $e'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> subscribeMailbox(String accountId, String path) async {
+    try {
+      await mailClientService.client!.subscribeMailbox(path);
+      return const Right(null);
+    } on MailException catch (e) {
+      return Left(Failure.server(message: e.message));
+    } catch (e) {
+      return Left(Failure.unknown(message: 'An unknown error occurred: $e'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> unsubscribeMailbox(String accountId, String path) async {
+    try {
+      await mailClientService.client!.unsubscribeMailbox(path);
+      return const Right(null);
+    } on MailException catch (e) {
+      return Left(Failure.server(message: e.message));
+    } catch (e) {
+      return Left(Failure.unknown(message: 'An unknown error occurred: $e'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, MailboxStatus>> getMailboxStatus(
+    String accountId,
+    String path,
+  ) async {
+    try {
+      final mailbox = await mailClientService.client!.selectMailboxByPath(path);
+      return Right(MailboxStatus(
+        path: path,
+        messageCount: mailbox.messagesExists,
+        unreadCount: mailbox.messagesUnseen,
+        recentCount: mailbox.messagesRecent,
+        uidNext: mailbox.uidNext,
+        uidValidity: mailbox.uidValidity,
+      ));
+    } on MailException catch (e) {
+      return Left(Failure.server(message: e.message));
+    } catch (e) {
+      return Left(Failure.unknown(message: 'An unknown error occurred: $e'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> markAllAsRead(String accountId, String path) async {
+    try {
+      await mailClientService.client!.selectMailboxByPath(path);
+      await mailClientService.client!.markAllMessagesSeen(true);
+      return const Right(null);
+    } on MailException catch (e) {
+      return Left(Failure.server(message: e.message));
+    } catch (e) {
+      return Left(Failure.unknown(message: 'An unknown error occurred: $e'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> emptyTrash(String accountId) async {
+    try {
+      final mailboxes = await mailClientService.client!.listMailboxes();
+      final trashBox = mailboxes.where((box) => 
+          box.name.toLowerCase().contains('trash') ||
+          box.name.toLowerCase().contains('deleted') ||
+          box.path.toLowerCase().contains('trash')).firstOrNull;
+      
+      if (trashBox != null) {
+        await mailClientService.client!.selectMailboxByPath(trashBox.path);
+        await mailClientService.client!.expunge();
+      }
+      return const Right(null);
+    } on MailException catch (e) {
+      return Left(Failure.server(message: e.message));
+    } catch (e) {
+      return Left(Failure.unknown(message: 'An unknown error occurred: $e'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> emptySpam(String accountId) async {
+    try {
+      final mailboxes = await mailClientService.client!.listMailboxes();
+      final spamBox = mailboxes.where((box) => 
+          box.name.toLowerCase().contains('spam') ||
+          box.name.toLowerCase().contains('junk') ||
+          box.path.toLowerCase().contains('spam')).firstOrNull;
+      
+      if (spamBox != null) {
+        await mailClientService.client!.selectMailboxByPath(spamBox.path);
+        await mailClientService.client!.expunge();
+      }
+      return const Right(null);
+    } on MailException catch (e) {
+      return Left(Failure.server(message: e.message));
+    } catch (e) {
+      return Left(Failure.unknown(message: 'An unknown error occurred: $e'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<model.Mailbox>>> getMailboxHierarchy(String accountId) async {
+    return getMailboxes(accountId);
+  }
+
+  @override
+  Future<Either<Failure, List<model.Mailbox>>> searchMailboxes(
+    String accountId,
+    String query,
+  ) async {
+    try {
+      final mailboxes = await mailClientService.client!.listMailboxes();
+      final filteredMailboxes = mailboxes
+          .where((box) => 
+              box.name.toLowerCase().contains(query.toLowerCase()) ||
+              box.path.toLowerCase().contains(query.toLowerCase()))
+          .map((e) => model.Mailbox.fromEnoughMail(e))
+          .toList();
+      return Right(filteredMailboxes);
+    } on MailException catch (e) {
+      return Left(Failure.server(message: e.message));
+    } catch (e) {
+      return Left(Failure.unknown(message: 'An unknown error occurred: $e'));
+    }
+  }
+}
