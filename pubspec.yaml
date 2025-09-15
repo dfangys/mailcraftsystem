@@ -14,7 +14,7 @@ dependencies:
   dio: ^5.4.0
   drift: ^2.18.0
   encrypt: ^5.0.1
-  enough_mail: ^2.1.6
+  enough_mail: ^2.1.7
   flutter:
     sdk: flutter
   flutter_dotenv: ^5.1.0
@@ -54,3 +54,6 @@ flutter:
 
 flutter_intl:
   enabled: true
+
+dependency_overrides:
+  pointycastle: ^4.0.0

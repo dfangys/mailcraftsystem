@@ -48,7 +48,8 @@ class MailClientFactory {
       await client.connect();
       
       // Get capabilities
-      final capabilities = client.imapClient.serverInfo.capabilities;
+      final imapClient = client.lowLevelIncomingMailClient as ImapClient;
+      final capabilities = imapClient.serverInfo.capabilities;
       
       AppLogger.info('IMAP connection successful. Capabilities: ${capabilities.join(', ')}');
       
@@ -90,7 +91,7 @@ class MailClientFactory {
       await smtpClient.connectToServer(
         config.smtpConfig.host,
         config.smtpConfig.port,
-        connectionSecurity: config.smtpConfig.socketType.connectionSecurity,
+        isSecure: config.smtpConfig.socketType == SocketType.ssl,
       );
       
       await smtpClient.ehlo();
@@ -99,7 +100,7 @@ class MailClientFactory {
       await smtpClient.authenticate(
         config.email,
         config.password,
-        AuthMechanism.automatic,
+        AuthMechanism.plain,
       );
       
       AppLogger.info('SMTP connection and authentication successful');
