@@ -1,16 +1,12 @@
-import '../../../../core/error/failures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hugeicons/hugeicons.dart';
-
-import '../../../../shared/widgets/loading_widget.dart';
-import '../../../../shared/widgets/error_widget.dart';
-import '../../../../shared/forms/app_text_field.dart';
-import '../controllers/account_controller.dart';
-import '../widgets/provider_preset_card.dart';
-import '../widgets/advanced_settings_panel.dart';
-import '../../../../core/error/failures.dart' as core;
+import 'package:mailcraftsystem/core/error/failures.dart';
+import 'package:mailcraftsystem/features/account/presentation/controllers/account_controller.dart';
+import 'package:mailcraftsystem/features/account/presentation/widgets/advanced_settings_panel.dart';
+import 'package:mailcraftsystem/features/account/presentation/widgets/provider_preset_card.dart';
+import 'package:mailcraftsystem/shared/forms/app_text_field.dart';
+import 'package:mailcraftsystem/shared/widgets/error_widget.dart';
 
 /// Account setup screen with IMAP/SMTP configuration
 class AccountSetupScreen extends ConsumerStatefulWidget {
@@ -25,21 +21,20 @@ class _AccountSetupScreenState extends ConsumerState<AccountSetupScreen>
     with SingleTickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final _pageController = PageController();
-  
+
   // Form controllers
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _displayNameController = TextEditingController();
-  
+
   // Manual setup controllers
   final _imapHostController = TextEditingController();
   final _imapPortController = TextEditingController();
   final _smtpHostController = TextEditingController();
   final _smtpPortController = TextEditingController();
-  
+
   late TabController _tabController;
   int _currentStep = 0;
-  bool _showAdvancedSettings = false;
   bool _obscurePassword = true;
 
   @override
@@ -123,7 +118,7 @@ class _AccountSetupScreenState extends ConsumerState<AccountSetupScreen>
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-                leading: _currentStep > 0
+        leading: _currentStep > 0
             ? IconButton(
                 icon: const Icon(Icons.arrow_back),
                 onPressed: _previousStep,
@@ -144,7 +139,7 @@ class _AccountSetupScreenState extends ConsumerState<AccountSetupScreen>
         children: [
           // Progress indicator
           _buildProgressIndicator(),
-          
+
           // Content
           Expanded(
             child: PageView(
@@ -182,7 +177,7 @@ class _AccountSetupScreenState extends ConsumerState<AccountSetupScreen>
                   decoration: BoxDecoration(
                     color: isActive
                         ? colorScheme.primary
-                        : colorScheme.surfaceVariant,
+                        : colorScheme.surfaceContainerHighest,
                     shape: BoxShape.circle,
                   ),
                   child: Center(
@@ -210,7 +205,7 @@ class _AccountSetupScreenState extends ConsumerState<AccountSetupScreen>
                       margin: const EdgeInsets.symmetric(horizontal: 8),
                       color: isCompleted
                           ? colorScheme.primary
-                          : colorScheme.surfaceVariant,
+                          : colorScheme.surfaceContainerHighest,
                     ),
                   ),
               ],
@@ -257,7 +252,6 @@ class _AccountSetupScreenState extends ConsumerState<AccountSetupScreen>
             onTap: () => _handleProviderSelected('gmail'),
           ),
           const SizedBox(height: 16),
-          
           ProviderPresetCard(
             providerId: 'outlook',
             name: 'Outlook',
@@ -266,7 +260,6 @@ class _AccountSetupScreenState extends ConsumerState<AccountSetupScreen>
             onTap: () => _handleProviderSelected('outlook'),
           ),
           const SizedBox(height: 16),
-          
           ProviderPresetCard(
             providerId: 'yahoo',
             name: 'Yahoo Mail',
@@ -275,7 +268,6 @@ class _AccountSetupScreenState extends ConsumerState<AccountSetupScreen>
             onTap: () => _handleProviderSelected('yahoo'),
           ),
           const SizedBox(height: 16),
-          
           ProviderPresetCard(
             providerId: 'wahda',
             name: 'Wahda Bank',
@@ -375,7 +367,8 @@ class _AccountSetupScreenState extends ConsumerState<AccountSetupScreen>
               },
               onChanged: (value) {
                 // Auto-fill server settings based on email domain
-                ref.read(accountControllerProvider.notifier)
+                ref
+                    .read(accountControllerProvider.notifier)
                     .updateEmailAndDetectProvider(value);
               },
             ),
@@ -428,7 +421,7 @@ class _AccountSetupScreenState extends ConsumerState<AccountSetupScreen>
                 ],
               ),
               const SizedBox(height: 16),
-              
+
               // Manual server configuration
               _buildManualServerSettings(),
               const SizedBox(height: 24),
@@ -436,13 +429,15 @@ class _AccountSetupScreenState extends ConsumerState<AccountSetupScreen>
               ExpansionTile(
                 leading: const Icon(Icons.settings),
                 title: const Text('Advanced Settings'),
-                subtitle: const Text('Server configuration and security options'),
+                subtitle:
+                    const Text('Server configuration and security options'),
                 children: [
                   _buildManualServerSettings(),
                   const SizedBox(height: 16),
                   AdvancedSettingsPanel(
                     onSettingsChanged: (settings) {
-                      ref.read(accountControllerProvider.notifier)
+                      ref
+                          .read(accountControllerProvider.notifier)
                           .updateAdvancedSettings(settings);
                     },
                   ),
@@ -500,7 +495,7 @@ class _AccountSetupScreenState extends ConsumerState<AccountSetupScreen>
           ],
         ),
         const SizedBox(height: 16),
-        
+
         // SMTP Settings
         Row(
           children: [
@@ -549,9 +544,7 @@ class _AccountSetupScreenState extends ConsumerState<AccountSetupScreen>
               shape: BoxShape.circle,
             ),
             child: Icon(
-              accountState.isConnected
-                  ? Icons.settings
-                  : Icons.settings,
+              accountState.isConnected ? Icons.check_circle : Icons.error,
               size: 48,
               color: accountState.isConnected
                   ? colorScheme.primary
@@ -574,7 +567,6 @@ class _AccountSetupScreenState extends ConsumerState<AccountSetupScreen>
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
-
           if (accountState.isConnected) ...[
             Text(
               'Your email account has been configured successfully.',
@@ -584,13 +576,13 @@ class _AccountSetupScreenState extends ConsumerState<AccountSetupScreen>
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 32),
-            
+
             // Connection details
             if (accountState.connectionDetails != null) ...[
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: colorScheme.surfaceVariant.withOpacity(0.3),
+                  color: colorScheme.surfaceContainerHighest.withOpacity(0.3),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Column(
@@ -603,27 +595,7 @@ class _AccountSetupScreenState extends ConsumerState<AccountSetupScreen>
                       ),
                     ),
                     const SizedBox(height: 8),
-                    ...accountState.connectionDetails!.entries.map(
-                      (entry) => Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 2),
-                        child: Row(
-                          children: [
-                            Text(
-                              '${entry.key}: ',
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: colorScheme.onSurfaceVariant,
-                              ),
-                            ),
-                            Text(
-                              entry.value,
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                    Text(accountState.connectionDetails!),
                   ],
                 ),
               ),
@@ -649,7 +621,6 @@ class _AccountSetupScreenState extends ConsumerState<AccountSetupScreen>
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 32),
-            
             OutlinedButton(
               onPressed: _previousStep,
               style: OutlinedButton.styleFrom(
@@ -666,3 +637,4 @@ class _AccountSetupScreenState extends ConsumerState<AccountSetupScreen>
     );
   }
 }
+

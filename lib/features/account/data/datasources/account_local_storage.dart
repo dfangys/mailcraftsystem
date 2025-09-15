@@ -6,6 +6,7 @@ import 'package:mailcraftsystem/features/account/domain/models/mail_account_conf
 
 /// Local storage service for mail accounts
 class AccountLocalStorage {
+  /// Creates a new instance of [AccountLocalStorage].
   AccountLocalStorage({FlutterSecureStorage? storage})
       : _storage = storage ?? const FlutterSecureStorage();
   
@@ -102,7 +103,7 @@ class AccountLocalStorage {
   
   /// Get default account ID
   Future<String?> getDefaultAccountId() async {
-    return await _storage.read(key: _defaultAccountKey);
+    return _storage.read(key: _defaultAccountKey);
   }
   
   /// Get default account
@@ -110,7 +111,7 @@ class AccountLocalStorage {
     final defaultId = await getDefaultAccountId();
     if (defaultId == null) return null;
     
-    return await getAccount(defaultId);
+    return getAccount(defaultId);
   }
   
   /// Clear default account
@@ -148,7 +149,7 @@ class AccountLocalStorage {
     if (account == null) return false;
     
     final updatedAccount = account.copyWith(isActive: false);
-    return await updateAccount(updatedAccount);
+    return updateAccount(updatedAccount);
   }
   
   /// Activate account
@@ -157,6 +158,7 @@ class AccountLocalStorage {
     if (account == null) return false;
     
     final updatedAccount = account.copyWith(isActive: true);
-    return await updateAccount(updatedAccount);
+    return updateAccount(updatedAccount);
   }
 }
+

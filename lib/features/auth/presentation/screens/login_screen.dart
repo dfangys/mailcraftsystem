@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hugeicons/hugeicons.dart';
-
-import '../../../../shared/widgets/loading_widget.dart';
-import '../../../../shared/widgets/error_widget.dart';
-import '../../../../shared/forms/app_text_field.dart';
-import '../controllers/auth_controller.dart';
-import '../../../../core/error/failures.dart' as core;
-import '../../../../core/error/failures.dart' as core;
+import 'package:mailcraftsystem/core/error/failures.dart';
+import 'package:mailcraftsystem/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:mailcraftsystem/shared/forms/app_text_field.dart';
+import 'package:mailcraftsystem/shared/widgets/error_widget.dart';
 
 /// Login screen with Gmail-like design
 class LoginScreen extends ConsumerStatefulWidget {
@@ -38,7 +34,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       ref.read(authControllerProvider.notifier).login(
             _emailController.text.trim(),
             _passwordController.text,
-            rememberMe: _rememberMe,
           );
     }
   }
@@ -63,7 +58,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24.0),
+            padding: const EdgeInsets.all(24),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 400),
               child: Form(
@@ -100,7 +95,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     // Error display
                     if (authState.error != null) ...[
                       AppErrorWidget(
-                        failure: authState.error!,
+                        failure: Failure.auth(message: authState.error!),
                         onRetry: _handleLogin,
                       ),
                       const SizedBox(height: 16),

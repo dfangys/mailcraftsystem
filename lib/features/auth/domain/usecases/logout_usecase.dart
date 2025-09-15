@@ -1,5 +1,6 @@
-import '../repositories/auth_repository.dart';
-import '../../../../core/error/failures.dart';
+import 'package:dartz/dartz.dart';
+import 'package:mailcraftsystem/core/error/failures.dart';
+import 'package:mailcraftsystem/features/auth/domain/repositories/auth_repository.dart';
 
 /// Logout use case
 class LogoutUseCase {
@@ -12,7 +13,8 @@ class LogoutUseCase {
   AuthRepository get repository => _repository;
   
   /// Execute logout
-  Future<({Failure? left, void right})> call() async {
-    return await _repository.logout();
+  Future<Either<Failure, void>> call() async {
+    return _repository.logout();
   }
 }
+

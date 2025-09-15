@@ -108,8 +108,6 @@ extension MailAccountConfigExtension on MailAccountConfig {
       incomingHost: imapConfig.host,
       outgoingHost: smtpConfig.host,
       password: password,
-      incomingType: enough_mail.ServerType.imap,
-      outgoingType: enough_mail.ServerType.smtp,
       incomingPort: imapConfig.port,
       outgoingPort: smtpConfig.port,
       incomingSocketType: imapConfig.socketType.enoughMailSocketType,

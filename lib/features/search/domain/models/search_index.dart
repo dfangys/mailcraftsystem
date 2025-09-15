@@ -133,26 +133,26 @@ extension AdvancedSearchCriteriaExtension on AdvancedSearchCriteria {
   
   /// Get active criteria count
   int get activeCriteriaCount {
-    int count = 0;
-    if (allWords?.isNotEmpty == true) count++;
-    if (exactPhrase?.isNotEmpty == true) count++;
-    if (anyWords?.isNotEmpty == true) count++;
-    if (excludeWords?.isNotEmpty == true) count++;
-    if (from?.isNotEmpty == true) count++;
-    if (to?.isNotEmpty == true) count++;
-    if (subject?.isNotEmpty == true) count++;
-    if (body?.isNotEmpty == true) count++;
+    var count = 0;
+    if (allWords?.isNotEmpty ?? false) count++;
+    if (exactPhrase?.isNotEmpty ?? false) count++;
+    if (anyWords?.isNotEmpty ?? false) count++;
+    if (excludeWords?.isNotEmpty ?? false) count++;
+    if (from?.isNotEmpty ?? false) count++;
+    if (to?.isNotEmpty ?? false) count++;
+    if (subject?.isNotEmpty ?? false) count++;
+    if (body?.isNotEmpty ?? false) count++;
     if (dateFrom != null) count++;
     if (dateTo != null) count++;
     if (hasAttachments != null) count++;
-    if (attachmentTypes?.isNotEmpty == true) count++;
+    if (attachmentTypes?.isNotEmpty ?? false) count++;
     if (isRead != null) count++;
     if (isFlagged != null) count++;
     if (isImportant != null) count++;
     if (minSize != null) count++;
     if (maxSize != null) count++;
-    if (labels?.isNotEmpty == true) count++;
-    if (mailboxPaths?.isNotEmpty == true) count++;
+    if (labels?.isNotEmpty ?? false) count++;
+    if (mailboxPaths?.isNotEmpty ?? false) count++;
     return count;
   }
   
@@ -160,34 +160,34 @@ extension AdvancedSearchCriteriaExtension on AdvancedSearchCriteria {
   String toQueryString() {
     final parts = <String>[];
     
-    if (allWords?.isNotEmpty == true) {
+    if (allWords?.isNotEmpty ?? false) {
       parts.add(allWords!);
     }
     
-    if (exactPhrase?.isNotEmpty == true) {
+    if (exactPhrase?.isNotEmpty ?? false) {
       parts.add('"$exactPhrase"');
     }
     
-    if (anyWords?.isNotEmpty == true) {
+    if (anyWords?.isNotEmpty ?? false) {
       final words = anyWords!.split(' ');
       parts.add('(${words.join(' OR ')})');
     }
     
-    if (excludeWords?.isNotEmpty == true) {
+    if (excludeWords?.isNotEmpty ?? false) {
       final words = excludeWords!.split(' ');
       for (final word in words) {
         parts.add('-$word');
       }
     }
     
-    if (from?.isNotEmpty == true) parts.add('from:$from');
-    if (to?.isNotEmpty == true) parts.add('to:$to');
-    if (subject?.isNotEmpty == true) parts.add('subject:$subject');
-    if (hasAttachments == true) parts.add('has:attachment');
-    if (isRead == true) parts.add('is:read');
+    if (from?.isNotEmpty ?? false) parts.add('from:$from');
+    if (to?.isNotEmpty ?? false) parts.add('to:$to');
+    if (subject?.isNotEmpty ?? false) parts.add('subject:$subject');
+    if (hasAttachments ?? false) parts.add('has:attachment');
+    if (isRead ?? false) parts.add('is:read');
     if (isRead == false) parts.add('is:unread');
-    if (isFlagged == true) parts.add('is:flagged');
-    if (isImportant == true) parts.add('is:important');
+    if (isFlagged ?? false) parts.add('is:flagged');
+    if (isImportant ?? false) parts.add('is:important');
     
     return parts.join(' ');
   }

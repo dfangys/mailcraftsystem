@@ -1,34 +1,35 @@
-import '../models/auth_token.dart';
-import '../models/user_profile.dart';
-import '../models/login_request.dart';
-import '../models/otp_challenge.dart';
-import '../../../../core/error/failures.dart';
+import 'package:dartz/dartz.dart';
+import 'package:mailcraftsystem/core/error/failures.dart';
+import 'package:mailcraftsystem/features/auth/domain/models/auth_token.dart';
+import 'package:mailcraftsystem/features/auth/domain/models/login_request.dart';
+import 'package:mailcraftsystem/features/auth/domain/models/otp_challenge.dart';
+import 'package:mailcraftsystem/features/auth/domain/models/user_profile.dart';
 
 /// Authentication repository interface
 abstract class AuthRepository {
   /// Login with email and password
-  Future<({Failure? left, AuthToken? right})> login(LoginRequest request);
+  Future<Either<Failure, AuthToken>> login(LoginRequest request);
   
   /// Verify OTP code
-  Future<({Failure? left, AuthToken? right})> verifyOtp(OtpChallenge challenge);
+  Future<Either<Failure, AuthToken>> verifyOtp(OtpChallenge challenge);
   
   /// Get current user profile
-  Future<({Failure? left, UserProfile? right})> getUserProfile();
+  Future<Either<Failure, UserProfile>> getUserProfile();
   
   /// Request password reset
-  Future<({Failure? left, void right})> resetPassword(String email);
+  Future<Either<Failure, void>> resetPassword(String email);
   
   /// Request password reset (alias)
-  Future<({Failure? left, void right})> requestPasswordReset(String email);
+  Future<Either<Failure, void>> requestPasswordReset(String email);
   
   /// Confirm password reset
-  Future<({Failure? left, void right})> confirmPasswordReset(String token, String newPassword);
+  Future<Either<Failure, void>> confirmPasswordReset(String token, String newPassword);
   
   /// Logout
-  Future<({Failure? left, void right})> logout();
+  Future<Either<Failure, void>> logout();
   
   /// Refresh access token
-  Future<({Failure? left, AuthToken? right})> refreshToken();
+  Future<Either<Failure, AuthToken>> refreshToken();
   
   /// Check if user is authenticated
   Future<bool> isAuthenticated();
@@ -42,3 +43,4 @@ abstract class AuthRepository {
   /// Clear stored token
   Future<void> clearToken();
 }
+

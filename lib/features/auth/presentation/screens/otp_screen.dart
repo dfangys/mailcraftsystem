@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hugeicons/hugeicons.dart';
+import 'package:mailcraftsystem/core/error/failures.dart';
+import 'package:mailcraftsystem/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:mailcraftsystem/shared/widgets/error_widget.dart';
 
-import '../../../../shared/widgets/error_widget.dart';
-import '../controllers/auth_controller.dart';
-import '../../../../core/error/failures.dart' as core;
 
 /// OTP verification screen
 class OtpScreen extends ConsumerStatefulWidget {
@@ -96,7 +95,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24.0),
+            padding: const EdgeInsets.all(24),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 400),
               child: Column(
@@ -169,7 +168,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                               ),
                             ),
                             filled: true,
-                            fillColor: colorScheme.surfaceVariant.withOpacity(0.3),
+                            fillColor: colorScheme.surfaceContainerHighest.withOpacity(0.3),
                           ),
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
@@ -240,7 +239,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: colorScheme.surfaceVariant.withOpacity(0.3),
+                      color: colorScheme.surfaceContainerHighest.withOpacity(0.3),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
                         color: colorScheme.outline.withOpacity(0.2),

@@ -23,7 +23,7 @@ class AuthToken with _$AuthToken {
 /// Extension for token validation
 extension AuthTokenExtension on AuthToken {
   /// Check if token is temporary (requires OTP)
-  bool get isTemporary => requiresOtp == true;
+  bool get isTemporary => requiresOtp ?? false;
   
   /// Get authorization header value
   String get authorizationHeader => '$tokenType $accessToken';

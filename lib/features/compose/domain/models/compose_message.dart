@@ -10,8 +10,7 @@ part 'compose_message.g.dart';
 /// ComposeMessage class
 class ComposeMessage with _$ComposeMessage {
   const factory ComposeMessage({
-    String? id,
-    required String accountId,
+    required String accountId, String? id,
     List<MessageAddress>? to,
     List<MessageAddress>? cc,
     List<MessageAddress>? bcc,
@@ -174,8 +173,8 @@ extension ComposeAttachmentExtension on ComposeAttachment {
     if (size == null) return 'Unknown size';
     
     const units = ['B', 'KB', 'MB', 'GB'];
-    double fileSize = size!.toDouble();
-    int unitIndex = 0;
+    var fileSize = size!.toDouble();
+    var unitIndex = 0;
     
     while (fileSize >= 1024 && unitIndex < units.length - 1) {
       fileSize /= 1024;
@@ -190,9 +189,9 @@ extension ComposeAttachmentExtension on ComposeAttachment {
 extension ComposeMessageExtension on ComposeMessage {
   /// Check if message has recipients
   bool get hasRecipients {
-    return (to?.isNotEmpty == true) ||
-           (cc?.isNotEmpty == true) ||
-           (bcc?.isNotEmpty == true);
+    return (to?.isNotEmpty ?? false) ||
+           (cc?.isNotEmpty ?? false) ||
+           (bcc?.isNotEmpty ?? false);
   }
   
   /// Get total recipient count
@@ -202,12 +201,12 @@ extension ComposeMessageExtension on ComposeMessage {
   
   /// Check if message has content
   bool get hasContent {
-    return (textContent?.isNotEmpty == true) ||
-           (htmlContent?.isNotEmpty == true);
+    return (textContent?.isNotEmpty ?? false) ||
+           (htmlContent?.isNotEmpty ?? false);
   }
   
   /// Check if message has attachments
-  bool get hasAttachments => attachments?.isNotEmpty == true;
+  bool get hasAttachments => attachments?.isNotEmpty ?? false;
   
   /// Get attachment count
   int get attachmentCount => attachments?.length ?? 0;
@@ -224,8 +223,8 @@ extension ComposeMessageExtension on ComposeMessage {
     if (totalSize == 0) return '0 B';
     
     const units = ['B', 'KB', 'MB', 'GB'];
-    double fileSize = totalSize.toDouble();
-    int unitIndex = 0;
+    var fileSize = totalSize.toDouble();
+    var unitIndex = 0;
     
     while (fileSize >= 1024 && unitIndex < units.length - 1) {
       fileSize /= 1024;
@@ -239,7 +238,7 @@ extension ComposeMessageExtension on ComposeMessage {
   bool get isReadyToSend {
     return hasRecipients && 
            (hasContent || hasAttachments) &&
-           subject?.isNotEmpty == true;
+           subject?.isNotEmpty ?? false;
   }
   
   /// Get validation errors
@@ -250,7 +249,7 @@ extension ComposeMessageExtension on ComposeMessage {
       errors.add('At least one recipient is required');
     }
     
-    if (subject?.isEmpty == true) {
+    if (subject?.isEmpty ?? false) {
       errors.add('Subject is required');
     }
     
@@ -301,7 +300,7 @@ extension ComposeMessageExtension on ComposeMessage {
     // Remove duplicates and self
     // TODO: Implement self-removal logic based on account email
     
-    final subject = originalMessage.subject?.startsWith('Re: ') == true
+    final subject = originalMessage.subject?.startsWith('Re: ') ?? false
         ? originalMessage.subject
         : 'Re: ${originalMessage.subject ?? ''}';
     
@@ -323,7 +322,7 @@ extension ComposeMessageExtension on ComposeMessage {
     required String accountId,
     required Message originalMessage,
   }) {
-    final subject = originalMessage.subject?.startsWith('Fwd: ') == true
+    final subject = originalMessage.subject?.startsWith('Fwd: ') ?? false
         ? originalMessage.subject
         : 'Fwd: ${originalMessage.subject ?? ''}';
     
@@ -351,11 +350,11 @@ extension ComposeMessageExtension on ComposeMessage {
     buffer.writeln('Date: ${originalMessage.formattedDate}');
     buffer.writeln('Subject: ${originalMessage.subject ?? '(No Subject)'}');
     
-    if (originalMessage.to?.isNotEmpty == true) {
+    if (originalMessage.to?.isNotEmpty ?? false) {
       buffer.writeln('To: ${originalMessage.to!.map((a) => a.formatted).join(', ')}');
     }
     
-    if (originalMessage.cc?.isNotEmpty == true) {
+    if (originalMessage.cc?.isNotEmpty ?? false) {
       buffer.writeln('Cc: ${originalMessage.cc!.map((a) => a.formatted).join(', ')}');
     }
     

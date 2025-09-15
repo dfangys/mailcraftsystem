@@ -7,13 +7,16 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:logger/logger.dart';
-
-import '../core/logging/logger.dart';
-import '../features/auth/presentation/screens/splash_screen.dart';
-import '../features/auth/presentation/screens/login_screen.dart';
-import '../features/auth/presentation/screens/otp_screen.dart';
-import '../features/auth/presentation/screens/reset_password_screen.dart';
-import '../features/account/presentation/screens/account_setup_screen.dart';
+import 'package:mailcraftsystem/core/logging/logger.dart';
+import 'package:mailcraftsystem/features/account/presentation/screens/account_setup_screen.dart';
+import 'package:mailcraftsystem/features/auth/presentation/screens/login_screen.dart';
+import 'package:mailcraftsystem/features/auth/presentation/screens/otp_screen.dart';
+import 'package:mailcraftsystem/features/auth/presentation/screens/reset_password_screen.dart';
+import 'package:mailcraftsystem/features/auth/presentation/screens/splash_screen.dart';
+import 'package:mailcraftsystem/features/compose/presentation/screens/compose_screen.dart';
+import 'package:mailcraftsystem/features/mailboxes/presentation/screens/mailbox_screen.dart';
+import 'package:mailcraftsystem/features/messages/domain/models/message.dart';
+import 'package:mailcraftsystem/features/messages/presentation/screens/message_detail_screen.dart';
 
 /// Bootstrap the application with proper error handling and initialization
 void bootstrap() {
@@ -23,7 +26,7 @@ void bootstrap() {
       
       // Load environment variables
       try {
-        await dotenv.load(fileName: '.env');
+        await dotenv.load();
       } catch (e) {
         // If .env file doesn't exist or is empty, load from .env.example
         try {
@@ -47,8 +50,8 @@ void bootstrap() {
       
       // Run the app
       runApp(
-        ProviderScope(
-          child: const _MailCraftApp(),
+        const ProviderScope(
+          child: MailCraftApp(),
         ),
       );
     },
@@ -62,9 +65,9 @@ void bootstrap() {
 }
 
 /// Main application widget for MailCraft System (internal)
-class _MailCraftApp extends ConsumerWidget {
+class MailCraftApp extends ConsumerWidget {
   /// Creates a new instance of [_MailCraftApp]
-  const _MailCraftApp();
+  const MailCraftApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -113,47 +116,27 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/home',
-        builder: (context, state) => const HomeScreen(),
+        builder: (context, state) => const MailboxScreen(),
+      ),
+      GoRoute(
+        path: '/message-detail',
+        builder: (context, state) {
+          final message = state.extra as Message?;
+          if (message != null) {
+            return MessageDetailScreen(message: message);
+          }
+          return const Scaffold(
+            body: Center(
+              child: Text('Error: Message not found'),
+            ),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/compose',
+        builder: (context, state) => const ComposeScreen(),
       ),
     ],
   );
 });
 
-/// Temporary splash screen for initial app loading
-class SplashScreen extends StatelessWidget {
-  /// Creates a splash screen
-  const SplashScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.email, size: 64),
-            SizedBox(height: 16),
-            Text('MailCraft System', style: TextStyle(fontSize: 24)),
-            SizedBox(height: 8),
-            Text('Loading...', style: TextStyle(fontSize: 16)),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// Temporary home screen placeholder
-class HomeScreen extends StatelessWidget {
-  /// Creates a home screen
-  const HomeScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Text('Home Screen - Coming Soon'),
-      ),
-    );
-  }
-}

@@ -34,9 +34,7 @@ class DioClient {
         LogInterceptor(
           requestBody: true,
           responseBody: true,
-          requestHeader: true,
           responseHeader: false,
-          error: true,
           logPrint: (object) => AppLogger.debug(object.toString()),
         ),
       );
@@ -84,12 +82,10 @@ class _ErrorInterceptor extends Interceptor {
         err = err.copyWith(
           message: 'Connection timeout. Please check your internet connection.',
         );
-        break;
       case DioExceptionType.connectionError:
         err = err.copyWith(
           message: 'Unable to connect to server. Please check your internet connection.',
         );
-        break;
       case DioExceptionType.badResponse:
         final statusCode = err.response?.statusCode;
         if (statusCode == 401) {
@@ -101,16 +97,12 @@ class _ErrorInterceptor extends Interceptor {
         } else if (statusCode != null && statusCode >= 500) {
           err = err.copyWith(message: 'Server error. Please try again later.');
         }
-        break;
       case DioExceptionType.cancel:
         err = err.copyWith(message: 'Request was cancelled.');
-        break;
       case DioExceptionType.unknown:
         err = err.copyWith(message: 'An unexpected error occurred.');
-        break;
       case DioExceptionType.badCertificate:
         err = err.copyWith(message: 'Certificate verification failed.');
-        break;
     }
     
     handler.next(err);

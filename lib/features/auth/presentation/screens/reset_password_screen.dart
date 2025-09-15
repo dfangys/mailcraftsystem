@@ -1,13 +1,10 @@
-import '../../../core/error/failures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hugeicons/hugeicons.dart';
-
-import '../../../../shared/widgets/error_widget.dart';
-import '../../../../shared/forms/app_text_field.dart';
-import '../controllers/auth_controller.dart';
-import '../../../../core/error/failures.dart' as core;
+import 'package:mailcraftsystem/core/error/failures.dart';
+import 'package:mailcraftsystem/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:mailcraftsystem/shared/forms/app_text_field.dart';
+import 'package:mailcraftsystem/shared/widgets/error_widget.dart';
 
 /// Password reset screen
 class ResetPasswordScreen extends ConsumerStatefulWidget {
@@ -65,7 +62,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24.0),
+            padding: const EdgeInsets.all(24),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 400),
               child: _isEmailSent ? _buildSuccessView() : _buildRequestView(),
@@ -104,7 +101,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Enter your email address and we\'ll send you '
+            "Enter your email address and we'll send you "
             'instructions to reset your password.',
             style: theme.textTheme.bodyLarge?.copyWith(
               color: colorScheme.onSurfaceVariant,
@@ -223,7 +220,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
         ),
         const SizedBox(height: 16),
         Text(
-          'We\'ve sent password reset instructions to:',
+          "We've sent password reset instructions to:",
           style: theme.textTheme.bodyLarge?.copyWith(
             color: colorScheme.onSurfaceVariant,
           ),
@@ -244,7 +241,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: colorScheme.surfaceVariant.withOpacity(0.3),
+            color: colorScheme.surfaceContainerHighest.withOpacity(0.3),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
               color: colorScheme.outline.withOpacity(0.2),

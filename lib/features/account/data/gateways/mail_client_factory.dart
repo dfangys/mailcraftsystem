@@ -101,7 +101,6 @@ class MailClientFactory {
       await smtpClient.authenticate(
         config.email,
         config.password,
-        enough_mail.AuthMechanism.plain,
       );
       
       AppLogger.info('SMTP connection and authentication successful');

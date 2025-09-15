@@ -21,8 +21,7 @@ mixin _$AccountState {
   bool get isSetupComplete => throw _privateConstructorUsedError;
   String? get selectedProvider => throw _privateConstructorUsedError;
   MailAccountConfig? get accountConfig => throw _privateConstructorUsedError;
-  Map<String, String>? get connectionDetails =>
-      throw _privateConstructorUsedError;
+  String? get connectionDetails => throw _privateConstructorUsedError;
   String? get error => throw _privateConstructorUsedError;
 
   /// Create a copy of AccountState
@@ -44,7 +43,7 @@ abstract class $AccountStateCopyWith<$Res> {
       bool isSetupComplete,
       String? selectedProvider,
       MailAccountConfig? accountConfig,
-      Map<String, String>? connectionDetails,
+      String? connectionDetails,
       String? error});
 
   $MailAccountConfigCopyWith<$Res>? get accountConfig;
@@ -97,7 +96,7 @@ class _$AccountStateCopyWithImpl<$Res, $Val extends AccountState>
       connectionDetails: freezed == connectionDetails
           ? _value.connectionDetails
           : connectionDetails // ignore: cast_nullable_to_non_nullable
-              as Map<String, String>?,
+              as String?,
       error: freezed == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
@@ -134,7 +133,7 @@ abstract class _$$AccountStateImplCopyWith<$Res>
       bool isSetupComplete,
       String? selectedProvider,
       MailAccountConfig? accountConfig,
-      Map<String, String>? connectionDetails,
+      String? connectionDetails,
       String? error});
 
   @override
@@ -184,9 +183,9 @@ class __$$AccountStateImplCopyWithImpl<$Res>
           : accountConfig // ignore: cast_nullable_to_non_nullable
               as MailAccountConfig?,
       connectionDetails: freezed == connectionDetails
-          ? _value._connectionDetails
+          ? _value.connectionDetails
           : connectionDetails // ignore: cast_nullable_to_non_nullable
-              as Map<String, String>?,
+              as String?,
       error: freezed == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
@@ -204,9 +203,8 @@ class _$AccountStateImpl implements _AccountState {
       this.isSetupComplete = false,
       this.selectedProvider,
       this.accountConfig,
-      final Map<String, String>? connectionDetails,
-      this.error})
-      : _connectionDetails = connectionDetails;
+      this.connectionDetails,
+      this.error});
 
   @override
   @JsonKey()
@@ -221,17 +219,8 @@ class _$AccountStateImpl implements _AccountState {
   final String? selectedProvider;
   @override
   final MailAccountConfig? accountConfig;
-  final Map<String, String>? _connectionDetails;
   @override
-  Map<String, String>? get connectionDetails {
-    final value = _connectionDetails;
-    if (value == null) return null;
-    if (_connectionDetails is EqualUnmodifiableMapView)
-      return _connectionDetails;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableMapView(value);
-  }
-
+  final String? connectionDetails;
   @override
   final String? error;
 
@@ -255,8 +244,8 @@ class _$AccountStateImpl implements _AccountState {
                 other.selectedProvider == selectedProvider) &&
             (identical(other.accountConfig, accountConfig) ||
                 other.accountConfig == accountConfig) &&
-            const DeepCollectionEquality()
-                .equals(other._connectionDetails, _connectionDetails) &&
+            (identical(other.connectionDetails, connectionDetails) ||
+                other.connectionDetails == connectionDetails) &&
             (identical(other.error, error) || other.error == error));
   }
 
@@ -268,7 +257,7 @@ class _$AccountStateImpl implements _AccountState {
       isSetupComplete,
       selectedProvider,
       accountConfig,
-      const DeepCollectionEquality().hash(_connectionDetails),
+      connectionDetails,
       error);
 
   /// Create a copy of AccountState
@@ -287,7 +276,7 @@ abstract class _AccountState implements AccountState {
       final bool isSetupComplete,
       final String? selectedProvider,
       final MailAccountConfig? accountConfig,
-      final Map<String, String>? connectionDetails,
+      final String? connectionDetails,
       final String? error}) = _$AccountStateImpl;
 
   @override
@@ -301,7 +290,7 @@ abstract class _AccountState implements AccountState {
   @override
   MailAccountConfig? get accountConfig;
   @override
-  Map<String, String>? get connectionDetails;
+  String? get connectionDetails;
   @override
   String? get error;
 

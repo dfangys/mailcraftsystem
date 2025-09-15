@@ -138,7 +138,7 @@ class MailProviderPresets {
   /// Find preset by email domain
   static MailProviderPreset? findByEmail(String email) {
     return builtInPresets.cast<MailProviderPreset?>().firstWhere(
-      (preset) => preset?.matchesDomain(email) == true,
+      (preset) => preset?.matchesDomain(email) ?? false,
       orElse: () => null,
     );
   }

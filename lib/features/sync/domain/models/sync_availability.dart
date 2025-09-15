@@ -90,8 +90,8 @@ extension SyncEstimateExtension on SyncEstimate {
   /// Get formatted data usage
   String get formattedDataUsage {
     const units = ['B', 'KB', 'MB', 'GB'];
-    double size = estimatedDataUsage.toDouble();
-    int unitIndex = 0;
+    var size = estimatedDataUsage.toDouble();
+    var unitIndex = 0;
     
     while (size >= 1024 && unitIndex < units.length - 1) {
       size /= 1024;
@@ -132,8 +132,8 @@ extension SyncStatisticsExtension on SyncStatistics {
   /// Get formatted total data transferred
   String get formattedTotalDataTransferred {
     const units = ['B', 'KB', 'MB', 'GB'];
-    double size = totalDataTransferred.toDouble();
-    int unitIndex = 0;
+    var size = totalDataTransferred.toDouble();
+    var unitIndex = 0;
     
     while (size >= 1024 && unitIndex < units.length - 1) {
       size /= 1024;

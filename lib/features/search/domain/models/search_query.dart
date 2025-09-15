@@ -262,13 +262,13 @@ extension SearchQueryExtension on SearchQuery {
     
     if (filters != null) {
       final f = filters!;
-      if (f.from?.isNotEmpty == true) parts.add('from:${f.from}');
-      if (f.to?.isNotEmpty == true) parts.add('to:${f.to}');
-      if (f.subject?.isNotEmpty == true) parts.add('subject:${f.subject}');
-      if (f.hasAttachments == true) parts.add('has:attachment');
-      if (f.isRead == true) parts.add('is:read');
+      if (f.from?.isNotEmpty ?? false) parts.add('from:${f.from}');
+      if (f.to?.isNotEmpty ?? false) parts.add('to:${f.to}');
+      if (f.subject?.isNotEmpty ?? false) parts.add('subject:${f.subject}');
+      if (f.hasAttachments ?? false) parts.add('has:attachment');
+      if (f.isRead ?? false) parts.add('is:read');
       if (f.isRead == false) parts.add('is:unread');
-      if (f.isFlagged == true) parts.add('is:flagged');
+      if (f.isFlagged ?? false) parts.add('is:flagged');
     }
     
     return parts.join(' ');
@@ -309,18 +309,18 @@ extension SearchFiltersExtension on SearchFilters {
   
   /// Get active filter count
   int get activeFilterCount {
-    int count = 0;
-    if (from?.isNotEmpty == true) count++;
-    if (to?.isNotEmpty == true) count++;
-    if (subject?.isNotEmpty == true) count++;
-    if (body?.isNotEmpty == true) count++;
+    var count = 0;
+    if (from?.isNotEmpty ?? false) count++;
+    if (to?.isNotEmpty ?? false) count++;
+    if (subject?.isNotEmpty ?? false) count++;
+    if (body?.isNotEmpty ?? false) count++;
     if (dateFrom != null) count++;
     if (dateTo != null) count++;
     if (hasAttachments != null) count++;
     if (isRead != null) count++;
     if (isFlagged != null) count++;
     if (priority != null) count++;
-    if (attachmentTypes?.isNotEmpty == true) count++;
+    if (attachmentTypes?.isNotEmpty ?? false) count++;
     if (minSize != null) count++;
     if (maxSize != null) count++;
     return count;
@@ -330,13 +330,13 @@ extension SearchFiltersExtension on SearchFilters {
   String get filterSummary {
     final parts = <String>[];
     
-    if (from?.isNotEmpty == true) parts.add('From: $from');
-    if (to?.isNotEmpty == true) parts.add('To: $to');
-    if (subject?.isNotEmpty == true) parts.add('Subject: $subject');
-    if (hasAttachments == true) parts.add('Has attachments');
-    if (isRead == true) parts.add('Read');
+    if (from?.isNotEmpty ?? false) parts.add('From: $from');
+    if (to?.isNotEmpty ?? false) parts.add('To: $to');
+    if (subject?.isNotEmpty ?? false) parts.add('Subject: $subject');
+    if (hasAttachments ?? false) parts.add('Has attachments');
+    if (isRead ?? false) parts.add('Read');
     if (isRead == false) parts.add('Unread');
-    if (isFlagged == true) parts.add('Flagged');
+    if (isFlagged ?? false) parts.add('Flagged');
     if (priority != null) parts.add('Priority: ${priority!.displayName}');
     
     return parts.join(', ');

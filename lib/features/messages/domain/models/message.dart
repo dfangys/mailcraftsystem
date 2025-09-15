@@ -47,8 +47,7 @@ class Message with _$Message {
 /// MessageAddress class
 class MessageAddress with _$MessageAddress {
   const factory MessageAddress({
-    String? name,
-    required String email,
+    required String email, String? name,
   }) = _MessageAddress;
 
   factory MessageAddress.fromJson(Map<String, dynamic> json) =>
@@ -95,11 +94,11 @@ enum MessagePriority {
 /// Extension for message address
 extension MessageAddressExtension on MessageAddress {
   /// Get display name (name if available, otherwise email)
-  String get displayName => name?.isNotEmpty == true ? name! : email;
+  String get displayName => name?.isNotEmpty ?? false ? name! : email;
   
   /// Get formatted address string
   String get formatted {
-    if (name?.isNotEmpty == true) {
+    if (name?.isNotEmpty ?? false) {
       return '$name <$email>';
     }
     return email;
@@ -146,8 +145,8 @@ extension MessageAttachmentExtension on MessageAttachment {
     if (size == null) return 'Unknown size';
     
     const units = ['B', 'KB', 'MB', 'GB'];
-    double fileSize = size!.toDouble();
-    int unitIndex = 0;
+    var fileSize = size!.toDouble();
+    var unitIndex = 0;
     
     while (fileSize >= 1024 && unitIndex < units.length - 1) {
       fileSize /= 1024;
@@ -202,10 +201,10 @@ extension MessageExtension on Message {
   String get senderEmail => from?.email ?? '';
   
   /// Get subject or default
-  String get displaySubject => subject?.isNotEmpty == true ? subject! : '(No Subject)';
+  String get displaySubject => subject?.isNotEmpty ?? false ? subject! : '(No Subject)';
   
   /// Check if message has attachments
-  bool get hasAttachments => attachments?.isNotEmpty == true;
+  bool get hasAttachments => attachments?.isNotEmpty ?? false;
   
   /// Get attachment count
   int get attachmentCount => attachments?.length ?? 0;
@@ -248,14 +247,14 @@ extension MessageExtension on Message {
   
   /// Get message preview text
   String get previewText {
-    if (preview?.isNotEmpty == true) return preview!;
-    if (textPlain?.isNotEmpty == true) {
+    if (preview?.isNotEmpty ?? false) return preview!;
+    if (textPlain?.isNotEmpty ?? false) {
       return textPlain!.replaceAll(RegExp(r'\s+'), ' ').trim();
     }
-    if (textHtml?.isNotEmpty == true) {
+    if (textHtml?.isNotEmpty ?? false) {
       // Simple HTML stripping for preview
       return textHtml!
-          .replaceAll(RegExp(r'<[^>]*>'), '')
+          .replaceAll(RegExp('<[^>]*>'), '')
           .replaceAll(RegExp(r'\s+'), ' ')
           .trim();
     }
@@ -280,26 +279,26 @@ extension MessageExtension on Message {
       mailboxPath: mailboxPath,
       messageId: mimeMessage.decodeHeaderMailAddressValue('message-id')?.first.email,
       subject: mimeMessage.decodeSubject(),
-      from: mimeMessage.from?.isNotEmpty == true
+      from: mimeMessage.from?.isNotEmpty ?? false
           ? MessageAddressExtension.fromEnoughMail(mimeMessage.from!.first)
           : null,
-      to: mimeMessage.to?.map((addr) => MessageAddressExtension.fromEnoughMail(addr)).toList(),
-      cc: mimeMessage.cc?.map((addr) => MessageAddressExtension.fromEnoughMail(addr)).toList(),
-      bcc: mimeMessage.bcc?.map((addr) => MessageAddressExtension.fromEnoughMail(addr)).toList(),
-      replyTo: mimeMessage.replyTo?.map((addr) => MessageAddressExtension.fromEnoughMail(addr)).toList(),
+      to: mimeMessage.to?.map(MessageAddressExtension.fromEnoughMail).toList(),
+      cc: mimeMessage.cc?.map(MessageAddressExtension.fromEnoughMail).toList(),
+      bcc: mimeMessage.bcc?.map(MessageAddressExtension.fromEnoughMail).toList(),
+      replyTo: mimeMessage.replyTo?.map(MessageAddressExtension.fromEnoughMail).toList(),
       date: mimeMessage.decodeDate(),
       isRead: mimeMessage.isSeen,
       isFlagged: mimeMessage.isFlagged,
       isAnswered: mimeMessage.isAnswered,
-      isDraft: mimeMessage.flags?.any((f) => f.toString().toLowerCase() == '\\draft') ?? false,
-      isDeleted: mimeMessage.flags?.any((f) => f.toString().toLowerCase() == '\\deleted') ?? false,
-      isRecent: mimeMessage.flags?.any((f) => f.toString().toLowerCase() == '\\recent') ?? false,
+      isDraft: mimeMessage.flags?.any((f) => f.toLowerCase() == r'\draft') ?? false,
+      isDeleted: mimeMessage.flags?.any((f) => f.toLowerCase() == r'\deleted') ?? false,
+      isRecent: mimeMessage.flags?.any((f) => f.toLowerCase() == r'\recent') ?? false,
       priority: _getPriorityFromMime(mimeMessage),
       textPlain: mimeMessage.decodeTextPlainPart(),
       textHtml: mimeMessage.decodeTextHtmlPart(),
       attachments: _getAttachmentsFromMime(mimeMessage),
       size: mimeMessage.size,
-      flags: mimeMessage.flags?.map((f) => f.toString()).toList(),
+      flags: mimeMessage.flags?.map((f) => f).toList(),
       inReplyTo: mimeMessage.decodeHeaderValue('in-reply-to'),
       references: mimeMessage.decodeHeaderValue('references')?.split(' '),
       receivedAt: DateTime.now(),
@@ -350,7 +349,7 @@ extension MessageExtension on Message {
             size: contentInfo.size,
             isInline: contentInfo.contentDisposition?.disposition == 'inline',
             contentId: contentInfo.cid,
-            disposition: contentInfo.contentDisposition?.disposition?.toString() ?? 'attachment',
+            disposition: contentInfo.contentDisposition?.disposition.toString() ?? 'attachment',
           ),
         );
       }

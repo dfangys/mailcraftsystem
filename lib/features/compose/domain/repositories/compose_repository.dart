@@ -1,72 +1,73 @@
+import 'package:dartz/dartz.dart';
 import 'package:mailcraftsystem/core/error/failures.dart';
-import 'package:mailcraftsystem/features/auth/domain/repositories/auth_repository.dart';
 import 'package:mailcraftsystem/features/compose/domain/models/compose_message.dart';
-import 'package:mailcraftsystem/features/compose/domain/models/compose_validation.dart';
 
 /// Compose repository interface
 abstract class ComposeRepository {
   /// Send a composed message
-  Future<({Failure? left, [^}]* right})> sendMessage(ComposeMessage message);
-  
+  Future<Either<Failure, void>> sendMessage(ComposeMessage message);
+
   /// Save message as draft
-  Future<({Failure? left, [^}]* right})> saveDraft(ComposeMessage message);
-  
+  Future<Either<Failure, void>> saveDraft(ComposeMessage message);
+
   /// Get all drafts for an account
-  Future<({Failure? left, [^}]* right})>> getDrafts(String accountId);
-  
+  Future<Either<Failure, List<ComposeMessage>>> getDrafts(String accountId);
+
   /// Get a specific draft by ID
-  Future<({Failure? left, [^}]* right})> getDraft(String id);
-  
+  Future<Either<Failure, ComposeMessage>> getDraft(String id);
+
   /// Delete a draft
-  Future<({Failure? left, [^}]* right})> deleteDraft(String id);
-  
+  Future<Either<Failure, void>> deleteDraft(String id);
+
   /// Schedule a message for later sending
-  Future<({Failure? left, [^}]* right})> scheduleMessage(
+  Future<Either<Failure, void>> scheduleMessage(
     ComposeMessage message,
     DateTime scheduledAt,
   );
-  
+
   /// Get scheduled messages
-  Future<({Failure? left, [^}]* right})>> getScheduledMessages(String accountId);
-  
+  Future<Either<Failure, List<ComposeMessage>>> getScheduledMessages(
+      String accountId,);
+
   /// Cancel a scheduled message
-  Future<({Failure? left, [^}]* right})> cancelScheduledMessage(String id);
-  
+  Future<Either<Failure, void>> cancelScheduledMessage(String id);
+
   /// Upload attachment
-  Future<({Failure? left, [^}]* right})> uploadAttachment(
+  Future<Either<Failure, String>> uploadAttachment(
     String accountId,
     String filePath,
     String fileName,
     String? mimeType,
   );
-  
+
   /// Remove attachment
-  Future<({Failure? left, [^}]* right})> removeAttachment(String attachmentId);
-  
+  Future<Either<Failure, void>> removeAttachment(String attachmentId);
+
   /// Validate message before sending
-  Future<({Failure? left, [^}]* right})> validateMessage(
+  Future<Either<Failure, ComposeValidationResult>> validateMessage(
     ComposeMessage message,
   );
-  
+
   /// Get message size estimate
-  Future<({Failure? left, [^}]* right})> getMessageSizeEstimate(
+  Future<Either<Failure, int>> getMessageSizeEstimate(
     ComposeMessage message,
   );
-  
+
   /// Check if recipient addresses are valid
-  Future<({Failure? left, [^}]* right})>> validateAddresses(
+  Future<Either<Failure, List<String>>> validateAddresses(
     List<String> addresses,
   );
-  
+
   /// Get auto-complete suggestions for addresses
-  Future<({Failure? left, [^}]* right})>> getAddressSuggestions(
+  Future<Either<Failure, List<String>>> getAddressSuggestions(
     String query,
     String accountId,
   );
-  
+
   /// Import contacts for auto-complete
-  Future<({Failure? left, [^}]* right})> importContacts(
+  Future<Either<Failure, void>> importContacts(
     String accountId,
-    List<ContactInfo> contacts,
+    List<dynamic> contacts,
   );
 }
+

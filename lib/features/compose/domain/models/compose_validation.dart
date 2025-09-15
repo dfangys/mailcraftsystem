@@ -99,10 +99,10 @@ class SendResult with _$SendResult {
 /// Extension for message validation result
 extension MessageValidationResultExtension on MessageValidationResult {
   /// Check if there are any warnings
-  bool get hasWarnings => warnings?.isNotEmpty == true;
+  bool get hasWarnings => warnings?.isNotEmpty ?? false;
   
   /// Check if there are any errors
-  bool get hasErrors => errors?.isNotEmpty == true;
+  bool get hasErrors => errors?.isNotEmpty ?? false;
   
   /// Get all issues (errors + warnings)
   List<String> get allIssues {
@@ -134,8 +134,8 @@ extension MessageSizeInfoExtension on MessageSizeInfo {
   /// Format bytes to human readable string
   String _formatBytes(int bytes) {
     const units = ['B', 'KB', 'MB', 'GB'];
-    double size = bytes.toDouble();
-    int unitIndex = 0;
+    var size = bytes.toDouble();
+    var unitIndex = 0;
     
     while (size >= 1024 && unitIndex < units.length - 1) {
       size /= 1024;
@@ -149,11 +149,11 @@ extension MessageSizeInfoExtension on MessageSizeInfo {
 /// Extension for address suggestion
 extension AddressSuggestionExtension on AddressSuggestion {
   /// Get display name
-  String get displayName => name?.isNotEmpty == true ? name! : email;
+  String get displayName => name?.isNotEmpty ?? false ? name! : email;
   
   /// Get formatted suggestion
   String get formatted {
-    if (name?.isNotEmpty == true) {
+    if (name?.isNotEmpty ?? false) {
       return '$name <$email>';
     }
     return email;

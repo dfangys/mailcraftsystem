@@ -24,7 +24,7 @@ class SecureStorageService {
     if (token.refreshToken != null) {
       await _storage.write(
         key: _refreshTokenKey,
-        value: token.refreshToken!,
+        value: token.refreshToken,
       );
     }
   }
@@ -46,7 +46,7 @@ class SecureStorageService {
   
   /// Get stored refresh token
   Future<String?> getRefreshToken() async {
-    return await _storage.read(key: _refreshTokenKey);
+    return _storage.read(key: _refreshTokenKey);
   }
   
   /// Clear stored tokens

@@ -145,13 +145,13 @@ extension MessageSearchCriteriaExtension on MessageSearchCriteria {
   String get searchSummary {
     final parts = <String>[];
     
-    if (query?.isNotEmpty == true) parts.add('Text: "$query"');
-    if (from?.isNotEmpty == true) parts.add('From: "$from"');
-    if (to?.isNotEmpty == true) parts.add('To: "$to"');
-    if (subject?.isNotEmpty == true) parts.add('Subject: "$subject"');
+    if (query?.isNotEmpty ?? false) parts.add('Text: "$query"');
+    if (from?.isNotEmpty ?? false) parts.add('From: "$from"');
+    if (to?.isNotEmpty ?? false) parts.add('To: "$to"');
+    if (subject?.isNotEmpty ?? false) parts.add('Subject: "$subject"');
     if (isRead != null) parts.add(isRead! ? 'Read' : 'Unread');
-    if (isFlagged == true) parts.add('Flagged');
-    if (hasAttachments == true) parts.add('Has Attachments');
+    if (isFlagged ?? false) parts.add('Flagged');
+    if (hasAttachments ?? false) parts.add('Has Attachments');
     if (priority != null) parts.add('Priority: ${priority!.displayName}');
     
     return parts.join(', ');

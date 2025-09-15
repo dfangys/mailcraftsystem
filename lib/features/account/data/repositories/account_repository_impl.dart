@@ -1,10 +1,11 @@
-import '../../domain/models/mail_account_config.dart';
-import '../../domain/models/account_connection_result.dart';
-import '../../domain/models/mail_provider_preset.dart';
-import '../../domain/repositories/account_repository.dart';
-import '../datasources/account_local_storage.dart';
-import '../../../../core/error/failures.dart';
-import '../../../../core/logging/logger.dart';
+import 'package:dartz/dartz.dart';
+import 'package:mailcraftsystem/core/error/failures.dart';
+import 'package:mailcraftsystem/core/logging/logger.dart';
+import 'package:mailcraftsystem/features/account/data/datasources/account_local_storage.dart';
+import 'package:mailcraftsystem/features/account/domain/models/account_connection_result.dart';
+import 'package:mailcraftsystem/features/account/domain/models/mail_account_config.dart';
+import 'package:mailcraftsystem/features/account/domain/models/mail_provider_preset.dart';
+import 'package:mailcraftsystem/features/account/domain/repositories/account_repository.dart';
 
 /// Implementation of account repository
 class AccountRepositoryImpl implements AccountRepository {
@@ -17,19 +18,18 @@ class AccountRepositoryImpl implements AccountRepository {
   final AccountLocalStorage localStorage;
 
   @override
-  Future<({Failure? left, AccountConnectionResult? right})> testConnection(
+  Future<Either<Failure, AccountConnectionResult>> testConnection(
     MailAccountConfig config,
   ) async {
     try {
       AppLogger.info('Testing connection for ${config.email}');
-      
+
       // Simulate connection test
       await Future.delayed(const Duration(seconds: 2));
-      
+
       // Mock successful connection
-      return (
-        left: null,
-        right: AccountConnectionResult(
+      return const Right(
+        AccountConnectionResult(
           isSuccess: true,
           details: 'Connection successful',
           capabilities: ['IMAP', 'SMTP'],
@@ -37,100 +37,86 @@ class AccountRepositoryImpl implements AccountRepository {
       );
     } catch (e, stackTrace) {
       AppLogger.error('Connection test failed', e, stackTrace);
-      return (
-        left: Failure.network(message: 'Connection test failed: $e'),
-        right: null,
-      );
+      return Left(Failure.network(message: 'Connection test failed: $e'));
     }
   }
 
   @override
-  Future<({Failure? left, MailAccountConfig? right})> addAccount(
+  Future<Either<Failure, MailAccountConfig>> addAccount(
     MailAccountConfig config,
   ) async {
     try {
       await localStorage.addAccount(config);
       AppLogger.info('Account added successfully for ${config.email}');
-      return (left: null, right: config);
+      return Right(config);
     } catch (e, stackTrace) {
       AppLogger.error('Failed to add account', e, stackTrace);
-      return (
-        left: Failure.storage(message: 'Failed to add account: $e'),
-        right: null,
-      );
+      return Left(Failure.storage(message: 'Failed to add account: $e'));
     }
   }
 
   @override
-  Future<({Failure? left, List<MailAccountConfig>? right})> getAccounts() async {
+  Future<Either<Failure, List<MailAccountConfig>>> getAccounts() async {
     try {
       final accounts = await localStorage.getAccounts();
-      return (left: null, right: accounts);
+      return Right(accounts);
     } catch (e, stackTrace) {
       AppLogger.error('Failed to get accounts', e, stackTrace);
-      return (
-        left: Failure.storage(message: 'Failed to get accounts: $e'),
-        right: null,
-      );
+      return Left(Failure.storage(message: 'Failed to get accounts: $e'));
     }
   }
 
   @override
-  Future<({Failure? left, void right})> deleteAccount(String accountId) async {
+  Future<Either<Failure, void>> deleteAccount(String accountId) async {
     try {
       await localStorage.deleteAccount(accountId);
       AppLogger.info('Account deleted successfully: $accountId');
-      return (left: null, right: null);
+      return const Right(null);
     } catch (e, stackTrace) {
       AppLogger.error('Failed to delete account', e, stackTrace);
-      return (
-        left: Failure.storage(message: 'Failed to delete account: $e'),
-        right: null,
-      );
+      return Left(Failure.storage(message: 'Failed to delete account: $e'));
     }
   }
 
   @override
-  Future<({Failure? left, MailAccountConfig? right})> getAccount(String accountId) async {
+  Future<Either<Failure, MailAccountConfig>> getAccount(
+      String accountId) async {
     try {
       final account = await localStorage.getAccount(accountId);
-      return (left: null, right: account);
+      if (account != null) {
+        return Right(account);
+      }
+      return Left(Failure.notFound(message: 'Account not found'));
     } catch (e, stackTrace) {
       AppLogger.error('Failed to get account', e, stackTrace);
-      return (
-        left: Failure.storage(message: 'Failed to get account: $e'),
-        right: null,
-      );
+      return Left(Failure.storage(message: 'Failed to get account: $e'));
     }
   }
 
   @override
-  Future<({Failure? left, MailAccountConfig? right})> updateAccount(
+  Future<Either<Failure, MailAccountConfig>> updateAccount(
     MailAccountConfig config,
   ) async {
     try {
       await localStorage.updateAccount(config);
       AppLogger.info('Account updated successfully for ${config.email}');
-      return (left: null, right: config);
+      return Right(config);
     } catch (e, stackTrace) {
       AppLogger.error('Failed to update account', e, stackTrace);
-      return (
-        left: Failure.storage(message: 'Failed to update account: $e'),
-        right: null,
-      );
+      return Left(Failure.storage(message: 'Failed to update account: $e'));
     }
   }
 
   @override
-  Future<({Failure? left, List<MailProviderPreset>? right})> getProviderPresets() async {
+  Future<Either<Failure, List<MailProviderPreset>>> getProviderPresets() async {
     try {
       // Return built-in presets
       final presets = [
-        MailProviderPreset(
+        const MailProviderPreset(
           id: 'gmail',
           name: 'gmail',
           displayName: 'Gmail',
-          domains: const ['gmail.com'],
+          domains: ['gmail.com'],
           imapConfig: ImapConfig(
             host: 'imap.gmail.com',
             port: 993,
@@ -142,11 +128,11 @@ class AccountRepositoryImpl implements AccountRepository {
             socketType: SocketType.starttls,
           ),
         ),
-        MailProviderPreset(
+        const MailProviderPreset(
           id: 'outlook',
           name: 'outlook',
           displayName: 'Outlook',
-          domains: const ['outlook.com', 'hotmail.com'],
+          domains: ['outlook.com', 'hotmail.com'],
           imapConfig: ImapConfig(
             host: 'outlook.office365.com',
             port: 993,
@@ -159,68 +145,66 @@ class AccountRepositoryImpl implements AccountRepository {
           ),
         ),
       ];
-      return (left: null, right: presets);
+      return Right(presets);
     } catch (e, stackTrace) {
       AppLogger.error('Failed to get provider presets', e, stackTrace);
-      return (
-        left: Failure.unknown(message: 'Failed to get provider presets: $e'),
-        right: null,
-      );
+      return Left(
+          Failure.unknown(message: 'Failed to get provider presets: $e'));
     }
   }
 
   @override
-  Future<({Failure? left, MailProviderPreset? right})> findPresetByEmail(String email) async {
+  Future<Either<Failure, MailProviderPreset>> findPresetByEmail(
+      String email) async {
     try {
       final domain = email.split('@').last;
-      final presets = await getProviderPresets();
-      
-      if (presets.left != null) {
-        return (left: presets.left, right: null);
-      }
-      
-      final preset = presets.right?.firstWhere(
-        (p) => p.domains.contains(domain),
-        orElse: () => throw Exception('No preset found'),
+      final presetsResult = await getProviderPresets();
+
+      return presetsResult.fold(
+        (failure) => Left(failure),
+        (presets) {
+          try {
+            final preset = presets.firstWhere(
+              (p) => p.domains.contains(domain),
+            );
+            return Right(preset);
+          } catch (e) {
+            return Left(
+                const Failure.unknown(message: 'No preset found for email domain'));
+          }
+        },
       );
-      
-      return (left: null, right: preset);
     } catch (e, stackTrace) {
       AppLogger.error('Failed to find preset for email', e, stackTrace);
-      return (
-        left: Failure.unknown(message: 'No preset found for email domain'),
-        right: null,
-      );
+      return Left(
+          const Failure.unknown(message: 'No preset found for email domain'));
     }
   }
 
   @override
-  Future<({Failure? left, AccountValidationResult? right})> validateAccount(
+  Future<Either<Failure, AccountValidationResult>> validateAccount(
     MailAccountConfig config,
   ) async {
     try {
       final errors = <String>[];
-      
+
       if (config.email.isEmpty) errors.add('Email is required');
       if (config.name.isEmpty) errors.add('Name is required');
-      
+
       final result = AccountValidationResult(
         isValid: errors.isEmpty,
         errors: errors,
       );
-      
-      return (left: null, right: result);
+
+      return Right(result);
     } catch (e, stackTrace) {
       AppLogger.error('Failed to validate account', e, stackTrace);
-      return (
-        left: Failure.validation(message: 'Validation failed: $e'),
-        right: null,
-      );
+      return Left(Failure.validation(message: 'Validation failed: $e'));
     }
   }
 
   @override
-  Future<({Failure? left, AccountCapabilities? right})> getAccountCapabilities(
+  Future<Either<Failure, AccountCapabilities>> getAccountCapabilities(
     String accountId,
   ) async {
     try {
@@ -229,46 +213,41 @@ class AccountRepositoryImpl implements AccountRepository {
         supportsIdle: true,
         supportsSort: true,
         supportsMove: true,
-        supportsQuota: false,
         maxMessageSize: 25 * 1024 * 1024, // 25MB
       );
-      
-      return (left: null, right: capabilities);
+
+      return const Right(capabilities);
     } catch (e, stackTrace) {
       AppLogger.error('Failed to get account capabilities', e, stackTrace);
-      return (
-        left: Failure.unknown(message: 'Failed to get capabilities: $e'),
-        right: null,
-      );
+      return Left(Failure.unknown(message: 'Failed to get capabilities: $e'));
     }
   }
 
   @override
-  Future<({Failure? left, void right})> setDefaultAccount(String accountId) async {
+  Future<Either<Failure, void>> setDefaultAccount(String accountId) async {
     try {
       await localStorage.setDefaultAccount(accountId);
       AppLogger.info('Default account set: $accountId');
-      return (left: null, right: null);
+      return const Right(null);
     } catch (e, stackTrace) {
       AppLogger.error('Failed to set default account', e, stackTrace);
-      return (
-        left: Failure.storage(message: 'Failed to set default account: $e'),
-        right: null,
-      );
+      return Left(
+          Failure.storage(message: 'Failed to set default account: $e'));
     }
   }
 
   @override
-  Future<({Failure? left, MailAccountConfig? right})> getDefaultAccount() async {
+  Future<Either<Failure, MailAccountConfig>> getDefaultAccount() async {
     try {
       final account = await localStorage.getDefaultAccount();
-      return (left: null, right: account);
+      if (account != null) {
+        return Right(account);
+      }
+      return Left(Failure.notFound(message: 'No default account found'));
     } catch (e, stackTrace) {
       AppLogger.error('Failed to get default account', e, stackTrace);
-      return (
-        left: Failure.storage(message: 'Failed to get default account: $e'),
-        right: null,
-      );
+      return Left(Failure.storage(message: 'Failed to get default account: $e'));
     }
   }
 }
+

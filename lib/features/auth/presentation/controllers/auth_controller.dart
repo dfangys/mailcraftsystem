@@ -1,11 +1,9 @@
+import 'package:mailcraftsystem/core/logging/logger.dart';
+import 'package:mailcraftsystem/features/auth/domain/models/auth_token.dart';
+import 'package:mailcraftsystem/features/auth/domain/models/login_request.dart';
+import 'package:mailcraftsystem/features/auth/domain/models/otp_challenge.dart';
+import 'package:mailcraftsystem/features/auth/presentation/providers/auth_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-import '../../domain/models/auth_token.dart';
-import '../../domain/models/login_request.dart';
-import '../../domain/models/otp_challenge.dart';
-import '../providers/auth_providers.dart';
-import '../../../../core/error/failures.dart';
-import '../../../../core/logging/logger.dart';
 
 part 'auth_controller.g.dart';
 
@@ -19,6 +17,7 @@ class AuthState {
     this.error,
     this.requiresOtp = false,
     this.otpToken,
+    this.resetEmailSent = false,
   });
 
   /// Loading state
@@ -38,6 +37,9 @@ class AuthState {
   
   /// OTP token for verification
   final String? otpToken;
+  
+  /// Whether reset email was sent
+  final bool resetEmailSent;
 
   /// Copy with new values
   AuthState copyWith({
@@ -47,6 +49,7 @@ class AuthState {
     String? error,
     bool? requiresOtp,
     String? otpToken,
+    bool? resetEmailSent,
   }) {
     return AuthState(
       isLoading: isLoading ?? this.isLoading,
@@ -55,6 +58,7 @@ class AuthState {
       error: error ?? this.error,
       requiresOtp: requiresOtp ?? this.requiresOtp,
       otpToken: otpToken ?? this.otpToken,
+      resetEmailSent: resetEmailSent ?? this.resetEmailSent,
     );
   }
 }
@@ -93,45 +97,43 @@ class AuthController extends _$AuthController {
 
   /// Login with email and password
   Future<void> login(String email, String password) async {
-    state = state.copyWith(isLoading: true, error: null);
+    state = state.copyWith(isLoading: true);
 
     try {
       final loginUseCase = ref.read(loginUseCaseProvider);
       final request = LoginRequest(
         email: email,
         password: password,
-
-        rememberMe: true,
       );
 
       final result = await loginUseCase(request);
 
-      if (result.left != null) {
-        state = state.copyWith(
-          isLoading: false,
-          error: result.left!.message,
-        );
-        return;
-      }
-
-      final token = result.right!;
-      
-      if (token.isTemporary) {
-        // Requires OTP verification
-        state = state.copyWith(
-          isLoading: false,
-          requiresOtp: true,
-          otpToken: token.accessToken,
-        );
-      } else {
-        // Login successful
-        state = state.copyWith(
-          isLoading: false,
-          isAuthenticated: true,
-          token: token,
-          requiresOtp: false,
-        );
-      }
+      result.fold(
+        (failure) {
+          state = state.copyWith(
+            isLoading: false,
+            error: failure.message,
+          );
+        },
+        (token) {
+          if (token.isTemporary) {
+            // Requires OTP verification
+            state = state.copyWith(
+              isLoading: false,
+              requiresOtp: true,
+              otpToken: token.accessToken,
+            );
+          } else {
+            // Login successful
+            state = state.copyWith(
+              isLoading: false,
+              isAuthenticated: true,
+              token: token,
+              requiresOtp: false,
+            );
+          }
+        },
+      );
     } catch (e, stackTrace) {
       AppLogger.error('Login failed', e, stackTrace);
       state = state.copyWith(
@@ -148,7 +150,7 @@ class AuthController extends _$AuthController {
       return;
     }
 
-    state = state.copyWith(isLoading: true, error: null);
+    state = state.copyWith(isLoading: true);
 
     try {
       final verifyOtpUseCase = ref.read(verifyOtpUseCaseProvider);
@@ -159,21 +161,21 @@ class AuthController extends _$AuthController {
 
       final result = await verifyOtpUseCase(challenge);
 
-      if (result.left != null) {
-        state = state.copyWith(
-          isLoading: false,
-          error: result.left!.message,
-        );
-        return;
-      }
-
-      final token = result.right!;
-      state = state.copyWith(
-        isLoading: false,
-        isAuthenticated: true,
-        token: token,
-        requiresOtp: false,
-        otpToken: null,
+      result.fold(
+        (failure) {
+          state = state.copyWith(
+            isLoading: false,
+            error: failure.message,
+          );
+        },
+        (token) {
+          state = state.copyWith(
+            isLoading: false,
+            isAuthenticated: true,
+            token: token,
+            requiresOtp: false,
+          );
+        },
       );
     } catch (e, stackTrace) {
       AppLogger.error('OTP verification failed', e, stackTrace);
@@ -186,23 +188,25 @@ class AuthController extends _$AuthController {
 
   /// Request password reset
   Future<void> requestPasswordReset(String email) async {
-    state = state.copyWith(isLoading: true, error: null);
+    state = state.copyWith(isLoading: true);
 
     try {
       final loginUseCase = ref.read(loginUseCaseProvider);
       final result = await loginUseCase.repository.requestPasswordReset(email);
 
-      if (result.left != null) {
-        state = state.copyWith(
-          isLoading: false,
-          error: result.left!.message,
-        );
-        return;
-      }
-
-      state = state.copyWith(
-        isLoading: false,
-        error: null,
+      result.fold(
+        (failure) {
+          state = state.copyWith(
+            isLoading: false,
+            error: failure.message,
+          );
+        },
+        (_) {
+          state = state.copyWith(
+            isLoading: false,
+            resetEmailSent: true,
+          );
+        },
       );
     } catch (e, stackTrace) {
       AppLogger.error('Password reset request failed', e, stackTrace);
@@ -231,8 +235,34 @@ class AuthController extends _$AuthController {
     }
   }
 
+  /// Resend OTP code
+  Future<void> resendOtp() async {
+    if (state.otpToken == null) return;
+    
+    state = state.copyWith(isLoading: true);
+
+    try {
+      // Simulate resending OTP
+      await Future.delayed(const Duration(seconds: 1));
+      
+      state = state.copyWith(
+        isLoading: false,
+        resetEmailSent: true,
+      );
+      
+      AppLogger.info('OTP resent successfully');
+    } catch (e, stackTrace) {
+      AppLogger.error('Resend OTP failed', e, stackTrace);
+      state = state.copyWith(
+        isLoading: false,
+        error: 'Failed to resend OTP: $e',
+      );
+    }
+  }
+
   /// Clear error state
   void clearError() {
-    state = state.copyWith(error: null);
+    state = state.copyWith();
   }
 }
+

@@ -10,11 +10,6 @@ class AppLogger {
     _instance = Logger(
       level: kDebugMode ? Level.debug : Level.info,
       printer: PrettyPrinter(
-        methodCount: 2,
-        errorMethodCount: 8,
-        lineLength: 120,
-        colors: true,
-        printEmojis: true,
         printTime: true,
       ),
       filter: ProductionFilter(),

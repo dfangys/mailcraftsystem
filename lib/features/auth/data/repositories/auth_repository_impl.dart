@@ -1,14 +1,14 @@
 import 'dart:convert';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import '../../domain/models/auth_token.dart';
-import '../../domain/models/user_profile.dart';
-import '../../domain/models/login_request.dart';
-import '../../domain/models/otp_challenge.dart';
-import '../../domain/repositories/auth_repository.dart';
-import '../datasources/auth_api_client.dart';
-import '../../../../core/error/failures.dart';
-import '../../../../core/logging/logger.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:mailcraftsystem/core/error/failures.dart';
+import 'package:mailcraftsystem/core/logging/logger.dart';
+import 'package:mailcraftsystem/features/auth/data/datasources/auth_api_client.dart';
+import 'package:mailcraftsystem/features/auth/domain/models/auth_token.dart';
+import 'package:mailcraftsystem/features/auth/domain/models/login_request.dart';
+import 'package:mailcraftsystem/features/auth/domain/models/otp_challenge.dart';
+import 'package:mailcraftsystem/features/auth/domain/models/user_profile.dart';
+import 'package:mailcraftsystem/features/auth/domain/repositories/auth_repository.dart';
 
 /// Implementation of authentication repository
 class AuthRepositoryImpl implements AuthRepository {
@@ -68,7 +68,7 @@ class AuthRepositoryImpl implements AuthRepository {
       
       if (challenge.code != '123456') {
         return (
-          left: Failure.validation(message: 'Invalid OTP code'),
+          left: const Failure.validation(message: 'Invalid OTP code'),
           right: null,
         );
       }
@@ -109,7 +109,6 @@ class AuthRepositoryImpl implements AuthRepository {
         name: 'Mock User',
         avatarUrl: null,
         isEmailVerified: true,
-        createdAt: null,
       );
       
       return (left: null, right: profile);
@@ -194,7 +193,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final currentToken = await getStoredToken();
       if (currentToken?.refreshToken == null) {
         return (
-          left: Failure.validation(message: 'No refresh token available'),
+          left: const Failure.validation(message: 'No refresh token available'),
           right: null,
         );
       }

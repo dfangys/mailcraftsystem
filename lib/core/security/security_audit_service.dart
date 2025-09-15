@@ -3,15 +3,14 @@ import 'dart:io';
 
 import 'package:crypto/crypto.dart';
 import 'package:device_info_plus/device_info_plus.dart';
-import 'package:package_info_plus/package_info_plus.dart';
-
 import 'package:mailcraftsystem/core/logging/logger.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 /// Security audit service for vulnerability scanning and compliance checking
 class SecurityAuditService {
-  static SecurityAuditService? _instance;
   
   SecurityAuditService._();
+  static SecurityAuditService? _instance;
   
   /// Get singleton instance
   static SecurityAuditService get instance {
@@ -77,7 +76,7 @@ class SecurityAuditService {
         
         // Check if device is rooted
         if (await _isDeviceRooted()) {
-          findings.add(SecurityFinding(
+          findings.add(const SecurityFinding(
             id: 'DEVICE_001',
             category: SecurityCategory.device,
             severity: SecuritySeverity.high,
@@ -85,7 +84,7 @@ class SecurityAuditService {
             description: 'Device appears to be rooted, which may compromise security',
             recommendation: 'Use the app only on non-rooted devices',
             cweId: 'CWE-250',
-          ));
+          ),);
         }
         
         // Check Android version
@@ -98,7 +97,7 @@ class SecurityAuditService {
             description: 'Android version ${androidInfo.version.release} may have security vulnerabilities',
             recommendation: 'Update to Android 6 or later',
             cweId: 'CWE-1104',
-          ));
+          ),);
         }
         
         // Check security patch level
@@ -115,7 +114,7 @@ class SecurityAuditService {
                 description: 'Security patch is $daysSincePatch days old',
                 recommendation: 'Install latest security updates',
                 cweId: 'CWE-1104',
-              ));
+              ),);
             }
           }
         }
@@ -124,7 +123,7 @@ class SecurityAuditService {
         
         // Check if device is jailbroken
         if (await _isDeviceJailbroken()) {
-          findings.add(SecurityFinding(
+          findings.add(const SecurityFinding(
             id: 'DEVICE_004',
             category: SecurityCategory.device,
             severity: SecuritySeverity.high,
@@ -132,7 +131,7 @@ class SecurityAuditService {
             description: 'Device appears to be jailbroken, which may compromise security',
             recommendation: 'Use the app only on non-jailbroken devices',
             cweId: 'CWE-250',
-          ));
+          ),);
         }
         
         // Check iOS version
@@ -147,7 +146,7 @@ class SecurityAuditService {
             description: 'iOS version ${iosInfo.systemVersion} may have security vulnerabilities',
             recommendation: 'Update to iOS 13 or later',
             cweId: 'CWE-1104',
-          ));
+          ),);
         }
       }
     } catch (e) {
@@ -166,7 +165,7 @@ class SecurityAuditService {
       
       // Check if app is in debug mode
       if (_isDebugMode()) {
-        findings.add(SecurityFinding(
+        findings.add(const SecurityFinding(
           id: 'APP_001',
           category: SecurityCategory.application,
           severity: SecuritySeverity.high,
@@ -174,12 +173,12 @@ class SecurityAuditService {
           description: 'Application is running in debug mode',
           recommendation: 'Disable debug mode in production builds',
           cweId: 'CWE-489',
-        ));
+        ),);
       }
       
       // Check app signature
       if (!await _verifyAppSignature()) {
-        findings.add(SecurityFinding(
+        findings.add(const SecurityFinding(
           id: 'APP_002',
           category: SecurityCategory.application,
           severity: SecuritySeverity.critical,
@@ -187,12 +186,12 @@ class SecurityAuditService {
           description: 'Application signature could not be verified',
           recommendation: 'Reinstall the app from official sources',
           cweId: 'CWE-347',
-        ));
+        ),);
       }
       
       // Check for code obfuscation
       if (!_isCodeObfuscated()) {
-        findings.add(SecurityFinding(
+        findings.add(const SecurityFinding(
           id: 'APP_003',
           category: SecurityCategory.application,
           severity: SecuritySeverity.low,
@@ -200,7 +199,7 @@ class SecurityAuditService {
           description: 'Application code is not obfuscated',
           recommendation: 'Enable code obfuscation for production builds',
           cweId: 'CWE-656',
-        ));
+        ),);
       }
     } catch (e) {
       AppLogger.error('App security check failed', e);
@@ -215,7 +214,7 @@ class SecurityAuditService {
     
     // Check certificate pinning
     if (!_isCertificatePinningEnabled()) {
-      findings.add(SecurityFinding(
+      findings.add(const SecurityFinding(
         id: 'NET_001',
         category: SecurityCategory.network,
         severity: SecuritySeverity.medium,
@@ -223,12 +222,12 @@ class SecurityAuditService {
         description: 'SSL certificate pinning is not enabled',
         recommendation: 'Enable certificate pinning for API endpoints',
         cweId: 'CWE-295',
-      ));
+      ),);
     }
     
     // Check for HTTP usage
     if (_usesHttpConnections()) {
-      findings.add(SecurityFinding(
+      findings.add(const SecurityFinding(
         id: 'NET_002',
         category: SecurityCategory.network,
         severity: SecuritySeverity.high,
@@ -236,7 +235,7 @@ class SecurityAuditService {
         description: 'Application uses unencrypted HTTP connections',
         recommendation: 'Use HTTPS for all network communications',
         cweId: 'CWE-319',
-      ));
+      ),);
     }
     
     return findings;
@@ -248,7 +247,7 @@ class SecurityAuditService {
     
     // Check encryption status
     if (!_isDataEncrypted()) {
-      findings.add(SecurityFinding(
+      findings.add(const SecurityFinding(
         id: 'DATA_001',
         category: SecurityCategory.dataProtection,
         severity: SecuritySeverity.high,
@@ -256,12 +255,12 @@ class SecurityAuditService {
         description: 'Sensitive data is stored without encryption',
         recommendation: 'Encrypt all sensitive data at rest',
         cweId: 'CWE-311',
-      ));
+      ),);
     }
     
     // Check backup security
     if (!_isBackupSecure()) {
-      findings.add(SecurityFinding(
+      findings.add(const SecurityFinding(
         id: 'DATA_002',
         category: SecurityCategory.dataProtection,
         severity: SecuritySeverity.medium,
@@ -269,7 +268,7 @@ class SecurityAuditService {
         description: 'App data may be included in insecure backups',
         recommendation: 'Exclude sensitive data from device backups',
         cweId: 'CWE-200',
-      ));
+      ),);
     }
     
     return findings;
@@ -281,7 +280,7 @@ class SecurityAuditService {
     
     // Check biometric authentication
     if (!_isBiometricAuthEnabled()) {
-      findings.add(SecurityFinding(
+      findings.add(const SecurityFinding(
         id: 'AUTH_001',
         category: SecurityCategory.authentication,
         severity: SecuritySeverity.low,
@@ -289,12 +288,12 @@ class SecurityAuditService {
         description: 'Biometric authentication is not enabled',
         recommendation: 'Enable biometric authentication for enhanced security',
         cweId: 'CWE-287',
-      ));
+      ),);
     }
     
     // Check session timeout
     if (!_hasSessionTimeout()) {
-      findings.add(SecurityFinding(
+      findings.add(const SecurityFinding(
         id: 'AUTH_002',
         category: SecurityCategory.authentication,
         severity: SecuritySeverity.medium,
@@ -302,7 +301,7 @@ class SecurityAuditService {
         description: 'User sessions do not have automatic timeout',
         recommendation: 'Implement automatic session timeout',
         cweId: 'CWE-613',
-      ));
+      ),);
     }
     
     return findings;
@@ -343,7 +342,7 @@ class SecurityAuditService {
   Map<String, bool> _checkCompliance(List<SecurityFinding> findings) {
     return {
       'GDPR': !findings.any((f) => f.category == SecurityCategory.dataProtection && 
-                             f.severity.index >= SecuritySeverity.medium.index),
+                             f.severity.index >= SecuritySeverity.medium.index,),
       'SOC2': !findings.any((f) => f.severity == SecuritySeverity.critical),
       'OWASP': findings.where((f) => f.severity.index >= SecuritySeverity.medium.index).length < 3,
     };
@@ -369,7 +368,7 @@ class SecurityAuditService {
   
   bool _isDebugMode() {
     // Check if running in debug mode
-    bool debugMode = false;
+    var debugMode = false;
     assert(debugMode = true);
     return debugMode;
   }
@@ -445,22 +444,18 @@ class SecurityAuditReport {
   
   /// Get security score (0-100)
   int get securityScore {
-    int score = 100;
+    var score = 100;
     
     for (final finding in findings) {
       switch (finding.severity) {
         case SecuritySeverity.critical:
           score -= 25;
-          break;
         case SecuritySeverity.high:
           score -= 15;
-          break;
         case SecuritySeverity.medium:
           score -= 10;
-          break;
         case SecuritySeverity.low:
           score -= 5;
-          break;
       }
     }
     

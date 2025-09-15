@@ -4,73 +4,74 @@ import 'package:flutter/services.dart';
 
 import 'package:mailcraftsystem/core/logging/logger.dart';
 
-/// Accessibility service for inclusive design and WCAG compliance
+/// A service that provides accessibility features for the application.
+///
+/// This service provides a centralized way to manage accessibility settings,
+/// check for accessibility features, and create accessible widgets.
 class AccessibilityService {
-  static AccessibilityService? _instance;
-  
   AccessibilityService._();
-  
-  /// Get singleton instance
+  static AccessibilityService? _instance;
+
+  /// Returns the singleton instance of the [AccessibilityService].
   static AccessibilityService get instance {
     _instance ??= AccessibilityService._();
     return _instance!;
   }
-  
-  /// Current accessibility settings
+
   AccessibilitySettings _settings = const AccessibilitySettings();
-  
-  /// Get current accessibility settings
+
+  /// Returns the current accessibility settings.
   AccessibilitySettings get settings => _settings;
-  
-  /// Update accessibility settings
+
+  /// Updates the accessibility settings.
   void updateSettings(AccessibilitySettings newSettings) {
     _settings = newSettings;
     AppLogger.info('Accessibility settings updated');
   }
-  
-  /// Check if screen reader is enabled
+
+  /// Returns `true` if a screen reader is enabled.
   bool get isScreenReaderEnabled {
     return WidgetsBinding.instance.accessibilityFeatures.accessibleNavigation;
   }
-  
-  /// Check if high contrast is enabled
+
+  /// Returns `true` if high contrast is enabled.
   bool get isHighContrastEnabled {
     return WidgetsBinding.instance.accessibilityFeatures.highContrast;
   }
-  
-  /// Check if large text is enabled
+
+  /// Returns `true` if large text is enabled.
   bool get isLargeTextEnabled {
     return WidgetsBinding.instance.accessibilityFeatures.boldText;
   }
-  
-  /// Check if reduce motion is enabled
+
+  /// Returns `true` if reduce motion is enabled.
   bool get isReduceMotionEnabled {
     return WidgetsBinding.instance.accessibilityFeatures.disableAnimations;
   }
-  
-  /// Get text scale factor based on accessibility settings
+
+  /// Returns the text scale factor based on the accessibility settings.
   double getTextScaleFactor(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
-    double scaleFactor = mediaQuery.textScaleFactor;
-    
+    var scaleFactor = mediaQuery.textScaleFactor;
+
     // Apply custom scaling if enabled
     if (_settings.enableCustomTextScaling) {
       scaleFactor *= _settings.textScaleFactor;
     }
-    
+
     // Ensure minimum and maximum bounds
     return scaleFactor.clamp(_settings.minTextScale, _settings.maxTextScale);
   }
-  
-  /// Get appropriate color contrast based on settings
+
+  /// Returns a contrast color based on the accessibility settings.
   Color getContrastColor(Color baseColor, {bool isBackground = false}) {
     if (!isHighContrastEnabled && !_settings.enableHighContrast) {
       return baseColor;
     }
-    
+
     // Calculate luminance
     final luminance = baseColor.computeLuminance();
-    
+
     if (isBackground) {
       // For backgrounds, use high contrast alternatives
       return luminance > 0.5 ? Colors.white : Colors.black;
@@ -79,9 +80,10 @@ class AccessibilityService {
       return luminance > 0.5 ? Colors.black : Colors.white;
     }
   }
-  
-  /// Get semantic label for UI elements
-  String getSemanticLabel(String text, {
+
+  /// Returns a semantic label for a UI element.
+  String getSemanticLabel(
+    String text, {
     String? hint,
     String? role,
     bool isButton = false,
@@ -89,7 +91,7 @@ class AccessibilityService {
     bool isHeading = false,
   }) {
     final buffer = StringBuffer();
-    
+
     // Add role information
     if (isHeading) {
       buffer.write('Heading: ');
@@ -100,19 +102,19 @@ class AccessibilityService {
     } else if (role != null) {
       buffer.write('$role: ');
     }
-    
+
     // Add main text
     buffer.write(text);
-    
+
     // Add hint if provided
     if (hint != null) {
       buffer.write('. $hint');
     }
-    
+
     return buffer.toString();
   }
-  
-  /// Create semantic properties for widgets
+
+  /// Creates a [SemanticsProperties] object for a widget.
   SemanticsProperties createSemanticsProperties({
     required String label,
     String? hint,
@@ -126,7 +128,6 @@ class AccessibilityService {
   }) {
     return SemanticsProperties(
       label: getSemanticLabel(
-        /// label
         label,
         hint: hint,
         isButton: isButton,
@@ -143,9 +144,10 @@ class AccessibilityService {
       onTap: onTap,
     );
   }
-  
-  /// Announce message to screen reader
-  void announceMessage(String message, {
+
+  /// Announces a message to the screen reader.
+  void announceMessage(
+    String message, {
     Assertiveness assertiveness = Assertiveness.polite,
   }) {
     if (isScreenReaderEnabled) {
@@ -153,57 +155,54 @@ class AccessibilityService {
       AppLogger.info('Screen reader announcement: $message');
     }
   }
-  
-  /// Provide haptic feedback based on accessibility settings
+
+  /// Provides haptic feedback based on the accessibility settings.
   void provideHapticFeedback(HapticFeedbackType type) {
     if (_settings.enableHapticFeedback) {
       switch (type) {
         case HapticFeedbackType.lightImpact:
           HapticFeedback.lightImpact();
-          break;
         case HapticFeedbackType.mediumImpact:
           HapticFeedback.mediumImpact();
-          break;
         case HapticFeedbackType.heavyImpact:
           HapticFeedback.heavyImpact();
-          break;
         case HapticFeedbackType.selectionClick:
           HapticFeedback.selectionClick();
-          break;
         case HapticFeedbackType.vibrate:
           HapticFeedback.vibrate();
-          break;
       }
     }
   }
-  
-  /// Get animation duration based on accessibility settings
+
+  /// Returns the animation duration based on the accessibility settings.
   Duration getAnimationDuration(Duration defaultDuration) {
     if (isReduceMotionEnabled || _settings.reduceMotion) {
       return Duration.zero;
     }
-    
+
     return defaultDuration * _settings.animationSpeedFactor;
   }
-  
-  /// Check color contrast ratio
+
+  /// Calculates the contrast ratio between two colors.
   double calculateContrastRatio(Color color1, Color color2) {
     final luminance1 = color1.computeLuminance();
     final luminance2 = color2.computeLuminance();
-    
+
     final lighter = luminance1 > luminance2 ? luminance1 : luminance2;
     final darker = luminance1 > luminance2 ? luminance2 : luminance1;
-    
+
     return (lighter + 0.05) / (darker + 0.05);
   }
-  
-  /// Check if color combination meets WCAG standards
-  bool meetsWCAGStandards(Color foreground, Color background, {
+
+  /// Checks if a color combination meets WCAG standards.
+  bool meetsWCAGStandards(
+    Color foreground,
+    Color background, {
     WCAGLevel level = WCAGLevel.aa,
     bool isLargeText = false,
   }) {
     final contrastRatio = calculateContrastRatio(foreground, background);
-    
+
     switch (level) {
       case WCAGLevel.aa:
         return isLargeText ? contrastRatio >= 3 : contrastRatio >= 4.5;
@@ -211,24 +210,25 @@ class AccessibilityService {
         return isLargeText ? contrastRatio >= 4.5 : contrastRatio >= 7;
     }
   }
-  
-  /// Get focus order for keyboard navigation
+
+  /// Returns the focus order for keyboard navigation.
   List<FocusNode> getFocusOrder(List<FocusNode> nodes) {
     // Sort by reading order (top to bottom, left to right)
-    return nodes..sort((a, b) {
-      final aRect = a.rect;
-      final bRect = b.rect;
-      
-      // Compare by vertical position first
-      final verticalDiff = aRect.top.compareTo(bRect.top);
-      if (verticalDiff != 0) return verticalDiff;
-      
-      // Then by horizontal position
-      return aRect.left.compareTo(bRect.left);
-    });
+    return nodes
+      ..sort((a, b) {
+        final aRect = a.rect;
+        final bRect = b.rect;
+
+        // Compare by vertical position first
+        final verticalDiff = aRect.top.compareTo(bRect.top);
+        if (verticalDiff != 0) return verticalDiff;
+
+        // Then by horizontal position
+        return aRect.left.compareTo(bRect.left);
+      });
   }
-  
-  /// Create accessible button
+
+  /// Creates an accessible button.
   Widget createAccessibleButton({
     required String label,
     required VoidCallback onPressed,
@@ -249,8 +249,8 @@ class AccessibilityService {
       ),
     );
   }
-  
-  /// Create accessible text field
+
+  /// Creates an accessible text field.
   Widget createAccessibleTextField({
     required String label,
     String? hint,
@@ -275,8 +275,9 @@ class AccessibilityService {
   }
 }
 
-/// Accessibility settings model
+/// A class that represents the accessibility settings.
 class AccessibilitySettings {
+  /// Creates a new instance of [AccessibilitySettings].
   const AccessibilitySettings({
     this.enableHighContrast = false,
     this.enableCustomTextScaling = false,
@@ -291,33 +292,44 @@ class AccessibilitySettings {
     this.enableBoldText = false,
     this.colorBlindnessType = ColorBlindnessType.none,
   });
-  
-  /// Whether high contrast mode is enabled
+
+  /// Whether high contrast mode is enabled.
   final bool enableHighContrast;
-  /// Whether custom text scaling is enabled
+
+  /// Whether custom text scaling is enabled.
   final bool enableCustomTextScaling;
-  /// Current text scale factor
+
+  /// The current text scale factor.
   final double textScaleFactor;
-  /// Minimum allowed text scale
+
+  /// The minimum allowed text scale.
   final double minTextScale;
-  /// Maximum allowed text scale
+
+  /// The maximum allowed text scale.
   final double maxTextScale;
-  /// Whether haptic feedback is enabled
+
+  /// Whether haptic feedback is enabled.
   final bool enableHapticFeedback;
-  /// Whether motion should be reduced
+
+  /// Whether motion should be reduced.
   final bool reduceMotion;
-  /// Animation speed multiplier factor
+
+  /// The animation speed multiplier factor.
   final double animationSpeedFactor;
-  /// Whether VoiceOver is enabled
+
+  /// Whether VoiceOver is enabled.
   final bool enableVoiceOver;
-  /// Whether large text is enabled
+
+  /// Whether large text is enabled.
   final bool enableLargeText;
-  /// Whether bold text is enabled
+
+  /// Whether bold text is enabled.
   final bool enableBoldText;
-  /// Type of color blindness to accommodate
+
+  /// The type of color blindness to accommodate.
   final ColorBlindnessType colorBlindnessType;
-  
-  /// Copy with new values
+
+  /// Creates a new instance of [AccessibilitySettings] with the given values.
   AccessibilitySettings copyWith({
     bool? enableHighContrast,
     bool? enableCustomTextScaling,
@@ -334,8 +346,8 @@ class AccessibilitySettings {
   }) {
     return AccessibilitySettings(
       enableHighContrast: enableHighContrast ?? this.enableHighContrast,
-       enableCustomTextScaling: 
-           enableCustomTextScaling ?? this.enableCustomTextScaling,
+      enableCustomTextScaling:
+          enableCustomTextScaling ?? this.enableCustomTextScaling,
       textScaleFactor: textScaleFactor ?? this.textScaleFactor,
       minTextScale: minTextScale ?? this.minTextScale,
       maxTextScale: maxTextScale ?? this.maxTextScale,
@@ -350,52 +362,66 @@ class AccessibilitySettings {
   }
 }
 
-/// WCAG compliance levels
+/// An enum that represents the WCAG compliance levels.
 enum WCAGLevel {
-  /// WCAG AA level (4.5:1 contrast ratio for normal text)
+  /// WCAG AA level (4.5:1 contrast ratio for normal text).
   aa,
-  /// WCAG AAA level (7:1 contrast ratio for normal text)
+
+  /// WCAG AAA level (7:1 contrast ratio for normal text).
   aaa,
 }
 
-/// Color blindness types
+/// An enum that represents the types of color blindness.
 enum ColorBlindnessType {
-  /// No color blindness
+  /// No color blindness.
   none,
-  /// Protanopia (red-blind)
+
+  /// Protanopia (red-blind).
   protanopia,
-  /// Deuteranopia (green-blind)
+
+  /// Deuteranopia (green-blind).
   deuteranopia,
-  /// Tritanopia (blue-blind)
+
+  /// Tritanopia (blue-blind).
   tritanopia,
-  /// Protanomaly (red-weak)
+
+  /// Protanomaly (red-weak).
   protanomaly,
-  /// Deuteranomaly (green-weak)
+
+  /// Deuteranomaly (green-weak).
   deuteranomaly,
-  /// Tritanomaly (blue-weak)
+
+  /// Tritanomaly (blue-weak).
   tritanomaly,
-  /// Achromatopsia (complete color blindness)
+
+  /// Achromatopsia (complete color blindness).
   achromatopsia,
 }
 
-/// Haptic feedback types
+/// An enum that represents the types of haptic feedback.
 enum HapticFeedbackType {
-  /// Light impact feedback
+  /// Light impact feedback.
   lightImpact,
-  /// Medium impact feedback
+
+  /// Medium impact feedback.
   mediumImpact,
-  /// Heavy impact feedback
+
+  /// Heavy impact feedback.
   heavyImpact,
-  /// Selection click feedback
+
+  /// Selection click feedback.
   selectionClick,
-  /// Vibrate feedback
+
+  /// Vibrate feedback.
   vibrate,
 }
 
-/// Screen reader assertiveness levels
+/// An enum that represents the screen reader assertiveness levels.
 enum Assertiveness {
-  /// Polite announcement (waits for current speech to finish)
+  /// Polite announcement (waits for current speech to finish).
   polite,
-  /// Assertive announcement (interrupts current speech)
+
+  /// Assertive announcement (interrupts current speech).
   assertive,
 }
+

@@ -9,14 +9,14 @@ import 'package:mailcraftsystem/core/logging/logger.dart';
 
 /// Service for handling encryption and decryption of sensitive data
 class EncryptionService {
-  static const int _keyLength = 32; // 256 bits
-  static const int _ivLength = 16; // 128 bits
-  
-  late Key _key;
-  late Encrypter _encrypter;
   
   /// Create encryption service instance
   EncryptionService._(this._key, this._encrypter);
+  static const int _keyLength = 32; // 256 bits
+  static const int _ivLength = 16; // 128 bits
+  
+  late final Key _key;
+  late final Encrypter _encrypter;
   
   /// Create encryption service instance
   static Future<EncryptionService> create(String masterPassword) async {
@@ -166,6 +166,14 @@ class EncryptionResult {
     required this.timestamp,
   });
   
+  /// Create from JSON
+  factory EncryptionResult.fromJson(Map<String, dynamic> json) =>
+      EncryptionResult(
+        encryptedData: json['encryptedData'] as String,
+        hash: json['hash'] as String,
+        timestamp: DateTime.parse(json['timestamp'] as String),
+      );
+  
   /// The encrypted data
   final String encryptedData;
   
@@ -181,14 +189,6 @@ class EncryptionResult {
     'hash': hash,
     'timestamp': timestamp.toIso8601String(),
   };
-  
-  /// Create from JSON
-  factory EncryptionResult.fromJson(Map<String, dynamic> json) =>
-      EncryptionResult(
-        encryptedData: json['encryptedData'] as String,
-        hash: json['hash'] as String,
-        timestamp: DateTime.parse(json['timestamp'] as String),
-      );
 }
 
 /// Security audit result for encryption operations

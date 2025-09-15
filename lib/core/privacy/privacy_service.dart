@@ -4,9 +4,9 @@ import 'package:mailcraftsystem/core/logging/logger.dart';
 
 /// Privacy service for GDPR compliance and data protection
 class PrivacyService {
-  static PrivacyService? _instance;
   
   PrivacyService._();
+  static PrivacyService? _instance;
   
   /// Get singleton instance
   static PrivacyService get instance {
@@ -82,7 +82,7 @@ class PrivacyService {
   /// Get data processing activities
   List<DataProcessingActivity> getDataProcessingActivities() {
     return [
-      DataProcessingActivity(
+      const DataProcessingActivity(
         id: 'email_processing',
         name: 'Email Processing',
         purpose: 'To provide email client functionality',
@@ -92,10 +92,10 @@ class PrivacyService {
           DataType.attachments,
         ],
         legalBasis: LegalBasis.contract,
-        retentionPeriod: const Duration(days: 365 * 2), // 2 years
+        retentionPeriod: Duration(days: 365 * 2), // 2 years
         isAutomated: true,
       ),
-      DataProcessingActivity(
+      const DataProcessingActivity(
         id: 'account_management',
         name: 'Account Management',
         purpose: 'To manage user accounts and authentication',
@@ -105,10 +105,10 @@ class PrivacyService {
           DataType.preferences,
         ],
         legalBasis: LegalBasis.contract,
-        retentionPeriod: const Duration(days: 365 * 7), // 7 years
+        retentionPeriod: Duration(days: 365 * 7), // 7 years
         isAutomated: false,
       ),
-      DataProcessingActivity(
+      const DataProcessingActivity(
         id: 'analytics',
         name: 'Usage Analytics',
         purpose: 'To improve app performance and user experience',
@@ -118,7 +118,7 @@ class PrivacyService {
           DataType.performanceData,
         ],
         legalBasis: LegalBasis.consent,
-        retentionPeriod: const Duration(days: 365), // 1 year
+        retentionPeriod: Duration(days: 365), // 1 year
         isAutomated: true,
       ),
     ];
@@ -172,7 +172,7 @@ class PrivacyService {
       }
       
       // Verify deletion if requested
-      bool verificationPassed = true;
+      var verificationPassed = true;
       if (verifyDeletion) {
         verificationPassed = await _verifyDataDeletion(userId, typesToDelete);
       }
@@ -226,7 +226,7 @@ class PrivacyService {
           retentionPeriod: activity.retentionPeriod,
           expiredDataCount: expiredData.length,
           oldestExpiredDate: expiredData.first.expiryDate,
-        ));
+        ),);
       }
     }
     

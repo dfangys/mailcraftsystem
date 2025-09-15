@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hugeicons/hugeicons.dart';
 
 /// Advanced settings model
 class AdvancedSettings {
@@ -88,7 +87,7 @@ class _AdvancedSettingsPanelState extends State<AdvancedSettingsPanel> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: colorScheme.surfaceVariant.withOpacity(0.3),
+        color: colorScheme.surfaceContainerHighest.withOpacity(0.3),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: colorScheme.outline.withOpacity(0.2),
@@ -271,7 +270,7 @@ class _AdvancedSettingsPanelState extends State<AdvancedSettingsPanel> {
               SizedBox(
                 width: 80,
                 child: DropdownButtonFormField<int>(
-                  value: _settings.connectionTimeout,
+                  initialValue: _settings.connectionTimeout,
                   decoration: const InputDecoration(
                     isDense: true,
                     contentPadding: EdgeInsets.symmetric(
@@ -318,7 +317,7 @@ class _AdvancedSettingsPanelState extends State<AdvancedSettingsPanel> {
         SizedBox(
           width: 140,
           child: DropdownButtonFormField<String>(
-            value: value,
+            initialValue: value,
             decoration: const InputDecoration(
               isDense: true,
               contentPadding: EdgeInsets.symmetric(

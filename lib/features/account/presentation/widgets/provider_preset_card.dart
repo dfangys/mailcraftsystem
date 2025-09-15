@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hugeicons/hugeicons.dart';
 
 /// Provider preset card widget
 class ProviderPresetCard extends StatelessWidget {

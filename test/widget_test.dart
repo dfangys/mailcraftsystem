@@ -8,7 +8,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'package:mailcraftsystem/main.dart';
+import 'package:mailcraftsystem/app/bootstrap.dart';
 
 void main() {
   testWidgets('MailCraft app smoke test', (WidgetTester tester) async {
@@ -23,3 +23,7 @@ void main() {
     expect(find.text('MailCraft System'), findsOneWidget);
   });
 }
+
+
+
+

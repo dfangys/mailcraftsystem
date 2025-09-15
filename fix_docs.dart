@@ -25,7 +25,7 @@ void addDocumentationToFile(File file) {
   final lines = file.readAsLinesSync();
   final newLines = <String>[];
   
-  for (int i = 0; i < lines.length; i++) {
+  for (var i = 0; i < lines.length; i++) {
     final line = lines[i];
     
     // Check if this line needs documentation

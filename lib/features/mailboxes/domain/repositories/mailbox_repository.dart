@@ -1,63 +1,64 @@
+import 'package:dartz/dartz.dart';
 import 'package:mailcraftsystem/core/error/failures.dart';
-import 'package:mailcraftsystem/features/auth/domain/repositories/auth_repository.dart';
 import 'package:mailcraftsystem/features/mailboxes/domain/models/mailbox.dart';
 import 'package:mailcraftsystem/features/mailboxes/domain/models/mailbox_status.dart';
 
 /// Mailbox repository interface
 abstract class MailboxRepository {
   /// Get all mailboxes for an account
-  Future<({Failure? left, [^}]* right})>> getMailboxes(String accountId);
-  
+  Future<Either<Failure, List<Mailbox>>> getMailboxes(String accountId);
+
   /// Get a specific mailbox by path
-  Future<({Failure? left, [^}]* right})> getMailbox(String accountId, String path);
-  
+  Future<Either<Failure, Mailbox>> getMailbox(String accountId, String path);
+
   /// Refresh mailbox list from server
-  Future<({Failure? left, [^}]* right})>> refreshMailboxes(String accountId);
-  
+  Future<Either<Failure, List<Mailbox>>> refreshMailboxes(String accountId);
+
   /// Create a new mailbox
-  Future<({Failure? left, [^}]* right})> createMailbox(
+  Future<Either<Failure, Mailbox>> createMailbox(
     String accountId,
     String name,
     String? parentPath,
   );
-  
+
   /// Rename a mailbox
-  Future<({Failure? left, [^}]* right})> renameMailbox(
+  Future<Either<Failure, void>> renameMailbox(
     String accountId,
     String currentPath,
     String newName,
   );
-  
+
   /// Delete a mailbox
-  Future<({Failure? left, [^}]* right})> deleteMailbox(String accountId, String path);
-  
+  Future<Either<Failure, void>> deleteMailbox(String accountId, String path);
+
   /// Subscribe to a mailbox
-  Future<({Failure? left, [^}]* right})> subscribeMailbox(String accountId, String path);
-  
+  Future<Either<Failure, void>> subscribeMailbox(String accountId, String path);
+
   /// Unsubscribe from a mailbox
-  Future<({Failure? left, [^}]* right})> unsubscribeMailbox(String accountId, String path);
-  
+  Future<Either<Failure, void>> unsubscribeMailbox(String accountId, String path);
+
   /// Get mailbox status (message counts, etc.)
-  Future<({Failure? left, [^}]* right})> getMailboxStatus(
+  Future<Either<Failure, MailboxStatus>> getMailboxStatus(
     String accountId,
     String path,
   );
-  
+
   /// Mark all messages in mailbox as read
-  Future<({Failure? left, [^}]* right})> markAllAsRead(String accountId, String path);
-  
+  Future<Either<Failure, void>> markAllAsRead(String accountId, String path);
+
   /// Empty trash mailbox
-  Future<({Failure? left, [^}]* right})> emptyTrash(String accountId);
-  
+  Future<Either<Failure, void>> emptyTrash(String accountId);
+
   /// Empty spam mailbox
-  Future<({Failure? left, [^}]* right})> emptySpam(String accountId);
-  
+  Future<Either<Failure, void>> emptySpam(String accountId);
+
   /// Get mailbox hierarchy
-  Future<({Failure? left, [^}]* right})>> getMailboxHierarchy(String accountId);
-  
+  Future<Either<Failure, List<Mailbox>>> getMailboxHierarchy(String accountId);
+
   /// Search for mailboxes by name
-  Future<({Failure? left, [^}]* right})>> searchMailboxes(
+  Future<Either<Failure, List<Mailbox>>> searchMailboxes(
     String accountId,
     String query,
   );
 }
+

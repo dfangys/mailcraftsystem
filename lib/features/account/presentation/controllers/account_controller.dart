@@ -1,12 +1,12 @@
+import 'package:dartz/dartz.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:enough_mail/enough_mail.dart' as enough_mail;
-
-import '../../domain/models/mail_account_config.dart';
-import '../../domain/models/mail_provider_preset.dart';
-import '../../domain/repositories/account_repository.dart';
-import '../widgets/advanced_settings_panel.dart';
-import '../../../../core/error/failures.dart';
+import 'package:mailcraftsystem/core/error/failures.dart';
+import 'package:mailcraftsystem/features/account/domain/models/account_connection_result.dart';
+import 'package:mailcraftsystem/features/account/domain/models/mail_account_config.dart';
+import 'package:mailcraftsystem/features/account/domain/models/mail_provider_preset.dart';
+import 'package:mailcraftsystem/features/account/domain/repositories/account_repository.dart';
+import 'package:mailcraftsystem/features/account/presentation/widgets/advanced_settings_panel.dart';
 
 part 'account_controller.freezed.dart';
 
@@ -20,7 +20,7 @@ class AccountState with _$AccountState {
     @Default(false) bool isSetupComplete,
     String? selectedProvider,
     MailAccountConfig? accountConfig,
-    Map<String, String>? connectionDetails,
+    String? connectionDetails,
     String? error,
   }) = _AccountState;
 }
@@ -158,37 +158,37 @@ class AccountController extends StateNotifier<AccountState> {
       // Test connection
       final result = await _accountRepository.testConnection(accountConfig);
       
-      if (result.left != null) {
-        state = state.copyWith(
-          isLoading: false,
-          error: result.left!.message,
-        );
-      } else if (result.right != null) {
-        final connectionResult = result.right!;
-        if (connectionResult.isSuccess) {
-          // Save account configuration
-          await _accountRepository.addAccount(accountConfig);
-          
+      result.fold(
+        (failure) {
           state = state.copyWith(
             isLoading: false,
-            isConnected: true,
-            isSetupComplete: true,
-            accountConfig: accountConfig,
-            connectionDetails: connectionResult.details != null 
-                ? {'status': connectionResult.details!} 
-                : null,
+            error: failure.message,
           );
-        } else {
-          state = state.copyWith(
-            isLoading: false,
-            error: connectionResult.errorMessage ?? 'Connection failed',
-          );
-        }
-      }
+        },
+        (connectionResult) async {
+          if (connectionResult.isSuccess) {
+            // Save account configuration
+            await _accountRepository.addAccount(accountConfig);
+            
+            state = state.copyWith(
+              isLoading: false,
+              isConnected: true,
+              isSetupComplete: true,
+              accountConfig: accountConfig,
+              connectionDetails: connectionResult.details,
+            );
+          } else {
+            state = state.copyWith(
+              isLoading: false,
+              error: connectionResult.errorMessage ?? 'Connection failed',
+            );
+          }
+        },
+      );
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: 'An unexpected error occurred: ${e.toString()}',
+        error: 'An unexpected error occurred: $e',
       );
     }
   }
@@ -227,7 +227,7 @@ final accountRepositoryProvider = Provider<AccountRepository>((ref) {
 /// Mock account repository implementation
 class MockAccountRepository implements AccountRepository {
   @override
-  Future<({Failure? left, AccountConnectionResult? right})> testConnection(
+  Future<Either<Failure, AccountConnectionResult>> testConnection(
     MailAccountConfig config,
   ) async {
     // Simulate network delay
@@ -235,104 +235,84 @@ class MockAccountRepository implements AccountRepository {
 
     // Simulate connection test
     if (config.email.isEmpty || config.password.isEmpty) {
-      return (left: Failure.validation(message: 'Email and password are required'), right: null);
+      return const Left(Failure.validation(message: 'Email and password are required'));
     }
 
     if (config.imapConfig.host.isEmpty || config.smtpConfig.host.isEmpty) {
-      return (left: Failure.validation(message: 'Server configuration is incomplete'), right: null);
+      return const Left(Failure.validation(message: 'Server configuration is incomplete'));
     }
 
     // Simulate successful connection
-    return (
-      left: null,
-      right: AccountConnectionResult(
+    final detailsMap = {
+      'IMAP Server': '${config.imapConfig.host}:${config.imapConfig.port}',
+      'SMTP Server': '${config.smtpConfig.host}:${config.smtpConfig.port}',
+      'Security': config.allowInsecureSSL ? 'Insecure SSL' : 'Secure SSL/TLS',
+      'Capabilities': 'IDLE, SORT, MOVE, QUOTA',
+    };
+    return Right(
+      AccountConnectionResult(
         isSuccess: true,
-        details: {
-          'IMAP Server': '${config.imapConfig.host}:${config.imapConfig.port}',
-          'SMTP Server': '${config.smtpConfig.host}:${config.smtpConfig.port}',
-          'Security': config.allowInsecureSSL ? 'Insecure SSL' : 'Secure SSL/TLS',
-          'Capabilities': 'IDLE, SORT, MOVE, QUOTA',
-        },
+        details: detailsMap.entries.map((e) => '${e.key}: ${e.value}').join('\n'),
       ),
     );
   }
 
   @override
-  Future<({Failure? left, MailAccountConfig? right})> addAccount(MailAccountConfig config) async {
+  Future<Either<Failure, MailAccountConfig>> addAccount(MailAccountConfig config) async {
     // Simulate saving to secure storage
     await Future.delayed(const Duration(milliseconds: 500));
-    return (left: null, right: config);
+    return Right(config);
   }
 
   @override
-  Future<({Failure? left, List<MailAccountConfig>? right})> getAccounts() async {
+  Future<Either<Failure, List<MailAccountConfig>>> getAccounts() async {
     // Return empty list for now
-    return (left: null, right: <MailAccountConfig>[]);
+    return const Right(<MailAccountConfig>[]);
   }
 
   @override
-  Future<({Failure? left, void right})> deleteAccount(String accountId) async {
-    return (left: null, right: null);
+  Future<Either<Failure, void>> deleteAccount(String accountId) async {
+    return const Right(null);
   }
 
   @override
-  Future<({Failure? left, MailAccountConfig? right})> getAccount(String accountId) async {
-    return (left: Failure.validation(message: 'Account not found'), right: null);
+  Future<Either<Failure, MailAccountConfig>> getAccount(String accountId) async {
+    return const Left(Failure.validation(message: 'Account not found'));
   }
 
   @override
-  Future<({Failure? left, MailProviderPreset? right})> findPresetByEmail(String email) async {
-    return (left: Failure.validation(message: 'No preset found'), right: null);
+  Future<Either<Failure, MailProviderPreset>> findPresetByEmail(String email) async {
+    return const Left(Failure.validation(message: 'No preset found'));
   }
 
   @override
-  Future<({Failure? left, AccountCapabilities? right})> getAccountCapabilities(String accountId) async {
-    return (left: null, right: const AccountCapabilities());
+  Future<Either<Failure, AccountCapabilities>> getAccountCapabilities(String accountId) async {
+    return const Right(AccountCapabilities(supportsMove: true, supportsSort: true));
   }
 
   @override
-  Future<({Failure? left, MailAccountConfig? right})> updateAccount(MailAccountConfig config) async {
-    return (left: null, right: config);
+  Future<Either<Failure, MailAccountConfig>> updateAccount(MailAccountConfig config) async {
+    return Right(config);
   }
 
   @override
-  Future<({Failure? left, List<MailProviderPreset>? right})> getProviderPresets() async {
-    return (left: null, right: <MailProviderPreset>[]);
+  Future<Either<Failure, List<MailProviderPreset>>> getProviderPresets() async {
+    return const Right(<MailProviderPreset>[]);
   }
 
   @override
-  Future<({Failure? left, AccountValidationResult? right})> validateAccount(MailAccountConfig config) async {
-    return (left: null, right: const AccountValidationResult(isValid: true));
+  Future<Either<Failure, AccountValidationResult>> validateAccount(MailAccountConfig config) async {
+    return const Right(AccountValidationResult(isValid: true));
   }
 
   @override
-  Future<({Failure? left, void right})> setDefaultAccount(String accountId) async {
-    return (left: null, right: null);
+  Future<Either<Failure, void>> setDefaultAccount(String accountId) async {
+    return const Right(null);
   }
 
   @override
-  Future<({Failure? left, MailAccountConfig? right})> getDefaultAccount() async {
-    return (left: Failure.validation(message: 'No default account'), right: null);
+  Future<Either<Failure, MailAccountConfig>> getDefaultAccount() async {
+    return const Left(Failure.validation(message: 'No default account'));
   }
 }
 
-// Using Failure from core/error/failures.dart
-
-/// Account connection result
-class AccountConnectionResult {
-  /// Creates an account connection result
-  const AccountConnectionResult({
-    required this.isSuccess,
-    this.details,
-    this.errorMessage,
-  });
-
-  /// Whether the connection was successful
-  final bool isSuccess;
-
-  /// Connection details
-  final Map<String, String>? details;
-
-  /// Error message if connection failed
-  final String? errorMessage;
-}
