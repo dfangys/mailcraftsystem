@@ -10,7 +10,13 @@ import 'package:mailcraftsystem/shared/widgets/error_widget.dart';
 /// OTP verification screen
 class OtpScreen extends ConsumerStatefulWidget {
   /// Creates an OTP verification screen
-  const OtpScreen({super.key});
+  const OtpScreen({
+    super.key,
+    required this.email,
+  });
+
+  /// The email address for OTP verification
+  final String email;
 
   @override
   ConsumerState<OtpScreen> createState() => _OtpScreenState();

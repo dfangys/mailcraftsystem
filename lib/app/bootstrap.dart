@@ -104,7 +104,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/otp',
-        builder: (context, state) => const OtpScreen(),
+        builder: (context, state) {
+          final email = state.uri.queryParameters['email'] ?? '';
+          return OtpScreen(email: email);
+        },
       ),
       GoRoute(
         path: '/reset-password',
