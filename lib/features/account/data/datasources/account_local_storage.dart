@@ -94,6 +94,11 @@ class AccountLocalStorage {
   Future<void> setDefaultAccountId(String accountId) async {
     await _storage.write(key: _defaultAccountKey, value: accountId);
   }
+
+  /// Set default account (alias for setDefaultAccountId)
+  Future<void> setDefaultAccount(String accountId) async {
+    await setDefaultAccountId(accountId);
+  }
   
   /// Get default account ID
   Future<String?> getDefaultAccountId() async {

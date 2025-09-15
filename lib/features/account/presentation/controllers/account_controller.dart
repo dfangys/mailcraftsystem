@@ -233,11 +233,11 @@ class MockAccountRepository implements AccountRepository {
 
     // Simulate connection test
     if (config.email.isEmpty || config.password.isEmpty) {
-      return (left: Failure('Email and password are required'), right: null);
+      return (left: Failure.validation(message: 'Email and password are required'), right: null);
     }
 
     if (config.imapConfig.host.isEmpty || config.smtpConfig.host.isEmpty) {
-      return (left: Failure('Server configuration is incomplete'), right: null);
+      return (left: Failure.validation(message: 'Server configuration is incomplete'), right: null);
     }
 
     // Simulate successful connection
@@ -275,12 +275,12 @@ class MockAccountRepository implements AccountRepository {
 
   @override
   Future<({Failure? left, MailAccountConfig? right})> getAccount(String accountId) async {
-    return (left: Failure('Account not found'), right: null);
+    return (left: Failure.validation(message: 'Account not found'), right: null);
   }
 
   @override
   Future<({Failure? left, MailProviderPreset? right})> findPresetByEmail(String email) async {
-    return (left: Failure('No preset found'), right: null);
+    return (left: Failure.validation(message: 'No preset found'), right: null);
   }
 
   @override
@@ -310,7 +310,7 @@ class MockAccountRepository implements AccountRepository {
 
   @override
   Future<({Failure? left, MailAccountConfig? right})> getDefaultAccount() async {
-    return (left: Failure('No default account'), right: null);
+    return (left: Failure.validation(message: 'No default account'), right: null);
   }
 }
 
