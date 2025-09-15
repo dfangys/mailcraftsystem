@@ -96,7 +96,7 @@ class SecurityAuditService {
             severity: SecuritySeverity.medium,
             title: 'Outdated Android Version',
             description: 'Android version ${androidInfo.version.release} may have security vulnerabilities',
-            recommendation: 'Update to Android 6.0 or later',
+            recommendation: 'Update to Android 6 or later',
             cweId: 'CWE-1104',
           ));
         }
@@ -145,7 +145,7 @@ class SecurityAuditService {
             severity: SecuritySeverity.medium,
             title: 'Outdated iOS Version',
             description: 'iOS version ${iosInfo.systemVersion} may have security vulnerabilities',
-            recommendation: 'Update to iOS 13.0 or later',
+            recommendation: 'Update to iOS 13 or later',
             cweId: 'CWE-1104',
           ));
         }
@@ -493,26 +493,40 @@ class SecurityFinding {
 
 /// Security categories
 enum SecurityCategory {
+  /// device
   device,
+  /// application
   application,
+  /// network
   network,
+  /// dataProtection
   dataProtection,
+  /// authentication
   authentication,
+  /// permissions
   permissions,
 }
 
 /// Security severity levels
 enum SecuritySeverity {
+  /// low
   low,
+  /// medium
   medium,
+  /// high
   high,
+  /// critical
   critical,
 }
 
 /// Security risk levels
 enum SecurityRiskLevel {
+  /// low
   low,
+  /// medium
   medium,
+  /// high
   high,
+  /// critical
   critical,
 }

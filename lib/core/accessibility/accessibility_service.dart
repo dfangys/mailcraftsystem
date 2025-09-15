@@ -126,6 +126,7 @@ class AccessibilityService {
   }) {
     return SemanticsProperties(
       label: getSemanticLabel(
+        /// label
         label,
         hint: hint,
         isButton: isButton,
@@ -205,9 +206,9 @@ class AccessibilityService {
     
     switch (level) {
       case WCAGLevel.aa:
-        return isLargeText ? contrastRatio >= 3.0 : contrastRatio >= 4.5;
+        return isLargeText ? contrastRatio >= 3 : contrastRatio >= 4.5;
       case WCAGLevel.aaa:
-        return isLargeText ? contrastRatio >= 4.5 : contrastRatio >= 7.0;
+        return isLargeText ? contrastRatio >= 4.5 : contrastRatio >= 7;
     }
   }
   
@@ -279,29 +280,41 @@ class AccessibilitySettings {
   const AccessibilitySettings({
     this.enableHighContrast = false,
     this.enableCustomTextScaling = false,
-    this.textScaleFactor = 1.0,
+    this.textScaleFactor = 1,
     this.minTextScale = 0.8,
-    this.maxTextScale = 3.0,
+    this.maxTextScale = 3,
     this.enableHapticFeedback = true,
     this.reduceMotion = false,
-    this.animationSpeedFactor = 1.0,
+    this.animationSpeedFactor = 1,
     this.enableVoiceOver = false,
     this.enableLargeText = false,
     this.enableBoldText = false,
     this.colorBlindnessType = ColorBlindnessType.none,
   });
   
+  /// Whether high contrast mode is enabled
   final bool enableHighContrast;
+  /// Whether custom text scaling is enabled
   final bool enableCustomTextScaling;
+  /// Current text scale factor
   final double textScaleFactor;
+  /// Minimum allowed text scale
   final double minTextScale;
+  /// Maximum allowed text scale
   final double maxTextScale;
+  /// Whether haptic feedback is enabled
   final bool enableHapticFeedback;
+  /// Whether motion should be reduced
   final bool reduceMotion;
+  /// Animation speed multiplier factor
   final double animationSpeedFactor;
+  /// Whether VoiceOver is enabled
   final bool enableVoiceOver;
+  /// Whether large text is enabled
   final bool enableLargeText;
+  /// Whether bold text is enabled
   final bool enableBoldText;
+  /// Type of color blindness to accommodate
   final ColorBlindnessType colorBlindnessType;
   
   /// Copy with new values
@@ -321,7 +334,8 @@ class AccessibilitySettings {
   }) {
     return AccessibilitySettings(
       enableHighContrast: enableHighContrast ?? this.enableHighContrast,
-      enableCustomTextScaling: enableCustomTextScaling ?? this.enableCustomTextScaling,
+       enableCustomTextScaling: 
+           enableCustomTextScaling ?? this.enableCustomTextScaling,
       textScaleFactor: textScaleFactor ?? this.textScaleFactor,
       minTextScale: minTextScale ?? this.minTextScale,
       maxTextScale: maxTextScale ?? this.maxTextScale,
@@ -338,33 +352,50 @@ class AccessibilitySettings {
 
 /// WCAG compliance levels
 enum WCAGLevel {
+  /// WCAG AA level (4.5:1 contrast ratio for normal text)
   aa,
+  /// WCAG AAA level (7:1 contrast ratio for normal text)
   aaa,
 }
 
 /// Color blindness types
 enum ColorBlindnessType {
+  /// No color blindness
   none,
+  /// Protanopia (red-blind)
   protanopia,
+  /// Deuteranopia (green-blind)
   deuteranopia,
+  /// Tritanopia (blue-blind)
   tritanopia,
+  /// Protanomaly (red-weak)
   protanomaly,
+  /// Deuteranomaly (green-weak)
   deuteranomaly,
+  /// Tritanomaly (blue-weak)
   tritanomaly,
+  /// Achromatopsia (complete color blindness)
   achromatopsia,
 }
 
 /// Haptic feedback types
 enum HapticFeedbackType {
+  /// Light impact feedback
   lightImpact,
+  /// Medium impact feedback
   mediumImpact,
+  /// Heavy impact feedback
   heavyImpact,
+  /// Selection click feedback
   selectionClick,
+  /// Vibrate feedback
   vibrate,
 }
 
 /// Screen reader assertiveness levels
 enum Assertiveness {
+  /// Polite announcement (waits for current speech to finish)
   polite,
+  /// Assertive announcement (interrupts current speech)
   assertive,
 }

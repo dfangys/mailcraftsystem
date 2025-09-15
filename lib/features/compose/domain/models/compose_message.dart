@@ -7,6 +7,7 @@ part 'compose_message.g.dart';
 
 /// Compose message model for drafting emails
 @freezed
+/// ComposeMessage class
 class ComposeMessage with _$ComposeMessage {
   const factory ComposeMessage({
     String? id,
@@ -36,6 +37,7 @@ class ComposeMessage with _$ComposeMessage {
 
 /// Compose attachment model
 @freezed
+/// ComposeAttachment class
 class ComposeAttachment with _$ComposeAttachment {
   const factory ComposeAttachment({
     required String id,
@@ -55,24 +57,32 @@ class ComposeAttachment with _$ComposeAttachment {
 /// Compose type enumeration
 enum ComposeType {
   @JsonValue('new')
+  /// newMessage
   newMessage,
   @JsonValue('reply')
+  /// reply
   reply,
   @JsonValue('reply_all')
+  /// replyAll
   replyAll,
   @JsonValue('forward')
+  /// forward
   forward,
 }
 
 /// Attachment source enumeration
 enum AttachmentSource {
   @JsonValue('file')
+  /// file
   file,
   @JsonValue('camera')
+  /// camera
   camera,
   @JsonValue('gallery')
+  /// gallery
   gallery,
   @JsonValue('cloud')
+  /// cloud
   cloud,
 }
 

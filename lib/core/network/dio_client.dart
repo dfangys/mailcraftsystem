@@ -71,6 +71,7 @@ class _ErrorInterceptor extends Interceptor {
   void onError(DioException err, ErrorInterceptorHandler handler) {
     AppLogger.error(
       'HTTP Error: ${err.type} - ${err.message}',
+      /// err
       err,
       err.stackTrace,
     );

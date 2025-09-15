@@ -5,6 +5,7 @@ part 'sync_status.g.dart';
 
 /// Sync status model
 @freezed
+/// SyncStatus class
 class SyncStatus with _$SyncStatus {
   const factory SyncStatus({
     required String accountId,
@@ -26,20 +27,31 @@ class SyncStatus with _$SyncStatus {
 
 /// Sync state enumeration
 enum SyncState {
+  /// Sync is idle and not running
   @JsonValue('idle')
+  /// idle
   idle,
+  /// Sync is currently in progress
   @JsonValue('syncing')
+  /// syncing
   syncing,
+  /// Sync is paused by user or system
   @JsonValue('paused')
+  /// paused
   paused,
+  /// Sync encountered an error
   @JsonValue('error')
+  /// error
   error,
+  /// Sync completed successfully
   @JsonValue('completed')
+  /// completed
   completed,
 }
 
 /// Sync progress model
 @freezed
+/// SyncProgress class
 class SyncProgress with _$SyncProgress {
   const factory SyncProgress({
     required double percentage,
@@ -55,6 +67,7 @@ class SyncProgress with _$SyncProgress {
 
 /// Sync configuration model
 @freezed
+/// SyncConfiguration class
 class SyncConfiguration with _$SyncConfiguration {
   const factory SyncConfiguration({
     required String accountId,
@@ -75,6 +88,7 @@ class SyncConfiguration with _$SyncConfiguration {
 
 /// Sync result model
 @freezed
+/// SyncResult class
 class SyncResult with _$SyncResult {
   const factory SyncResult({
     required String accountId,
@@ -118,7 +132,10 @@ extension SyncStateExtension on SyncState {
   bool get hasError => this == SyncState.error;
   
   /// Check if sync can be started
-  bool get canStart => this == SyncState.idle || this == SyncState.error || this == SyncState.completed;
+  bool get canStart => 
+      this == SyncState.idle || 
+      this == SyncState.error || 
+      this == SyncState.completed;
   
   /// Check if sync can be paused
   bool get canPause => this == SyncState.syncing;
@@ -130,7 +147,7 @@ extension SyncStateExtension on SyncState {
 /// Extension for sync status
 extension SyncStatusExtension on SyncStatus {
   /// Get sync progress percentage
-  double get progressPercentage => progress?.percentage ?? 0.0;
+  double get progressPercentage => progress?.percentage ?? 0;
   
   /// Get formatted progress text
   String get progressText {
@@ -191,7 +208,7 @@ extension SyncConfigurationExtension on SyncConfiguration {
     final parts = <String>[];
     
     if (autoSync) {
-      parts.add('Auto-sync every ${syncIntervalMinutes}m');
+      parts.add('Auto-sync every $syncIntervalMinutesm');
     } else {
       parts.add('Manual sync only');
     }
@@ -242,7 +259,7 @@ extension SyncResultExtension on SyncResult {
   }
   
   /// Check if sync had errors
-  bool get hasErrors => errors?.isNotEmpty == true;
+  bool get hasErrors => errors?.isNotEmpty ?? false;
   
   /// Get error summary
   String? get errorSummary {

@@ -7,6 +7,7 @@ part 'message_content.g.dart';
 
 /// Message content model
 @freezed
+/// MessageContent class
 class MessageContent with _$MessageContent {
   const factory MessageContent({
     required String textPlain,
@@ -21,6 +22,7 @@ class MessageContent with _$MessageContent {
 
 /// Attachment data model
 @freezed
+/// AttachmentData class
 class AttachmentData with _$AttachmentData {
   const factory AttachmentData({
     required String name,
@@ -35,6 +37,7 @@ class AttachmentData with _$AttachmentData {
 
 /// Message search criteria
 @freezed
+/// MessageSearchCriteria class
 class MessageSearchCriteria with _$MessageSearchCriteria {
   const factory MessageSearchCriteria({
     String? query,
@@ -57,20 +60,28 @@ class MessageSearchCriteria with _$MessageSearchCriteria {
 /// Message sort order
 enum MessageSortOrder {
   @JsonValue('date_desc')
+  /// dateDescending
   dateDescending,
   @JsonValue('date_asc')
+  /// dateAscending
   dateAscending,
   @JsonValue('subject_asc')
+  /// subjectAscending
   subjectAscending,
   @JsonValue('subject_desc')
+  /// subjectDescending
   subjectDescending,
   @JsonValue('from_asc')
+  /// fromAscending
   fromAscending,
   @JsonValue('from_desc')
+  /// fromDescending
   fromDescending,
   @JsonValue('size_asc')
+  /// sizeAscending
   sizeAscending,
   @JsonValue('size_desc')
+  /// sizeDescending
   sizeDescending,
 }
 

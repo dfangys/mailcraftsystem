@@ -5,6 +5,7 @@ part 'search_index.g.dart';
 
 /// Search index status model
 @freezed
+/// SearchIndexStatus class
 class SearchIndexStatus with _$SearchIndexStatus {
   const factory SearchIndexStatus({
     required String accountId,
@@ -23,6 +24,7 @@ class SearchIndexStatus with _$SearchIndexStatus {
 
 /// Advanced search criteria model
 @freezed
+/// AdvancedSearchCriteria class
 class AdvancedSearchCriteria with _$AdvancedSearchCriteria {
   const factory AdvancedSearchCriteria({
     String? allWords,
@@ -52,6 +54,7 @@ class AdvancedSearchCriteria with _$AdvancedSearchCriteria {
 
 /// Search analytics model
 @freezed
+/// SearchAnalytics class
 class SearchAnalytics with _$SearchAnalytics {
   const factory SearchAnalytics({
     required String accountId,
@@ -72,7 +75,7 @@ class SearchAnalytics with _$SearchAnalytics {
 extension SearchIndexStatusExtension on SearchIndexStatus {
   /// Get indexing progress percentage
   double get indexingProgressPercentage {
-    if (totalMessages == 0) return 100.0;
+    if (totalMessages == 0) return 100;
     return (indexedMessages / totalMessages) * 100;
   }
   
@@ -84,7 +87,7 @@ extension SearchIndexStatusExtension on SearchIndexStatus {
   /// Get index status summary
   String get indexStatusSummary {
     if (isIndexing) {
-      return 'Indexing... ${formattedIndexingProgress}';
+      return 'Indexing... $formattedIndexingProgress';
     }
     
     if (isIndexed) {
@@ -211,7 +214,7 @@ extension SearchAnalyticsExtension on SearchAnalytics {
   
   /// Get analytics summary
   String get analyticsSummary {
-    return '$totalSearches searches, avg ${formattedAverageSearchTime}';
+    return '$totalSearches searches, avg $formattedAverageSearchTime';
   }
   
   /// Get most searched mailbox

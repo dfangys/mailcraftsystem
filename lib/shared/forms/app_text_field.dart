@@ -5,8 +5,8 @@ import 'package:flutter/services.dart';
 class AppTextField extends StatelessWidget {
   /// Creates a text field widget
   const AppTextField({
-    super.key,
     required this.label,
+    super.key,
     this.controller,
     this.initialValue,
     this.onChanged,
@@ -138,7 +138,8 @@ class AppTextField extends StatelessWidget {
         filled: true,
         fillColor: enabled 
             ? Theme.of(context).colorScheme.surface
-            : Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+            : Theme.of(context).colorScheme.surfaceContainerHighest
+                .withValues(alpha: 0.5),
       ),
     );
   }

@@ -6,6 +6,7 @@ part 'mailbox.g.dart';
 
 /// Mailbox model representing an IMAP folder
 @freezed
+/// Mailbox class
 class Mailbox with _$Mailbox {
   const factory Mailbox({
     required String id,
@@ -31,36 +32,50 @@ class Mailbox with _$Mailbox {
 /// Mailbox type enumeration
 enum MailboxType {
   @JsonValue('inbox')
+  /// inbox
   inbox,
   @JsonValue('sent')
+  /// sent
   sent,
   @JsonValue('drafts')
+  /// drafts
   drafts,
   @JsonValue('trash')
+  /// trash
   trash,
   @JsonValue('spam')
+  /// spam
   spam,
   @JsonValue('archive')
+  /// archive
   archive,
   @JsonValue('custom')
+  /// custom
   custom,
   @JsonValue('unknown')
+  /// unknown
   unknown,
 }
 
 /// Mailbox flags
 enum MailboxFlag {
   @JsonValue('noselect')
+  /// noselect
   noselect,
   @JsonValue('noinferiors')
+  /// noinferiors
   noinferiors,
   @JsonValue('marked')
+  /// marked
   marked,
   @JsonValue('unmarked')
+  /// unmarked
   unmarked,
   @JsonValue('haschildren')
+  /// haschildren
   haschildren,
   @JsonValue('hasnochildren')
+  /// hasnochildren
   hasnochildren,
 }
 

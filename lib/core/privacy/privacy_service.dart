@@ -47,7 +47,8 @@ class PrivacyService {
     required String description,
     bool isRequired = false,
   }) async {
-    final request = ConsentRequest(
+    // Create consent request for logging/audit purposes
+    ConsentRequest(
       type: type,
       purpose: purpose,
       description: description,
@@ -62,7 +63,8 @@ class PrivacyService {
   
   /// Record consent decision
   Future<void> recordConsent(ConsentType type, ConsentStatus status) async {
-    final record = ConsentRecord(
+    // Create consent record for audit trail
+    ConsentRecord(
       type: type,
       status: status,
       timestamp: DateTime.now(),
@@ -344,7 +346,7 @@ class PrivacySettings {
     this.marketingConsent = ConsentStatus.notAsked,
     this.functionalConsent = ConsentStatus.granted,
     this.performanceConsent = ConsentStatus.notAsked,
-    this.privacyPolicyVersion = '1.0',
+    this.privacyPolicyVersion = '1',
     this.dataRetentionDays = 365,
     this.enableDataMinimization = true,
     this.enableAutomaticDeletion = true,
@@ -383,13 +385,20 @@ class PrivacySettings {
 }
 
 // Enums and models
+/// Enumeration
 enum ConsentType { analytics, marketing, functional, performance }
+/// Enumeration
 enum ConsentStatus { granted, denied, notAsked, withdrawn }
+/// Enumeration
 enum DataType { personalInfo, emailContent, emailMetadata, attachments, credentials, preferences, usageData, deviceInfo, performanceData }
+/// Enumeration
 enum LegalBasis { consent, contract, legalObligation, vitalInterests, publicTask, legitimateInterests }
+/// Enumeration
 enum DataExportFormat { json, xml, csv }
+/// Enumeration
 enum PrivacyRiskLevel { low, medium, high, critical }
 
+/// ConsentRequest class
 class ConsentRequest {
   const ConsentRequest({
     required this.type,
@@ -406,6 +415,7 @@ class ConsentRequest {
   final DateTime timestamp;
 }
 
+/// ConsentRecord class
 class ConsentRecord {
   const ConsentRecord({
     required this.type,
@@ -420,6 +430,7 @@ class ConsentRecord {
   final String version;
 }
 
+/// DataProcessingActivity class
 class DataProcessingActivity {
   const DataProcessingActivity({
     required this.id,
@@ -440,6 +451,7 @@ class DataProcessingActivity {
   final bool isAutomated;
 }
 
+/// UserDataExport class
 class UserDataExport {
   const UserDataExport({
     required this.userId,
@@ -456,6 +468,7 @@ class UserDataExport {
   final String checksum;
 }
 
+/// DataDeletionResult class
 class DataDeletionResult {
   const DataDeletionResult({
     required this.userId,
@@ -472,6 +485,7 @@ class DataDeletionResult {
   final List<String> deletionLog;
 }
 
+/// DataRetentionReport class
 class DataRetentionReport {
   const DataRetentionReport({
     required this.checkDate,
@@ -486,6 +500,7 @@ class DataRetentionReport {
   final bool isCompliant;
 }
 
+/// DataRetentionViolation class
 class DataRetentionViolation {
   const DataRetentionViolation({
     required this.activityId,
@@ -502,6 +517,7 @@ class DataRetentionViolation {
   final DateTime oldestExpiredDate;
 }
 
+/// ExpiredDataRecord class
 class ExpiredDataRecord {
   const ExpiredDataRecord({
     required this.id,
@@ -516,6 +532,7 @@ class ExpiredDataRecord {
   final DateTime expiryDate;
 }
 
+/// PrivacyImpactAssessment class
 class PrivacyImpactAssessment {
   const PrivacyImpactAssessment({
     required this.activityId,

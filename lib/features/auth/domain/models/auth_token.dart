@@ -5,6 +5,7 @@ part 'auth_token.g.dart';
 
 /// Authentication token model
 @freezed
+/// AuthToken class
 class AuthToken with _$AuthToken {
   const factory AuthToken({
     required String accessToken,

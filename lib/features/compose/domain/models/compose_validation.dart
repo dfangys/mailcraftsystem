@@ -5,6 +5,7 @@ part 'compose_validation.g.dart';
 
 /// Message validation result
 @freezed
+/// MessageValidationResult class
 class MessageValidationResult with _$MessageValidationResult {
   const factory MessageValidationResult({
     required bool isValid,
@@ -19,6 +20,7 @@ class MessageValidationResult with _$MessageValidationResult {
 
 /// Message size information
 @freezed
+/// MessageSizeInfo class
 class MessageSizeInfo with _$MessageSizeInfo {
   const factory MessageSizeInfo({
     required int totalSize,
@@ -34,6 +36,7 @@ class MessageSizeInfo with _$MessageSizeInfo {
 
 /// Address validation result
 @freezed
+/// AddressValidationResult class
 class AddressValidationResult with _$AddressValidationResult {
   const factory AddressValidationResult({
     required String address,
@@ -48,6 +51,7 @@ class AddressValidationResult with _$AddressValidationResult {
 
 /// Address suggestion for auto-complete
 @freezed
+/// AddressSuggestion class
 class AddressSuggestion with _$AddressSuggestion {
   const factory AddressSuggestion({
     required String email,
@@ -63,6 +67,7 @@ class AddressSuggestion with _$AddressSuggestion {
 
 /// Contact information
 @freezed
+/// ContactInfo class
 class ContactInfo with _$ContactInfo {
   const factory ContactInfo({
     required String email,
@@ -78,6 +83,7 @@ class ContactInfo with _$ContactInfo {
 
 /// Send result
 @freezed
+/// SendResult class
 class SendResult with _$SendResult {
   const factory SendResult({
     required bool success,
@@ -122,7 +128,7 @@ extension MessageSizeInfoExtension on MessageSizeInfo {
   String? get sizeWarning {
     if (!exceedsLimit) return null;
     if (maxAllowedSize == null) return 'Message size is too large';
-    return 'Message size (${formattedTotalSize}) exceeds limit (${_formatBytes(maxAllowedSize!)})';
+    return 'Message size ($formattedTotalSize) exceeds limit (${_formatBytes(maxAllowedSize!)})';
   }
   
   /// Format bytes to human readable string
@@ -155,7 +161,7 @@ extension AddressSuggestionExtension on AddressSuggestion {
   
   /// Get relevance score for sorting
   double get relevanceScore {
-    double score = 0.0;
+    double score = 0;
     
     // Frequency contributes to score
     if (frequency != null) {

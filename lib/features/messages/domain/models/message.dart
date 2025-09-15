@@ -6,6 +6,7 @@ part 'message.g.dart';
 
 /// Email message model
 @freezed
+/// Message class
 class Message with _$Message {
   const factory Message({
     required String id,
@@ -43,6 +44,7 @@ class Message with _$Message {
 
 /// Message address model
 @freezed
+/// MessageAddress class
 class MessageAddress with _$MessageAddress {
   const factory MessageAddress({
     String? name,
@@ -55,6 +57,7 @@ class MessageAddress with _$MessageAddress {
 
 /// Message attachment model
 @freezed
+/// MessageAttachment class
 class MessageAttachment with _$MessageAttachment {
   const factory MessageAttachment({
     required String id,
@@ -73,14 +76,19 @@ class MessageAttachment with _$MessageAttachment {
 /// Message priority enumeration
 enum MessagePriority {
   @JsonValue('highest')
+  /// highest
   highest,
   @JsonValue('high')
+  /// high
   high,
   @JsonValue('normal')
+  /// normal
   normal,
   @JsonValue('low')
+  /// low
   low,
   @JsonValue('lowest')
+  /// lowest
   lowest,
 }
 

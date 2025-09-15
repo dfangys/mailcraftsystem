@@ -7,6 +7,7 @@ part 'search_query.g.dart';
 
 /// Search query model
 @freezed
+/// SearchQuery class
 class SearchQuery with _$SearchQuery {
   const factory SearchQuery({
     required String id,
@@ -28,6 +29,7 @@ class SearchQuery with _$SearchQuery {
 
 /// Search filters model
 @freezed
+/// SearchFilters class
 class SearchFilters with _$SearchFilters {
   const factory SearchFilters({
     String? from,
@@ -51,6 +53,7 @@ class SearchFilters with _$SearchFilters {
 
 /// Search sort model
 @freezed
+/// SearchSort class
 class SearchSort with _$SearchSort {
   const factory SearchSort({
     required SearchSortField field,
@@ -63,6 +66,7 @@ class SearchSort with _$SearchSort {
 
 /// Search result model
 @freezed
+/// SearchResult class
 class SearchResult with _$SearchResult {
   const factory SearchResult({
     required String queryId,
@@ -80,6 +84,7 @@ class SearchResult with _$SearchResult {
 
 /// Search statistics model
 @freezed
+/// SearchStats class
 class SearchStats with _$SearchStats {
   const factory SearchStats({
     required int totalMessages,
@@ -95,6 +100,7 @@ class SearchStats with _$SearchStats {
 
 /// Search suggestion model
 @freezed
+/// SearchSuggestion class
 class SearchSuggestion with _$SearchSuggestion {
   const factory SearchSuggestion({
     required String text,
@@ -110,6 +116,7 @@ class SearchSuggestion with _$SearchSuggestion {
 
 /// Search history model
 @freezed
+/// SearchHistory class
 class SearchHistory with _$SearchHistory {
   const factory SearchHistory({
     required String id,
@@ -126,34 +133,45 @@ class SearchHistory with _$SearchHistory {
 /// Search sort field enumeration
 enum SearchSortField {
   @JsonValue('relevance')
+  /// relevance
   relevance,
   @JsonValue('date')
+  /// date
   date,
   @JsonValue('from')
+  /// from
   from,
   @JsonValue('subject')
+  /// subject
   subject,
   @JsonValue('size')
+  /// size
   size,
 }
 
 /// Search sort order enumeration
 enum SearchSortOrder {
   @JsonValue('asc')
+  /// ascending
   ascending,
   @JsonValue('desc')
+  /// descending
   descending,
 }
 
 /// Search suggestion type enumeration
 enum SearchSuggestionType {
   @JsonValue('query')
+  /// query
   query,
   @JsonValue('sender')
+  /// sender
   sender,
   @JsonValue('subject')
+  /// subject
   subject,
   @JsonValue('mailbox')
+  /// mailbox
   mailbox,
 }
 
@@ -347,7 +365,7 @@ extension SearchResultExtension on SearchResult {
 extension SearchSuggestionExtension on SearchSuggestion {
   /// Get relevance score for sorting
   double get relevanceScore {
-    double score = 0.0;
+    double score = 0;
     
     // Frequency contributes to score
     if (frequency != null) {
@@ -366,7 +384,10 @@ extension SearchSuggestionExtension on SearchSuggestion {
 
 /// Search complexity enumeration
 enum SearchComplexity {
+  /// simple
   simple,
+  /// moderate
   moderate,
+  /// complex
   complex,
 }

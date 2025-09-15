@@ -8,6 +8,10 @@ environment:
   sdk: ">=3.5.0 <4.0.0"
 
 dependencies:
+  flutter:
+    sdk: flutter
+  
+  # Core dependencies (alphabetically sorted)
   collection: ^1.18.0
   crypto: ^3.0.3
   device_info_plus: ^9.1.0
@@ -15,8 +19,6 @@ dependencies:
   drift: ^2.18.0
   encrypt: ^5.0.1
   enough_mail: ^2.1.6
-  flutter:
-    sdk: flutter
   flutter_dotenv: ^5.1.0
   flutter_riverpod: ^2.5.1
   flutter_secure_storage: ^9.2.2
@@ -34,10 +36,12 @@ dependencies:
   webview_flutter: ^4.7.0
 
 dev_dependencies:
-  build_runner: ^2.4.11
-  drift_dev: ^2.18.0
   flutter_test:
     sdk: flutter
+  
+  # Dev dependencies (alphabetically sorted)
+  build_runner: ^2.4.11
+  drift_dev: ^2.18.0
   freezed: ^2.5.7
   golden_toolkit: ^0.15.0
   json_serializable: ^6.9.0

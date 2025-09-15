@@ -6,6 +6,7 @@ part 'mail_account_config.g.dart';
 
 /// Mail account configuration model
 @freezed
+/// MailAccountConfig class
 class MailAccountConfig with _$MailAccountConfig {
   const factory MailAccountConfig({
     required String id,
@@ -26,6 +27,7 @@ class MailAccountConfig with _$MailAccountConfig {
 
 /// IMAP configuration
 @freezed
+/// ImapConfig class
 class ImapConfig with _$ImapConfig {
   const factory ImapConfig({
     required String host,
@@ -41,6 +43,7 @@ class ImapConfig with _$ImapConfig {
 
 /// SMTP configuration
 @freezed
+/// SmtpConfig class
 class SmtpConfig with _$SmtpConfig {
   const factory SmtpConfig({
     required String host,
@@ -58,10 +61,13 @@ class SmtpConfig with _$SmtpConfig {
 /// Socket type enum
 enum SocketType {
   @JsonValue('plain')
+  /// plain
   plain,
   @JsonValue('ssl')
+  /// ssl
   ssl,
   @JsonValue('starttls')
+  /// starttls
   starttls,
 }
 

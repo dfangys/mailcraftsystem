@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:hugeicons/hugeicons.dart';
 
 import 'package:mailcraftsystem/core/error/failures.dart';
 
-/// Reusable error widget
+/// Reusable error widget for displaying failures to users
 class AppErrorWidget extends StatelessWidget {
   /// Creates an error widget
   const AppErrorWidget({
-    super.key,
     required this.failure,
+    super.key,
     this.onRetry,
   });
   
@@ -27,7 +26,7 @@ class AppErrorWidget extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              HugeIcons.strokeRoundedAlert02,
+              Icons.error_outline,
               size: 64,
               color: Theme.of(context).colorScheme.error,
             ),
@@ -47,7 +46,7 @@ class AppErrorWidget extends StatelessWidget {
               const SizedBox(height: 24),
               ElevatedButton.icon(
                 onPressed: onRetry,
-                icon: const Icon(HugeIcons.strokeRoundedRefresh),
+                icon: const Icon(Icons.refresh),
                 label: const Text('Try Again'),
               ),
             ],

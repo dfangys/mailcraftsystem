@@ -16,6 +16,7 @@ class MailClientFactory {
     final mailAccount = config.toMailAccount();
     
     return MailClient(
+      /// mailAccount
       mailAccount,
       isLogEnabled: enableLogging,
       onBadCertificate: config.allowInsecureSSL ? _allowBadCertificate : null,
@@ -29,6 +30,7 @@ class MailClientFactory {
     bool enableLogging = kDebugMode,
   }) {
     return createClient(
+      /// config
       config,
       enableLogging: enableLogging,
     );

@@ -5,6 +5,7 @@ part 'account_connection_result.g.dart';
 
 /// Account connection test result
 @freezed
+/// AccountConnectionResult class
 class AccountConnectionResult with _$AccountConnectionResult {
   const factory AccountConnectionResult({
     required bool imapConnected,
@@ -20,6 +21,7 @@ class AccountConnectionResult with _$AccountConnectionResult {
 
 /// Account validation result
 @freezed
+/// AccountValidationResult class
 class AccountValidationResult with _$AccountValidationResult {
   const factory AccountValidationResult({
     required bool isValid,
@@ -33,6 +35,7 @@ class AccountValidationResult with _$AccountValidationResult {
 
 /// Account capabilities
 @freezed
+/// AccountCapabilities class
 class AccountCapabilities with _$AccountCapabilities {
   const factory AccountCapabilities({
     @Default(false) bool supportsIdle,

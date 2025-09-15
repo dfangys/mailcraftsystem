@@ -5,6 +5,7 @@ part 'mailbox_status.g.dart';
 
 /// Mailbox status model
 @freezed
+/// MailboxStatus class
 class MailboxStatus with _$MailboxStatus {
   const factory MailboxStatus({
     required String path,
@@ -23,6 +24,7 @@ class MailboxStatus with _$MailboxStatus {
 
 /// Mailbox operation result
 @freezed
+/// MailboxOperationResult class
 class MailboxOperationResult with _$MailboxOperationResult {
   const factory MailboxOperationResult({
     required bool success,
@@ -45,7 +47,7 @@ extension MailboxStatusExtension on MailboxStatus {
   
   /// Get unread percentage
   double get unreadPercentage {
-    if (messageCount == 0) return 0.0;
+    if (messageCount == 0) return 0;
     return (unreadCount / messageCount) * 100;
   }
   

@@ -5,6 +5,7 @@ part 'sync_availability.g.dart';
 
 /// Sync availability model
 @freezed
+/// SyncAvailability class
 class SyncAvailability with _$SyncAvailability {
   const factory SyncAvailability({
     required bool isAvailable,
@@ -22,6 +23,7 @@ class SyncAvailability with _$SyncAvailability {
 
 /// Sync estimate model
 @freezed
+/// SyncEstimate class
 class SyncEstimate with _$SyncEstimate {
   const factory SyncEstimate({
     required Duration estimatedDuration,
@@ -37,6 +39,7 @@ class SyncEstimate with _$SyncEstimate {
 
 /// Sync statistics model
 @freezed
+/// SyncStatistics class
 class SyncStatistics with _$SyncStatistics {
   const factory SyncStatistics({
     required String accountId,
@@ -108,7 +111,7 @@ extension SyncEstimateExtension on SyncEstimate {
 extension SyncStatisticsExtension on SyncStatistics {
   /// Get success rate percentage
   double get successRate {
-    if (totalSyncs == 0) return 0.0;
+    if (totalSyncs == 0) return 0;
     return (successfulSyncs / totalSyncs) * 100;
   }
   
@@ -142,6 +145,6 @@ extension SyncStatisticsExtension on SyncStatistics {
   
   /// Get statistics summary
   String get statisticsSummary {
-    return '$totalSyncs syncs ($formattedSuccessRate success), avg ${formattedAverageSyncTime}';
+    return '$totalSyncs syncs ($formattedSuccessRate success), avg $formattedAverageSyncTime';
   }
 }

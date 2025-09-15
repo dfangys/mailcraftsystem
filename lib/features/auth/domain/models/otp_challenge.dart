@@ -5,6 +5,7 @@ part 'otp_challenge.g.dart';
 
 /// OTP challenge model
 @freezed
+/// OtpChallenge class
 class OtpChallenge with _$OtpChallenge {
   const factory OtpChallenge({
     required String challengeId,
@@ -19,6 +20,7 @@ class OtpChallenge with _$OtpChallenge {
 
 /// OTP verification request
 @freezed
+/// OtpVerificationRequest class
 class OtpVerificationRequest with _$OtpVerificationRequest {
   const factory OtpVerificationRequest({
     required String challengeId,

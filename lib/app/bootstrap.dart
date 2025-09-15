@@ -47,7 +47,7 @@ void bootstrap() {
   );
 }
 
-// Router provider - temporary implementation
+/// Router provider for navigation configuration
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: '/splash',
@@ -68,8 +68,9 @@ final routerProvider = Provider<GoRouter>((ref) {
   );
 });
 
-// Temporary screens for navigation
+/// Temporary splash screen for initial app loading
 class SplashScreen extends StatelessWidget {
+  /// Creates a splash screen
   const SplashScreen({super.key});
 
   @override
@@ -91,7 +92,9 @@ class SplashScreen extends StatelessWidget {
   }
 }
 
+/// Temporary login screen placeholder
 class LoginScreen extends StatelessWidget {
+  /// Creates a login screen
   const LoginScreen({super.key});
 
   @override
@@ -104,7 +107,9 @@ class LoginScreen extends StatelessWidget {
   }
 }
 
+/// Temporary home screen placeholder
 class HomeScreen extends StatelessWidget {
+  /// Creates a home screen
   const HomeScreen({super.key});
 
   @override

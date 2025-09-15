@@ -7,6 +7,7 @@ part 'mail_provider_preset.g.dart';
 
 /// Mail provider preset model
 @freezed
+/// MailProviderPreset class
 class MailProviderPreset with _$MailProviderPreset {
   const factory MailProviderPreset({
     required String id,

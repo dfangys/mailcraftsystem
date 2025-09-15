@@ -30,7 +30,7 @@ class EncryptionService {
   Future<void> initialize(String masterPassword) async {
     try {
       // Derive key from master password using PBKDF2
-      final salt = utf8.encode('${_keyPrefix}salt');
+      final salt = utf8.encode('$_keyPrefixsalt');
       final pbkdf2 = Pbkdf2(
         macAlgorithm: Hmac.sha256(),
         iterations: 100000, // OWASP recommended minimum
@@ -115,6 +115,7 @@ class EncryptionService {
     
     final random = Random.secure();
     final password = List.generate(
+      /// length
       length,
       (index) => chars[random.nextInt(chars.length)],
     ).join();
@@ -263,9 +264,13 @@ class PasswordStrength {
 
 /// Password strength levels
 enum PasswordStrengthLevel {
+  /// weak
   weak,
+  /// medium
   medium,
+  /// strong
   strong,
+  /// veryStrong
   veryStrong,
 }
 

@@ -5,6 +5,7 @@ part 'user_profile.g.dart';
 
 /// User profile model
 @freezed
+/// UserProfile class
 class UserProfile with _$UserProfile {
   const factory UserProfile({
     required String id,
@@ -23,6 +24,7 @@ class UserProfile with _$UserProfile {
 
 /// User quota information
 @freezed
+/// UserQuota class
 class UserQuota with _$UserQuota {
   const factory UserQuota({
     required int used,
