@@ -174,7 +174,9 @@ class AccountController extends StateNotifier<AccountState> {
             isConnected: true,
             isSetupComplete: true,
             accountConfig: accountConfig,
-            connectionDetails: connectionResult.details,
+            connectionDetails: connectionResult.details != null 
+                ? {'status': connectionResult.details!} 
+                : null,
           );
         } else {
           state = state.copyWith(

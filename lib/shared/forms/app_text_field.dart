@@ -107,7 +107,7 @@ class AppTextField extends StatelessWidget {
       autocorrect: autocorrect,
       enableSuggestions: enableSuggestions,
       decoration: InputDecoration(
-        label: label,
+        labelText: label,
         hintText: hintText,
         helperText: helperText,
         prefixIcon: prefixIcon,

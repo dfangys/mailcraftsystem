@@ -18,6 +18,9 @@ abstract class AuthRepository {
   /// Request password reset
   Future<({Failure? left, void right})> resetPassword(String email);
   
+  /// Request password reset (alias)
+  Future<({Failure? left, void right})> requestPasswordReset(String email);
+  
   /// Confirm password reset
   Future<({Failure? left, void right})> confirmPasswordReset(String token, String newPassword);
   

@@ -6,7 +6,7 @@ import 'package:mailcraftsystem/features/messages/domain/models/message_content.
 /// Message repository interface
 abstract class MessageRepository {
   /// Get messages from a mailbox
-  Future<Either<Failure, List<Message>>> getMessages(
+  Future<({Failure? left, [^}]* right})>> getMessages(
     String accountId,
     String mailboxPath, {
     int? limit,
@@ -15,49 +15,49 @@ abstract class MessageRepository {
   });
   
   /// Get a specific message by UID
-  Future<Either<Failure, Message?>> getMessage(
+  Future<({Failure? left, [^}]* right})> getMessage(
     String accountId,
     String mailboxPath,
     int uid,
   );
   
   /// Get message content (full body)
-  Future<Either<Failure, MessageContent>> getMessageContent(
+  Future<({Failure? left, [^}]* right})> getMessageContent(
     String accountId,
     String mailboxPath,
     int uid,
   );
   
   /// Mark message as read
-  Future<Either<Failure, void>> markAsRead(
+  Future<({Failure? left, [^}]* right})> markAsRead(
     String accountId,
     String mailboxPath,
     int uid,
   );
   
   /// Mark message as unread
-  Future<Either<Failure, void>> markAsUnread(
+  Future<({Failure? left, [^}]* right})> markAsUnread(
     String accountId,
     String mailboxPath,
     int uid,
   );
   
   /// Flag message
-  Future<Either<Failure, void>> flagMessage(
+  Future<({Failure? left, [^}]* right})> flagMessage(
     String accountId,
     String mailboxPath,
     int uid,
   );
   
   /// Unflag message
-  Future<Either<Failure, void>> unflagMessage(
+  Future<({Failure? left, [^}]* right})> unflagMessage(
     String accountId,
     String mailboxPath,
     int uid,
   );
   
   /// Move message to another mailbox
-  Future<Either<Failure, void>> moveMessage(
+  Future<({Failure? left, [^}]* right})> moveMessage(
     String accountId,
     String fromMailboxPath,
     String toMailboxPath,
@@ -65,7 +65,7 @@ abstract class MessageRepository {
   );
   
   /// Copy message to another mailbox
-  Future<Either<Failure, void>> copyMessage(
+  Future<({Failure? left, [^}]* right})> copyMessage(
     String accountId,
     String fromMailboxPath,
     String toMailboxPath,
@@ -73,7 +73,7 @@ abstract class MessageRepository {
   );
   
   /// Delete message (move to trash or permanent delete)
-  Future<Either<Failure, void>> deleteMessage(
+  Future<({Failure? left, [^}]* right})> deleteMessage(
     String accountId,
     String mailboxPath,
     int uid, {
@@ -81,7 +81,7 @@ abstract class MessageRepository {
   });
   
   /// Download attachment
-  Future<Either<Failure, AttachmentData>> downloadAttachment(
+  Future<({Failure? left, [^}]* right})> downloadAttachment(
     String accountId,
     String mailboxPath,
     int uid,
@@ -89,51 +89,51 @@ abstract class MessageRepository {
   );
   
   /// Search messages
-  Future<Either<Failure, List<Message>>> searchMessages(
+  Future<({Failure? left, [^}]* right})>> searchMessages(
     String accountId,
     String mailboxPath,
     MessageSearchCriteria criteria,
   );
   
   /// Get message thread
-  Future<Either<Failure, List<Message>>> getMessageThread(
+  Future<({Failure? left, [^}]* right})>> getMessageThread(
     String accountId,
     String messageId,
   );
   
   /// Bulk operations
-  Future<Either<Failure, void>> bulkMarkAsRead(
+  Future<({Failure? left, [^}]* right})> bulkMarkAsRead(
     String accountId,
     String mailboxPath,
     List<int> uids,
   );
   
-  Future<Either<Failure, void>> bulkMarkAsUnread(
+  Future<({Failure? left, [^}]* right})> bulkMarkAsUnread(
     String accountId,
     String mailboxPath,
     List<int> uids,
   );
   
-  Future<Either<Failure, void>> bulkFlag(
+  Future<({Failure? left, [^}]* right})> bulkFlag(
     String accountId,
     String mailboxPath,
     List<int> uids,
   );
   
-  Future<Either<Failure, void>> bulkUnflag(
+  Future<({Failure? left, [^}]* right})> bulkUnflag(
     String accountId,
     String mailboxPath,
     List<int> uids,
   );
   
-  Future<Either<Failure, void>> bulkMove(
+  Future<({Failure? left, [^}]* right})> bulkMove(
     String accountId,
     String fromMailboxPath,
     String toMailboxPath,
     List<int> uids,
   );
   
-  Future<Either<Failure, void>> bulkDelete(
+  Future<({Failure? left, [^}]* right})> bulkDelete(
     String accountId,
     String mailboxPath,
     List<int> uids, {

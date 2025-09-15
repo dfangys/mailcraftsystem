@@ -13,6 +13,7 @@ class AuthToken with _$AuthToken {
     required int expiresIn,
     String? refreshToken,
     @JsonKey(name: 'requires_otp') bool? requiresOtp,
+    DateTime? expiresAt,
   }) = _AuthToken;
 
   factory AuthToken.fromJson(Map<String, dynamic> json) =>

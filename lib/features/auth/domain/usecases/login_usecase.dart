@@ -1,6 +1,7 @@
 import '../models/auth_token.dart';
 import '../models/login_request.dart';
 import '../repositories/auth_repository.dart';
+import '../../../../core/error/failures.dart';
 
 /// Login use case
 class LoginUseCase {
@@ -9,12 +10,15 @@ class LoginUseCase {
   
   final AuthRepository _repository;
   
+  /// Repository getter
+  AuthRepository get repository => _repository;
+  
   /// Execute login
-  Future<({AuthFailure? left, AuthToken? right})> call(LoginRequest request) async {
+  Future<({Failure? left, AuthToken? right})> call(LoginRequest request) async {
     // Validate email format
     if (!_isValidEmail(request.email)) {
       return (
-        left: AuthFailure('Please enter a valid email address'),
+        left: Failure.validation(message: 'Please enter a valid email address'),
         right: null,
       );
     }
@@ -22,14 +26,14 @@ class LoginUseCase {
     // Validate password
     if (request.password.isEmpty) {
       return (
-        left: AuthFailure('Password cannot be empty'),
+        left: Failure.validation(message: 'Password cannot be empty'),
         right: null,
       );
     }
     
     if (request.password.length < 6) {
       return (
-        left: AuthFailure('Password must be at least 6 characters long'),
+        left: Failure.validation(message: 'Password must be at least 6 characters long'),
         right: null,
       );
     }
@@ -41,13 +45,4 @@ class LoginUseCase {
   bool _isValidEmail(String email) {
     return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
   }
-}
-
-/// Auth failure class
-class AuthFailure {
-  /// Creates an auth failure
-  const AuthFailure(this.message);
-
-  /// Error message
-  final String message;
 }

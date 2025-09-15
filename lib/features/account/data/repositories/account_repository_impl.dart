@@ -124,25 +124,39 @@ class AccountRepositoryImpl implements AccountRepository {
   @override
   Future<({Failure? left, List<MailProviderPreset>? right})> getProviderPresets() async {
     try {
-      // Return mock presets
+      // Return built-in presets
       final presets = [
         MailProviderPreset(
           id: 'gmail',
-          name: 'Gmail',
-          domains: ['gmail.com'],
-          imapHost: 'imap.gmail.com',
-          imapPort: 993,
-          smtpHost: 'smtp.gmail.com',
-          smtpPort: 587,
+          name: 'gmail',
+          displayName: 'Gmail',
+          domains: const ['gmail.com'],
+          imapConfig: ImapConfig(
+            host: 'imap.gmail.com',
+            port: 993,
+            socketType: SocketType.ssl,
+          ),
+          smtpConfig: SmtpConfig(
+            host: 'smtp.gmail.com',
+            port: 587,
+            socketType: SocketType.starttls,
+          ),
         ),
         MailProviderPreset(
           id: 'outlook',
-          name: 'Outlook',
-          domains: ['outlook.com', 'hotmail.com'],
-          imapHost: 'outlook.office365.com',
-          imapPort: 993,
-          smtpHost: 'smtp-mail.outlook.com',
-          smtpPort: 587,
+          name: 'outlook',
+          displayName: 'Outlook',
+          domains: const ['outlook.com', 'hotmail.com'],
+          imapConfig: ImapConfig(
+            host: 'outlook.office365.com',
+            port: 993,
+            socketType: SocketType.ssl,
+          ),
+          smtpConfig: SmtpConfig(
+            host: 'smtp-mail.outlook.com',
+            port: 587,
+            socketType: SocketType.starttls,
+          ),
         ),
       ];
       return (left: null, right: presets);

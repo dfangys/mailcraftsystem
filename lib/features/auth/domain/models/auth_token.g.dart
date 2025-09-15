@@ -13,6 +13,9 @@ _$AuthTokenImpl _$$AuthTokenImplFromJson(Map<String, dynamic> json) =>
       expiresIn: (json['expiresIn'] as num).toInt(),
       refreshToken: json['refreshToken'] as String?,
       requiresOtp: json['requires_otp'] as bool?,
+      expiresAt: json['expiresAt'] == null
+          ? null
+          : DateTime.parse(json['expiresAt'] as String),
     );
 
 Map<String, dynamic> _$$AuthTokenImplToJson(_$AuthTokenImpl instance) =>
@@ -22,4 +25,5 @@ Map<String, dynamic> _$$AuthTokenImplToJson(_$AuthTokenImpl instance) =>
       'expiresIn': instance.expiresIn,
       'refreshToken': instance.refreshToken,
       'requires_otp': instance.requiresOtp,
+      'expiresAt': instance.expiresAt?.toIso8601String(),
     };

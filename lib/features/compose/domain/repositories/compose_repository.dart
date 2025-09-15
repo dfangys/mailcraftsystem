@@ -6,34 +6,34 @@ import 'package:mailcraftsystem/features/compose/domain/models/compose_validatio
 /// Compose repository interface
 abstract class ComposeRepository {
   /// Send a composed message
-  Future<Either<Failure, void>> sendMessage(ComposeMessage message);
+  Future<({Failure? left, [^}]* right})> sendMessage(ComposeMessage message);
   
   /// Save message as draft
-  Future<Either<Failure, ComposeMessage>> saveDraft(ComposeMessage message);
+  Future<({Failure? left, [^}]* right})> saveDraft(ComposeMessage message);
   
   /// Get all drafts for an account
-  Future<Either<Failure, List<ComposeMessage>>> getDrafts(String accountId);
+  Future<({Failure? left, [^}]* right})>> getDrafts(String accountId);
   
   /// Get a specific draft by ID
-  Future<Either<Failure, ComposeMessage?>> getDraft(String id);
+  Future<({Failure? left, [^}]* right})> getDraft(String id);
   
   /// Delete a draft
-  Future<Either<Failure, void>> deleteDraft(String id);
+  Future<({Failure? left, [^}]* right})> deleteDraft(String id);
   
   /// Schedule a message for later sending
-  Future<Either<Failure, ComposeMessage>> scheduleMessage(
+  Future<({Failure? left, [^}]* right})> scheduleMessage(
     ComposeMessage message,
     DateTime scheduledAt,
   );
   
   /// Get scheduled messages
-  Future<Either<Failure, List<ComposeMessage>>> getScheduledMessages(String accountId);
+  Future<({Failure? left, [^}]* right})>> getScheduledMessages(String accountId);
   
   /// Cancel a scheduled message
-  Future<Either<Failure, void>> cancelScheduledMessage(String id);
+  Future<({Failure? left, [^}]* right})> cancelScheduledMessage(String id);
   
   /// Upload attachment
-  Future<Either<Failure, ComposeAttachment>> uploadAttachment(
+  Future<({Failure? left, [^}]* right})> uploadAttachment(
     String accountId,
     String filePath,
     String fileName,
@@ -41,31 +41,31 @@ abstract class ComposeRepository {
   );
   
   /// Remove attachment
-  Future<Either<Failure, void>> removeAttachment(String attachmentId);
+  Future<({Failure? left, [^}]* right})> removeAttachment(String attachmentId);
   
   /// Validate message before sending
-  Future<Either<Failure, MessageValidationResult>> validateMessage(
+  Future<({Failure? left, [^}]* right})> validateMessage(
     ComposeMessage message,
   );
   
   /// Get message size estimate
-  Future<Either<Failure, MessageSizeInfo>> getMessageSizeEstimate(
+  Future<({Failure? left, [^}]* right})> getMessageSizeEstimate(
     ComposeMessage message,
   );
   
   /// Check if recipient addresses are valid
-  Future<Either<Failure, List<AddressValidationResult>>> validateAddresses(
+  Future<({Failure? left, [^}]* right})>> validateAddresses(
     List<String> addresses,
   );
   
   /// Get auto-complete suggestions for addresses
-  Future<Either<Failure, List<AddressSuggestion>>> getAddressSuggestions(
+  Future<({Failure? left, [^}]* right})>> getAddressSuggestions(
     String query,
     String accountId,
   );
   
   /// Import contacts for auto-complete
-  Future<Either<Failure, void>> importContacts(
+  Future<({Failure? left, [^}]* right})> importContacts(
     String accountId,
     List<ContactInfo> contacts,
   );

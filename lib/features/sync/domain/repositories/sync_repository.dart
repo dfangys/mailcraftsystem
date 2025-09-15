@@ -6,56 +6,56 @@ import 'package:mailcraftsystem/features/sync/domain/models/sync_status.dart';
 /// Sync repository interface
 abstract class SyncRepository {
   /// Start sync for an account
-  Future<Either<Failure, void>> startSync(String accountId);
+  Future<({Failure? left, [^}]* right})> startSync(String accountId);
   
   /// Stop sync for an account
-  Future<Either<Failure, void>> stopSync(String accountId);
+  Future<({Failure? left, [^}]* right})> stopSync(String accountId);
   
   /// Pause sync for an account
-  Future<Either<Failure, void>> pauseSync(String accountId);
+  Future<({Failure? left, [^}]* right})> pauseSync(String accountId);
   
   /// Resume sync for an account
-  Future<Either<Failure, void>> resumeSync(String accountId);
+  Future<({Failure? left, [^}]* right})> resumeSync(String accountId);
   
   /// Get sync status for an account
-  Future<Either<Failure, SyncStatus>> getSyncStatus(String accountId);
+  Future<({Failure? left, [^}]* right})> getSyncStatus(String accountId);
   
   /// Get sync configuration for an account
-  Future<Either<Failure, SyncConfiguration>> getSyncConfiguration(String accountId);
+  Future<({Failure? left, [^}]* right})> getSyncConfiguration(String accountId);
   
   /// Update sync configuration for an account
-  Future<Either<Failure, SyncConfiguration>> updateSyncConfiguration(
+  Future<({Failure? left, [^}]* right})> updateSyncConfiguration(
     String accountId,
     SyncConfiguration configuration,
   );
   
   /// Get sync history for an account
-  Future<Either<Failure, List<SyncResult>>> getSyncHistory(
+  Future<({Failure? left, [^}]* right})>> getSyncHistory(
     String accountId, {
     int? limit,
     DateTime? since,
   });
   
   /// Force sync specific mailbox
-  Future<Either<Failure, void>> syncMailbox(
+  Future<({Failure? left, [^}]* right})> syncMailbox(
     String accountId,
     String mailboxPath,
   );
   
   /// Get last sync result for an account
-  Future<Either<Failure, SyncResult?>> getLastSyncResult(String accountId);
+  Future<({Failure? left, [^}]* right})> getLastSyncResult(String accountId);
   
   /// Check if sync is available (network, permissions, etc.)
-  Future<Either<Failure, SyncAvailability>> checkSyncAvailability(String accountId);
+  Future<({Failure? left, [^}]* right})> checkSyncAvailability(String accountId);
   
   /// Estimate sync time and data usage
-  Future<Either<Failure, SyncEstimate>> estimateSync(String accountId);
+  Future<({Failure? left, [^}]* right})> estimateSync(String accountId);
   
   /// Get sync statistics
-  Future<Either<Failure, SyncStatistics>> getSyncStatistics(String accountId);
+  Future<({Failure? left, [^}]* right})> getSyncStatistics(String accountId);
   
   /// Reset sync state (clear cache, restart)
-  Future<Either<Failure, void>> resetSync(String accountId);
+  Future<({Failure? left, [^}]* right})> resetSync(String accountId);
   
   /// Stream of sync status updates
   Stream<SyncStatus> watchSyncStatus(String accountId);

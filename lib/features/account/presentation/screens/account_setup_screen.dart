@@ -1,3 +1,4 @@
+import '../../../../core/error/failures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -334,7 +335,7 @@ class _AccountSetupScreenState extends ConsumerState<AccountSetupScreen>
             // Error display
             if (accountState.error != null) ...[
               AppErrorWidget(
-                failure: accountState.error!,
+                failure: Failure.validation(message: accountState.error!),
                 onRetry: _handleAccountSetup,
               ),
               const SizedBox(height: 24),

@@ -6,62 +6,62 @@ import 'package:mailcraftsystem/features/search/domain/models/search_query.dart'
 /// Search repository interface
 abstract class SearchRepository {
   /// Perform search with query
-  Future<Either<Failure, SearchResult>> search(SearchQuery query);
+  Future<({Failure? left, [^}]* right})> search(SearchQuery query);
   
   /// Get search suggestions based on input
-  Future<Either<Failure, List<SearchSuggestion>>> getSuggestions(
+  Future<({Failure? left, [^}]* right})>> getSuggestions(
     String input,
     String accountId,
   );
   
   /// Save search query for later use
-  Future<Either<Failure, SearchQuery>> saveSearch(SearchQuery query);
+  Future<({Failure? left, [^}]* right})> saveSearch(SearchQuery query);
   
   /// Get saved searches for an account
-  Future<Either<Failure, List<SearchQuery>>> getSavedSearches(String accountId);
+  Future<({Failure? left, [^}]* right})>> getSavedSearches(String accountId);
   
   /// Delete saved search
-  Future<Either<Failure, void>> deleteSavedSearch(String queryId);
+  Future<({Failure? left, [^}]* right})> deleteSavedSearch(String queryId);
   
   /// Get search history for an account
-  Future<Either<Failure, List<SearchHistory>>> getSearchHistory(
+  Future<({Failure? left, [^}]* right})>> getSearchHistory(
     String accountId, {
     int? limit,
   });
   
   /// Clear search history for an account
-  Future<Either<Failure, void>> clearSearchHistory(String accountId);
+  Future<({Failure? left, [^}]* right})> clearSearchHistory(String accountId);
   
   /// Add search to history
-  Future<Either<Failure, void>> addToHistory(SearchHistory history);
+  Future<({Failure? left, [^}]* right})> addToHistory(SearchHistory history);
   
   /// Get popular search terms
-  Future<Either<Failure, List<String>>> getPopularSearchTerms(String accountId);
+  Future<({Failure? left, [^}]* right})>> getPopularSearchTerms(String accountId);
   
   /// Index messages for search (background operation)
-  Future<Either<Failure, void>> indexMessages(
+  Future<({Failure? left, [^}]* right})> indexMessages(
     String accountId,
     String mailboxPath,
   );
   
   /// Get search index status
-  Future<Either<Failure, SearchIndexStatus>> getIndexStatus(String accountId);
+  Future<({Failure? left, [^}]* right})> getIndexStatus(String accountId);
   
   /// Rebuild search index
-  Future<Either<Failure, void>> rebuildIndex(String accountId);
+  Future<({Failure? left, [^}]* right})> rebuildIndex(String accountId);
   
   /// Search within specific mailboxes
-  Future<Either<Failure, SearchResult>> searchInMailboxes(
+  Future<({Failure? left, [^}]* right})> searchInMailboxes(
     SearchQuery query,
     List<String> mailboxPaths,
   );
   
   /// Advanced search with complex criteria
-  Future<Either<Failure, SearchResult>> advancedSearch(
+  Future<({Failure? left, [^}]* right})> advancedSearch(
     String accountId,
     AdvancedSearchCriteria criteria,
   );
   
   /// Get search analytics
-  Future<Either<Failure, SearchAnalytics>> getSearchAnalytics(String accountId);
+  Future<({Failure? left, [^}]* right})> getSearchAnalytics(String accountId);
 }

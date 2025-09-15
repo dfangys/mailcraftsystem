@@ -26,6 +26,7 @@ mixin _$AuthToken {
   String? get refreshToken => throw _privateConstructorUsedError;
   @JsonKey(name: 'requires_otp')
   bool? get requiresOtp => throw _privateConstructorUsedError;
+  DateTime? get expiresAt => throw _privateConstructorUsedError;
 
   /// Serializes this AuthToken to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -47,7 +48,8 @@ abstract class $AuthTokenCopyWith<$Res> {
       String tokenType,
       int expiresIn,
       String? refreshToken,
-      @JsonKey(name: 'requires_otp') bool? requiresOtp});
+      @JsonKey(name: 'requires_otp') bool? requiresOtp,
+      DateTime? expiresAt});
 }
 
 /// @nodoc
@@ -70,6 +72,7 @@ class _$AuthTokenCopyWithImpl<$Res, $Val extends AuthToken>
     Object? expiresIn = null,
     Object? refreshToken = freezed,
     Object? requiresOtp = freezed,
+    Object? expiresAt = freezed,
   }) {
     return _then(_value.copyWith(
       accessToken: null == accessToken
@@ -92,6 +95,10 @@ class _$AuthTokenCopyWithImpl<$Res, $Val extends AuthToken>
           ? _value.requiresOtp
           : requiresOtp // ignore: cast_nullable_to_non_nullable
               as bool?,
+      expiresAt: freezed == expiresAt
+          ? _value.expiresAt
+          : expiresAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
     ) as $Val);
   }
 }
@@ -109,7 +116,8 @@ abstract class _$$AuthTokenImplCopyWith<$Res>
       String tokenType,
       int expiresIn,
       String? refreshToken,
-      @JsonKey(name: 'requires_otp') bool? requiresOtp});
+      @JsonKey(name: 'requires_otp') bool? requiresOtp,
+      DateTime? expiresAt});
 }
 
 /// @nodoc
@@ -130,6 +138,7 @@ class __$$AuthTokenImplCopyWithImpl<$Res>
     Object? expiresIn = null,
     Object? refreshToken = freezed,
     Object? requiresOtp = freezed,
+    Object? expiresAt = freezed,
   }) {
     return _then(_$AuthTokenImpl(
       accessToken: null == accessToken
@@ -152,6 +161,10 @@ class __$$AuthTokenImplCopyWithImpl<$Res>
           ? _value.requiresOtp
           : requiresOtp // ignore: cast_nullable_to_non_nullable
               as bool?,
+      expiresAt: freezed == expiresAt
+          ? _value.expiresAt
+          : expiresAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
     ));
   }
 }
@@ -164,7 +177,8 @@ class _$AuthTokenImpl implements _AuthToken {
       required this.tokenType,
       required this.expiresIn,
       this.refreshToken,
-      @JsonKey(name: 'requires_otp') this.requiresOtp});
+      @JsonKey(name: 'requires_otp') this.requiresOtp,
+      this.expiresAt});
 
   factory _$AuthTokenImpl.fromJson(Map<String, dynamic> json) =>
       _$$AuthTokenImplFromJson(json);
@@ -180,10 +194,12 @@ class _$AuthTokenImpl implements _AuthToken {
   @override
   @JsonKey(name: 'requires_otp')
   final bool? requiresOtp;
+  @override
+  final DateTime? expiresAt;
 
   @override
   String toString() {
-    return 'AuthToken(accessToken: $accessToken, tokenType: $tokenType, expiresIn: $expiresIn, refreshToken: $refreshToken, requiresOtp: $requiresOtp)';
+    return 'AuthToken(accessToken: $accessToken, tokenType: $tokenType, expiresIn: $expiresIn, refreshToken: $refreshToken, requiresOtp: $requiresOtp, expiresAt: $expiresAt)';
   }
 
   @override
@@ -200,13 +216,15 @@ class _$AuthTokenImpl implements _AuthToken {
             (identical(other.refreshToken, refreshToken) ||
                 other.refreshToken == refreshToken) &&
             (identical(other.requiresOtp, requiresOtp) ||
-                other.requiresOtp == requiresOtp));
+                other.requiresOtp == requiresOtp) &&
+            (identical(other.expiresAt, expiresAt) ||
+                other.expiresAt == expiresAt));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, accessToken, tokenType,
-      expiresIn, refreshToken, requiresOtp);
+      expiresIn, refreshToken, requiresOtp, expiresAt);
 
   /// Create a copy of AuthToken
   /// with the given fields replaced by the non-null parameter values.
@@ -226,12 +244,12 @@ class _$AuthTokenImpl implements _AuthToken {
 
 abstract class _AuthToken implements AuthToken {
   const factory _AuthToken(
-          {required final String accessToken,
-          required final String tokenType,
-          required final int expiresIn,
-          final String? refreshToken,
-          @JsonKey(name: 'requires_otp') final bool? requiresOtp}) =
-      _$AuthTokenImpl;
+      {required final String accessToken,
+      required final String tokenType,
+      required final int expiresIn,
+      final String? refreshToken,
+      @JsonKey(name: 'requires_otp') final bool? requiresOtp,
+      final DateTime? expiresAt}) = _$AuthTokenImpl;
 
   factory _AuthToken.fromJson(Map<String, dynamic> json) =
       _$AuthTokenImpl.fromJson;
@@ -247,6 +265,8 @@ abstract class _AuthToken implements AuthToken {
   @override
   @JsonKey(name: 'requires_otp')
   bool? get requiresOtp;
+  @override
+  DateTime? get expiresAt;
 
   /// Create a copy of AuthToken
   /// with the given fields replaced by the non-null parameter values.

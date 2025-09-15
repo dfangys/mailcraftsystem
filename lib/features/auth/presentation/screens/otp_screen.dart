@@ -131,7 +131,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                   // Error display
                   if (authState.error != null) ...[
                     AppErrorWidget(
-                      error:authState.error!,
+                      failure: Failure.auth(message: authState.error!),
                       onRetry: _handleOtpSubmit,
                     ),
                     const SizedBox(height: 24),

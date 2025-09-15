@@ -48,6 +48,8 @@ class MockAuthRepository implements AuthRepository {
       left: null,
       right: AuthToken(
         accessToken: 'mock_access_token',
+        tokenType: 'Bearer',
+        expiresIn: 3600,
         refreshToken: 'mock_refresh_token',
         expiresAt: DateTime.now().add(const Duration(hours: 1)),
         requiresOtp: true,
@@ -69,6 +71,8 @@ class MockAuthRepository implements AuthRepository {
       left: null,
       right: AuthToken(
         accessToken: 'verified_access_token',
+        tokenType: 'Bearer',
+        expiresIn: 86400,
         refreshToken: 'verified_refresh_token',
         expiresAt: DateTime.now().add(const Duration(hours: 24)),
         requiresOtp: false,
