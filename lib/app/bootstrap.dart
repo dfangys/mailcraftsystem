@@ -9,6 +9,11 @@ import 'package:go_router/go_router.dart';
 import 'package:logger/logger.dart';
 
 import '../core/logging/logger.dart';
+import '../features/auth/presentation/screens/splash_screen.dart';
+import '../features/auth/presentation/screens/login_screen.dart';
+import '../features/auth/presentation/screens/otp_screen.dart';
+import '../features/auth/presentation/screens/reset_password_screen.dart';
+import '../features/account/presentation/screens/account_setup_screen.dart';
 
 /// Bootstrap the application with proper error handling and initialization
 void bootstrap() {
@@ -95,6 +100,18 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const LoginScreen(),
       ),
       GoRoute(
+        path: '/otp',
+        builder: (context, state) => const OtpScreen(),
+      ),
+      GoRoute(
+        path: '/reset-password',
+        builder: (context, state) => const ResetPasswordScreen(),
+      ),
+      GoRoute(
+        path: '/account-setup',
+        builder: (context, state) => const AccountSetupScreen(),
+      ),
+      GoRoute(
         path: '/home',
         builder: (context, state) => const HomeScreen(),
       ),
@@ -118,24 +135,9 @@ class SplashScreen extends StatelessWidget {
             SizedBox(height: 16),
             Text('MailCraft System', style: TextStyle(fontSize: 24)),
             SizedBox(height: 8),
-            Text('Enterprise Email Client'),
+            Text('Loading...', style: TextStyle(fontSize: 16)),
           ],
         ),
-      ),
-    );
-  }
-}
-
-/// Temporary login screen placeholder
-class LoginScreen extends StatelessWidget {
-  /// Creates a login screen
-  const LoginScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Text('Login Screen - Coming Soon'),
       ),
     );
   }
