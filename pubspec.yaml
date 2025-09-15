@@ -1,0 +1,85 @@
+name: mailcraftsystem
+description: "Enterprise-grade Flutter email client with feature-first DDD architecture, enough_mail integration, REST auth with OTP, and Gmail-like UI"
+publish_to: "none"
+
+version: 0.1.0+1
+
+environment:
+  sdk: ">=3.5.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # State Management
+  hooks_riverpod: ^2.5.1
+  riverpod_annotation: ^2.3.5
+  
+  # Navigation
+  go_router: ^14.2.0
+  
+  # Email Protocol
+  enough_mail: ^2.1.7
+  
+  # Code Generation
+  freezed_annotation: ^2.4.4
+  json_annotation: ^4.9.0
+  
+  # Database
+  drift: ^2.18.0
+  sqlite3_flutter_libs: ^0.5.24
+  
+  # Security & Storage
+  flutter_secure_storage: ^9.2.2
+  
+  # Configuration
+  flutter_dotenv: ^5.1.0
+  
+  # Web Views
+  webview_flutter: ^4.7.0
+  
+  # Internationalization
+  intl: ^0.19.0
+  
+  # Utilities
+  collection: ^1.18.0
+  
+  # Icons
+  hugeicons: ^1.0.2
+  
+  # HTTP Client
+  dio: ^5.4.0
+  
+  # Logging
+  logger: ^2.0.2+1
+  
+  # Path utilities
+  path: ^1.8.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  
+  # Code Generation
+  build_runner: ^2.4.11
+  freezed: ^2.5.7
+  json_serializable: ^6.9.0
+  riverpod_generator: ^2.4.0
+  drift_dev: ^2.18.0
+  
+  # Linting
+  very_good_analysis: ^6.0.0
+  
+  # Testing
+  mocktail: ^1.0.4
+  golden_toolkit: ^0.15.0
+
+flutter:
+  uses-material-design: true
+  
+  assets:
+    - assets/
+    - .env
+
+flutter_intl:
+  enabled: true

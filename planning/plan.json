@@ -1,0 +1,87 @@
+{
+  "version": "1.3",
+  "phases": [
+    {
+      "id": "P1",
+      "name": "Repo & Foundations",
+      "goal": "CI, feature-first DDD skeleton, quality gates",
+      "epics": [
+        {"id": "P1E1","name": "Bootstrap","tiny_tasks": [
+          {"id": "T1","desc": "Flutter app init + licenses","est_h": 2},
+          {"id": "T2","desc": "Lints + pre-commit hooks","est_h": 1},
+          {"id": "T3","desc": "CI: format/analyze/test/coverage","est_h": 2},
+          {"id": "T4","desc": "Docs + templates + CODEOWNERS","est_h": 3}
+        ]},
+        {"id": "P1E2","name": "DDD skeleton","tiny_tasks": [
+          {"id": "T5","desc": "Features: auth, account, mailboxes, messages, compose, search","est_h": 4},
+          {"id": "T6","desc": "Core/shared utilities","est_h": 2}
+        ]}
+      ]
+    },
+    {
+      "id": "P2",
+      "name": "Auth & Account",
+      "goal": "REST auth + OTP + IMAP/SMTP setup",
+      "epics": [
+        {"id": "P2E1","name": "REST Auth","tiny_tasks": [
+          {"id": "T7","desc": "Auth API client (login, verify-otp, user, 2FA, reset-password)","est_h": 6},
+          {"id": "T8","desc": "Domain models + repository + use cases","est_h": 5},
+          {"id": "T9","desc": "Login/OTP/Reset UI + controllers","est_h": 6},
+          {"id": "T10","desc": "Secure token storage","est_h": 2}
+        ]},
+        {"id": "P2E2","name": "IMAP/SMTP","tiny_tasks": [
+          {"id": "T11","desc": "MailClientFactory with insecure SSL toggle","est_h": 3},
+          {"id": "T12","desc": "Preset provider (wbmail.wahdabank.com.ly)","est_h": 2}
+        ]}
+      ]
+    },
+    {
+      "id": "P3",
+      "name": "Core Mail",
+      "goal": "List, Read, Compose, Flags, Move/Copy",
+      "epics": [
+        {"id": "P3E1","name": "Mailboxes & Messages","tiny_tasks": [
+          {"id": "T13","desc": "Mailbox list + unread counts","est_h": 3},
+          {"id": "T14","desc": "Message list (paging, SEARCH/SORT)","est_h": 6},
+          {"id": "T15","desc": "Read view (HTML, attachments)","est_h": 6},
+          {"id": "T16","desc": "Flags + move/copy","est_h": 4}
+        ]},
+        {"id": "P3E2","name": "Compose","tiny_tasks": [
+          {"id": "T17","desc": "Editor + autosave (APPEND Drafts)","est_h": 5},
+          {"id": "T18","desc": "SMTP send + APPEND Sent","est_h": 4},
+          {"id": "T19","desc": "EML import/export","est_h": 3}
+        ]}
+      ]
+    },
+    {
+      "id": "P4",
+      "name": "Sync & Search",
+      "goal": "IDLE push, background sync, local index",
+      "epics": [
+        {"id": "P4E1","name": "Sync","tiny_tasks": [
+          {"id": "T20","desc": "IMAP IDLE + fallback polling","est_h": 6},
+          {"id": "T21","desc": "Cache policy & purge","est_h": 3}
+        ]},
+        {"id": "P4E2","name": "Search","tiny_tasks": [
+          {"id": "T22","desc": "Query builder → IMAP keys","est_h": 3},
+          {"id": "T23","desc": "Local index fallback","est_h": 6}
+        ]}
+      ]
+    },
+    {
+      "id": "P5",
+      "name": "Hardening & Release",
+      "goal": "Security review, a11y, docs, v0.1.0",
+      "epics": [
+          {"id": "P5E1","name": "Hardening","tiny_tasks": [
+            {"id": "T24","desc": "HTML sanitizer + remote images policy","est_h": 4},
+            {"id": "T25","desc": "2FA toggle UX + insecure SSL warnings","est_h": 2},
+            {"id": "T26","desc": "Accessibility pass (WCAG AA)","est_h": 3}
+          ]},
+          {"id": "P5E2","name": "Release","tiny_tasks": [
+            {"id": "T27","desc": "Changelog + tags + release notes","est_h": 2}
+          ]}
+      ]
+    }
+  ]
+}
