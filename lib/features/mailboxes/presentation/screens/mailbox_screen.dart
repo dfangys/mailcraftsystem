@@ -7,7 +7,7 @@ import 'package:mailcraftsystem/shared/widgets/email_list_item.dart';
 import 'package:mailcraftsystem/shared/widgets/loading_widget.dart';
 import 'package:mailcraftsystem/shared/widgets/app_button.dart';
 import 'package:mailcraftsystem/features/messages/domain/models/message.dart';
-import 'package:mailcraftsystem/features/mailboxes/presentation/providers/mailbox_state.dart';
+import 'package:mailcraftsystem/features/mailboxes/presentation/controllers/mailbox_controller.dart';
 
 /// Enterprise-grade mailbox screen with comprehensive email management
 class MailboxScreen extends ConsumerStatefulWidget {
