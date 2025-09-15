@@ -1,0 +1,148 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+import 'package:mailcraftsystem/features/messages/domain/models/message.dart';
+
+part 'message_content.freezed.dart';
+part 'message_content.g.dart';
+
+/// Message content model
+@freezed
+class MessageContent with _$MessageContent {
+  const factory MessageContent({
+    required String textPlain,
+    String? textHtml,
+    List<MessageAttachment>? attachments,
+    List<MessageAttachment>? inlineAttachments,
+  }) = _MessageContent;
+  
+  factory MessageContent.fromJson(Map<String, dynamic> json) =>
+      _$MessageContentFromJson(json);
+}
+
+/// Attachment data model
+@freezed
+class AttachmentData with _$AttachmentData {
+  const factory AttachmentData({
+    required String name,
+    required String mimeType,
+    required List<int> data,
+    int? size,
+  }) = _AttachmentData;
+  
+  factory AttachmentData.fromJson(Map<String, dynamic> json) =>
+      _$AttachmentDataFromJson(json);
+}
+
+/// Message search criteria
+@freezed
+class MessageSearchCriteria with _$MessageSearchCriteria {
+  const factory MessageSearchCriteria({
+    String? query,
+    String? from,
+    String? to,
+    String? subject,
+    String? body,
+    DateTime? since,
+    DateTime? before,
+    bool? isRead,
+    bool? isFlagged,
+    bool? hasAttachments,
+    MessagePriority? priority,
+  }) = _MessageSearchCriteria;
+  
+  factory MessageSearchCriteria.fromJson(Map<String, dynamic> json) =>
+      _$MessageSearchCriteriaFromJson(json);
+}
+
+/// Message sort order
+enum MessageSortOrder {
+  @JsonValue('date_desc')
+  dateDescending,
+  @JsonValue('date_asc')
+  dateAscending,
+  @JsonValue('subject_asc')
+  subjectAscending,
+  @JsonValue('subject_desc')
+  subjectDescending,
+  @JsonValue('from_asc')
+  fromAscending,
+  @JsonValue('from_desc')
+  fromDescending,
+  @JsonValue('size_asc')
+  sizeAscending,
+  @JsonValue('size_desc')
+  sizeDescending,
+}
+
+/// Extension for message sort order
+extension MessageSortOrderExtension on MessageSortOrder {
+  /// Get display name
+  String get displayName {
+    switch (this) {
+      case MessageSortOrder.dateDescending:
+        return 'Date (Newest First)';
+      case MessageSortOrder.dateAscending:
+        return 'Date (Oldest First)';
+      case MessageSortOrder.subjectAscending:
+        return 'Subject (A-Z)';
+      case MessageSortOrder.subjectDescending:
+        return 'Subject (Z-A)';
+      case MessageSortOrder.fromAscending:
+        return 'From (A-Z)';
+      case MessageSortOrder.fromDescending:
+        return 'From (Z-A)';
+      case MessageSortOrder.sizeAscending:
+        return 'Size (Smallest First)';
+      case MessageSortOrder.sizeDescending:
+        return 'Size (Largest First)';
+    }
+  }
+  
+  /// Check if this is a date sort
+  bool get isDateSort {
+    return this == MessageSortOrder.dateAscending ||
+           this == MessageSortOrder.dateDescending;
+  }
+  
+  /// Check if this is ascending order
+  bool get isAscending {
+    return this == MessageSortOrder.dateAscending ||
+           this == MessageSortOrder.subjectAscending ||
+           this == MessageSortOrder.fromAscending ||
+           this == MessageSortOrder.sizeAscending;
+  }
+}
+
+/// Extension for message search criteria
+extension MessageSearchCriteriaExtension on MessageSearchCriteria {
+  /// Check if criteria is empty
+  bool get isEmpty {
+    return query == null &&
+           from == null &&
+           to == null &&
+           subject == null &&
+           body == null &&
+           since == null &&
+           before == null &&
+           isRead == null &&
+           isFlagged == null &&
+           hasAttachments == null &&
+           priority == null;
+  }
+  
+  /// Get search summary
+  String get searchSummary {
+    final parts = <String>[];
+    
+    if (query?.isNotEmpty == true) parts.add('Text: "$query"');
+    if (from?.isNotEmpty == true) parts.add('From: "$from"');
+    if (to?.isNotEmpty == true) parts.add('To: "$to"');
+    if (subject?.isNotEmpty == true) parts.add('Subject: "$subject"');
+    if (isRead != null) parts.add(isRead! ? 'Read' : 'Unread');
+    if (isFlagged == true) parts.add('Flagged');
+    if (hasAttachments == true) parts.add('Has Attachments');
+    if (priority != null) parts.add('Priority: ${priority!.displayName}');
+    
+    return parts.join(', ');
+  }
+}
