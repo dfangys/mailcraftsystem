@@ -17,12 +17,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
+  bool _hasInitialized = false;
 
   @override
   void initState() {
     super.initState();
     _setupAnimations();
-    _initializeApp();
   }
 
   void _setupAnimations() {
@@ -51,16 +51,23 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   }
 
   Future<void> _initializeApp() async {
-    ref.listen<AuthState>(authControllerProvider, (previous, next) {
-      if (next.isAuthenticated) {
-        context.go('/home');
-      } else if (next.error != null) {
-        context.go('/login');
-      }
-    });
-
+    if (_hasInitialized) return;
+    _hasInitialized = true;
+    
     // Check authentication status
     await ref.read(authControllerProvider.notifier).checkAuthStatus();
+    
+    // Navigate after a minimum delay for better UX
+    await Future.delayed(const Duration(milliseconds: 2000));
+    
+    if (mounted) {
+      final authState = ref.read(authControllerProvider);
+      if (authState.isAuthenticated) {
+        context.go('/home');
+      } else {
+        context.go('/login');
+      }
+    }
   }
 
   @override
@@ -73,6 +80,20 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+
+    // Listen to auth state changes in build method
+    ref.listen<AuthState>(authControllerProvider, (previous, next) {
+      if (next.isAuthenticated) {
+        context.go('/home');
+      } else if (next.error != null) {
+        context.go('/login');
+      }
+    });
+
+    // Initialize app on first build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initializeApp();
+    });
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
