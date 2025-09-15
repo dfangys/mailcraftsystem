@@ -208,8 +208,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                         ? null
                         : _handleOtpSubmit,
                     isLoading: authState.isLoading,
-                    style: AppButtonStyle.filled,
-                    size: AppButtonSize.large,
+style: AppButtonStyle.primary,
                   ),
                   const SizedBox(height: 24),
 

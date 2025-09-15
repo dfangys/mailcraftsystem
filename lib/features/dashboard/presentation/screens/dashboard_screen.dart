@@ -553,7 +553,7 @@ class _StatusItem extends StatelessWidget {
             child: Text(
               status,
               style: theme.textTheme.bodySmall?.copyWith(
-                color: color.shade700,
+                color: Colors.grey[700],
                 fontWeight: FontWeight.w500,
               ),
             ),

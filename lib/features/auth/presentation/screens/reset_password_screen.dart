@@ -148,8 +148,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
             text: 'Send Reset Instructions',
             onPressed: authState.isLoading ? null : _handleResetRequest,
             isLoading: authState.isLoading,
-            style: AppButtonStyle.filled,
-            size: AppButtonSize.large,
+style: AppButtonStyle.primary,
           ),
           const SizedBox(height: 24),
 
@@ -292,8 +291,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
               _isEmailSent = false;
             });
           },
-          style: AppButtonStyle.outlined,
-          size: AppButtonSize.large,
+style: AppButtonStyle.secondary,
         ),
         const SizedBox(height: 16),
 

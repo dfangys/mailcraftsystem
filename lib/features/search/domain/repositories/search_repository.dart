@@ -3,6 +3,7 @@ import 'package:mailcraftsystem/core/error/failures.dart';
 import 'package:mailcraftsystem/features/messages/domain/models/message.dart';
 import 'package:mailcraftsystem/features/search/domain/models/search_index.dart';
 import 'package:mailcraftsystem/features/search/domain/models/search_query.dart';
+import 'package:mailcraftsystem/features/search/domain/models/search_index_status.dart';
 
 /// Search repository interface
 abstract class SearchRepository {
