@@ -20,7 +20,12 @@ class MessageRepositoryImpl implements MessageRepository {
     dynamic sortOrder,
   }) async {
     try {
-      final messages = await mailClientService.client!.fetchMessages(
+      final client = mailClientService.client;
+      if (client == null) {
+        return const Left(Failure.auth(message: 'Mail client not initialized. Please login first.'));
+      }
+      
+      final messages = await client.fetchMessages(
         count: limit ?? 20,
         page: (offset ?? 0) ~/ (limit ?? 20) + 1,
       );
@@ -40,9 +45,14 @@ class MessageRepositoryImpl implements MessageRepository {
     int uid,
   ) async {
     try {
-      final messages = await mailClientService.client!.fetchMessages();
+      final client = mailClientService.client;
+      if (client == null) {
+        return const Left(Failure.auth(message: 'Mail client not initialized. Please login first.'));
+      }
+      
+      final messages = await client.fetchMessages();
       final message = messages.firstWhere((m) => m.uid == uid);
-      final fullMessage = await mailClientService.client!.fetchMessageContents(message);
+      final fullMessage = await client.fetchMessageContents(message);
       final mappedMessage = model.Message.fromEnoughMail(fullMessage);
       return Right(mappedMessage);
     } on MailException catch (e) {
@@ -59,15 +69,19 @@ class MessageRepositoryImpl implements MessageRepository {
     int uid,
   ) async {
     try {
-      final messages = await mailClientService.client!.fetchMessages();
+      final client = mailClientService.client;
+      if (client == null) {
+        return const Left(Failure.auth(message: 'Mail client not initialized. Please login first.'));
+      }
+      
+      final messages = await client.fetchMessages();
       final message = messages.firstWhere((m) => m.uid == uid);
-      final fullMessage = await mailClientService.client!.fetchMessageContents(message);
+      final fullMessage = await client.fetchMessageContents(message);
       
       return Right(MessageContent(
         textPlain: fullMessage.decodeTextPlainPart() ?? '',
-        textHtml: fullMessage.decodeTextHtmlPart(),
+        textHtml: fullMessage.decodeTextHtmlPart() ?? '',
         attachments: [],
-        inlineAttachments: [],
       ));
     } on MailException catch (e) {
       return Left(Failure.server(message: e.message ?? 'Unknown error'));
@@ -83,7 +97,14 @@ class MessageRepositoryImpl implements MessageRepository {
     int uid,
   ) async {
     try {
-      await mailClientService.client!.markSeen(MessageSequence.fromId(uid));
+      final client = mailClientService.client;
+      if (client == null) {
+        return const Left(Failure.auth(message: 'Mail client not initialized. Please login first.'));
+      }
+      
+      final messages = await client.fetchMessages();
+      final message = messages.firstWhere((m) => m.uid == uid);
+      await client.markSeen(MessageSequence.fromMessage(message));
       return const Right(null);
     } on MailException catch (e) {
       return Left(Failure.server(message: e.message ?? 'Unknown error'));
@@ -99,7 +120,14 @@ class MessageRepositoryImpl implements MessageRepository {
     int uid,
   ) async {
     try {
-      await mailClientService.client!.markUnseen(MessageSequence.fromId(uid));
+      final client = mailClientService.client;
+      if (client == null) {
+        return const Left(Failure.auth(message: 'Mail client not initialized. Please login first.'));
+      }
+      
+      final messages = await client.fetchMessages();
+      final message = messages.firstWhere((m) => m.uid == uid);
+      await client.markUnseen(MessageSequence.fromMessage(message));
       return const Right(null);
     } on MailException catch (e) {
       return Left(Failure.server(message: e.message ?? 'Unknown error'));
@@ -109,13 +137,20 @@ class MessageRepositoryImpl implements MessageRepository {
   }
 
   @override
-  Future<Either<Failure, void>> flagMessage(
+  Future<Either<Failure, void>> markAsFlagged(
     String accountId,
     String mailboxPath,
     int uid,
   ) async {
     try {
-      await mailClientService.client!.markFlagged(MessageSequence.fromId(uid));
+      final client = mailClientService.client;
+      if (client == null) {
+        return const Left(Failure.auth(message: 'Mail client not initialized. Please login first.'));
+      }
+      
+      final messages = await client.fetchMessages();
+      final message = messages.firstWhere((m) => m.uid == uid);
+      await client.markFlagged(MessageSequence.fromMessage(message));
       return const Right(null);
     } on MailException catch (e) {
       return Left(Failure.server(message: e.message ?? 'Unknown error'));
@@ -125,13 +160,44 @@ class MessageRepositoryImpl implements MessageRepository {
   }
 
   @override
-  Future<Either<Failure, void>> unflagMessage(
+  Future<Either<Failure, void>> markAsUnflagged(
     String accountId,
     String mailboxPath,
     int uid,
   ) async {
     try {
-      await mailClientService.client!.markUnflagged(MessageSequence.fromId(uid));
+      final client = mailClientService.client;
+      if (client == null) {
+        return const Left(Failure.auth(message: 'Mail client not initialized. Please login first.'));
+      }
+      
+      final messages = await client.fetchMessages();
+      final message = messages.firstWhere((m) => m.uid == uid);
+      await client.markUnflagged(MessageSequence.fromMessage(message));
+      return const Right(null);
+    } on MailException catch (e) {
+      return Left(Failure.server(message: e.message ?? 'Unknown error'));
+    } catch (e) {
+      return Left(Failure.unknown(message: 'An unknown error occurred: $e'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteMessage(
+    String accountId,
+    String mailboxPath,
+    int uid, {
+    bool permanent = false,
+  }) async {
+    try {
+      final client = mailClientService.client;
+      if (client == null) {
+        return const Left(Failure.auth(message: 'Mail client not initialized. Please login first.'));
+      }
+      
+      final messages = await client.fetchMessages();
+      final message = messages.firstWhere((m) => m.uid == uid);
+      await client.markDeleted(MessageSequence.fromMessage(message));
       return const Right(null);
     } on MailException catch (e) {
       return Left(Failure.server(message: e.message ?? 'Unknown error'));
@@ -148,10 +214,17 @@ class MessageRepositoryImpl implements MessageRepository {
     int uid,
   ) async {
     try {
-      // Get target mailbox
-      final mailboxes = await mailClientService.client!.listMailboxes();
-      final targetMailbox = mailboxes.firstWhere((box) => box.path == toMailboxPath);
-      await mailClientService.client!.moveMessages(MessageSequence.fromId(uid), targetMailbox);
+      final client = mailClientService.client;
+      if (client == null) {
+        return const Left(Failure.auth(message: 'Mail client not initialized. Please login first.'));
+      }
+      
+      final mailboxes = await client.listMailboxes();
+      final toMailbox = mailboxes.firstWhere((box) => box.path == toMailboxPath);
+      final messages = await client.fetchMessages();
+      final message = messages.firstWhere((m) => m.uid == uid);
+      
+      await client.moveMessages(MessageSequence.fromMessage(message), toMailbox);
       return const Right(null);
     } on MailException catch (e) {
       return Left(Failure.server(message: e.message ?? 'Unknown error'));
@@ -167,32 +240,158 @@ class MessageRepositoryImpl implements MessageRepository {
     String toMailboxPath,
     int uid,
   ) async {
-    try {
-      // Copy functionality is not directly available in enough_mail
-      return const Left(Failure.notImplemented(message: 'Copy message not implemented'));
-    } catch (e) {
-      return Left(Failure.unknown(message: 'An unknown error occurred: $e'));
-    }
+    return const Left(Failure.notImplemented(message: 'Copy message not implemented'));
   }
 
   @override
-  Future<Either<Failure, void>> deleteMessage(
+  Future<Either<Failure, List<model.Message>>> searchMessages(
     String accountId,
     String mailboxPath,
-    int uid, {
-    bool permanent = false,
-  }) async {
+    dynamic criteria,
+  ) async {
+    return const Left(Failure.notImplemented(message: 'Search messages not implemented'));
+  }
+
+  @override
+  Future<Either<Failure, void>> markMultipleAsRead(
+    String accountId,
+    String mailboxPath,
+    List<int> uids,
+  ) async {
     try {
-      await mailClientService.client!.deleteMessages(
-        MessageSequence.fromId(uid), 
-        expunge: permanent,
-      );
+      final client = mailClientService.client;
+      if (client == null) {
+        return const Left(Failure.auth(message: 'Mail client not initialized. Please login first.'));
+      }
+      
+      await client.markSeen(MessageSequence.fromIds(uids));
       return const Right(null);
     } on MailException catch (e) {
       return Left(Failure.server(message: e.message ?? 'Unknown error'));
     } catch (e) {
       return Left(Failure.unknown(message: 'An unknown error occurred: $e'));
     }
+  }
+
+  @override
+  Future<Either<Failure, void>> markMultipleAsUnread(
+    String accountId,
+    String mailboxPath,
+    List<int> uids,
+  ) async {
+    try {
+      final client = mailClientService.client;
+      if (client == null) {
+        return const Left(Failure.auth(message: 'Mail client not initialized. Please login first.'));
+      }
+      
+      await client.markUnseen(MessageSequence.fromIds(uids));
+      return const Right(null);
+    } on MailException catch (e) {
+      return Left(Failure.server(message: e.message ?? 'Unknown error'));
+    } catch (e) {
+      return Left(Failure.unknown(message: 'An unknown error occurred: $e'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteMultipleMessages(
+    String accountId,
+    String mailboxPath,
+    List<int> uids,
+  ) async {
+    try {
+      final client = mailClientService.client;
+      if (client == null) {
+        return const Left(Failure.auth(message: 'Mail client not initialized. Please login first.'));
+      }
+      
+      await client.markDeleted(MessageSequence.fromIds(uids));
+      return const Right(null);
+    } on MailException catch (e) {
+      return Left(Failure.server(message: e.message ?? 'Unknown error'));
+    } catch (e) {
+      return Left(Failure.unknown(message: 'An unknown error occurred: $e'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> moveMultipleMessages(
+    String accountId,
+    String fromMailboxPath,
+    String toMailboxPath,
+    List<int> uids,
+  ) async {
+    try {
+      final client = mailClientService.client;
+      if (client == null) {
+        return const Left(Failure.auth(message: 'Mail client not initialized. Please login first.'));
+      }
+      
+      final mailboxes = await client.listMailboxes();
+      final toMailbox = mailboxes.firstWhere((box) => box.path == toMailboxPath);
+      
+      await client.moveMessages(MessageSequence.fromIds(uids), toMailbox);
+      return const Right(null);
+    } on MailException catch (e) {
+      return Left(Failure.server(message: e.message ?? 'Unknown error'));
+    } catch (e) {
+      return Left(Failure.unknown(message: 'An unknown error occurred: $e'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> archiveMessage(
+    String accountId,
+    String mailboxPath,
+    int uid,
+  ) async {
+    return const Left(Failure.notImplemented(message: 'Archive message not implemented'));
+  }
+
+  @override
+  Future<Either<Failure, void>> unarchiveMessage(
+    String accountId,
+    String mailboxPath,
+    int uid,
+  ) async {
+    return const Left(Failure.notImplemented(message: 'Unarchive message not implemented'));
+  }
+
+  @override
+  Future<Either<Failure, void>> spamMessage(
+    String accountId,
+    String mailboxPath,
+    int uid,
+  ) async {
+    return const Left(Failure.notImplemented(message: 'Spam message not implemented'));
+  }
+
+  @override
+  Future<Either<Failure, void>> unspamMessage(
+    String accountId,
+    String mailboxPath,
+    int uid,
+  ) async {
+    return const Left(Failure.notImplemented(message: 'Unspam message not implemented'));
+  }
+
+  @override
+  Future<Either<Failure, void>> flagMessage(
+    String accountId,
+    String mailboxPath,
+    int uid,
+  ) async {
+    return markAsFlagged(accountId, mailboxPath, uid);
+  }
+
+  @override
+  Future<Either<Failure, void>> unflagMessage(
+    String accountId,
+    String mailboxPath,
+    int uid,
+  ) async {
+    return markAsUnflagged(accountId, mailboxPath, uid);
   }
 
   @override
@@ -202,26 +401,7 @@ class MessageRepositoryImpl implements MessageRepository {
     int uid,
     String attachmentId,
   ) async {
-    try {
-      // This would require more complex implementation with part fetching
-      return const Left(Failure.notImplemented(message: 'Attachment download not implemented'));
-    } catch (e) {
-      return Left(Failure.unknown(message: 'An unknown error occurred: $e'));
-    }
-  }
-
-  @override
-  Future<Either<Failure, List<model.Message>>> searchMessages(
-    String accountId,
-    String mailboxPath,
-    dynamic criteria,
-  ) async {
-    try {
-      // This would require implementing search criteria
-      return const Left(Failure.notImplemented(message: 'Message search not implemented'));
-    } catch (e) {
-      return Left(Failure.unknown(message: 'An unknown error occurred: $e'));
-    }
+    return const Left(Failure.notImplemented(message: 'Download attachment not implemented'));
   }
 
   @override
@@ -229,12 +409,7 @@ class MessageRepositoryImpl implements MessageRepository {
     String accountId,
     String messageId,
   ) async {
-    try {
-      // This would require implementing thread detection
-      return const Left(Failure.notImplemented(message: 'Message threading not implemented'));
-    } catch (e) {
-      return Left(Failure.unknown(message: 'An unknown error occurred: $e'));
-    }
+    return const Left(Failure.notImplemented(message: 'Get message thread not implemented'));
   }
 
   @override
@@ -243,15 +418,7 @@ class MessageRepositoryImpl implements MessageRepository {
     String mailboxPath,
     List<int> uids,
   ) async {
-    try {
-      final sequence = MessageSequence.fromIds(uids);
-      await mailClientService.client!.markSeen(sequence);
-      return const Right(null);
-    } on MailException catch (e) {
-      return Left(Failure.server(message: e.message ?? 'Unknown error'));
-    } catch (e) {
-      return Left(Failure.unknown(message: 'An unknown error occurred: $e'));
-    }
+    return markMultipleAsRead(accountId, mailboxPath, uids);
   }
 
   @override
@@ -260,15 +427,7 @@ class MessageRepositoryImpl implements MessageRepository {
     String mailboxPath,
     List<int> uids,
   ) async {
-    try {
-      final sequence = MessageSequence.fromIds(uids);
-      await mailClientService.client!.markUnseen(sequence);
-      return const Right(null);
-    } on MailException catch (e) {
-      return Left(Failure.server(message: e.message ?? 'Unknown error'));
-    } catch (e) {
-      return Left(Failure.unknown(message: 'An unknown error occurred: $e'));
-    }
+    return markMultipleAsUnread(accountId, mailboxPath, uids);
   }
 
   @override
@@ -277,15 +436,7 @@ class MessageRepositoryImpl implements MessageRepository {
     String mailboxPath,
     List<int> uids,
   ) async {
-    try {
-      final sequence = MessageSequence.fromIds(uids);
-      await mailClientService.client!.markFlagged(sequence);
-      return const Right(null);
-    } on MailException catch (e) {
-      return Left(Failure.server(message: e.message ?? 'Unknown error'));
-    } catch (e) {
-      return Left(Failure.unknown(message: 'An unknown error occurred: $e'));
-    }
+    return const Left(Failure.notImplemented(message: 'Bulk flag not implemented'));
   }
 
   @override
@@ -294,15 +445,7 @@ class MessageRepositoryImpl implements MessageRepository {
     String mailboxPath,
     List<int> uids,
   ) async {
-    try {
-      final sequence = MessageSequence.fromIds(uids);
-      await mailClientService.client!.markUnflagged(sequence);
-      return const Right(null);
-    } on MailException catch (e) {
-      return Left(Failure.server(message: e.message ?? 'Unknown error'));
-    } catch (e) {
-      return Left(Failure.unknown(message: 'An unknown error occurred: $e'));
-    }
+    return const Left(Failure.notImplemented(message: 'Bulk unflag not implemented'));
   }
 
   @override
@@ -312,17 +455,7 @@ class MessageRepositoryImpl implements MessageRepository {
     String toMailboxPath,
     List<int> uids,
   ) async {
-    try {
-      final sequence = MessageSequence.fromIds(uids);
-      final mailboxes = await mailClientService.client!.listMailboxes();
-      final targetMailbox = mailboxes.firstWhere((box) => box.path == toMailboxPath);
-      await mailClientService.client!.moveMessages(sequence, targetMailbox);
-      return const Right(null);
-    } on MailException catch (e) {
-      return Left(Failure.server(message: e.message ?? 'Unknown error'));
-    } catch (e) {
-      return Left(Failure.unknown(message: 'An unknown error occurred: $e'));
-    }
+    return moveMultipleMessages(accountId, fromMailboxPath, toMailboxPath, uids);
   }
 
   @override
@@ -332,14 +465,6 @@ class MessageRepositoryImpl implements MessageRepository {
     List<int> uids, {
     bool permanent = false,
   }) async {
-    try {
-      final sequence = MessageSequence.fromIds(uids);
-      await mailClientService.client!.deleteMessages(sequence, expunge: permanent);
-      return const Right(null);
-    } on MailException catch (e) {
-      return Left(Failure.server(message: e.message ?? 'Unknown error'));
-    } catch (e) {
-      return Left(Failure.unknown(message: 'An unknown error occurred: $e'));
-    }
+    return deleteMultipleMessages(accountId, mailboxPath, uids);
   }
 }

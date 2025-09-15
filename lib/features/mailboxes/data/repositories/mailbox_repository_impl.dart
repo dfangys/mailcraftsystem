@@ -14,7 +14,12 @@ class MailboxRepositoryImpl implements MailboxRepository {
   @override
   Future<Either<Failure, List<model.Mailbox>>> getMailboxes(String accountId) async {
     try {
-      final mailboxes = await mailClientService.client!.listMailboxes();
+      final client = mailClientService.client;
+      if (client == null) {
+        return const Left(Failure.auth(message: 'Mail client not initialized. Please login first.'));
+      }
+      
+      final mailboxes = await client.listMailboxes();
       final mappedMailboxes = mailboxes.map((e) => model.Mailbox.fromEnoughMail(e)).toList();
       return Right(mappedMailboxes);
     } on MailException catch (e) {
@@ -27,7 +32,12 @@ class MailboxRepositoryImpl implements MailboxRepository {
   @override
   Future<Either<Failure, model.Mailbox>> getMailbox(String accountId, String path) async {
     try {
-      final mailboxes = await mailClientService.client!.listMailboxes();
+      final client = mailClientService.client;
+      if (client == null) {
+        return const Left(Failure.auth(message: 'Mail client not initialized. Please login first.'));
+      }
+      
+      final mailboxes = await client.listMailboxes();
       final mailbox = mailboxes.firstWhere((box) => box.path == path);
       return Right(model.Mailbox.fromEnoughMail(mailbox));
     } on MailException catch (e) {
@@ -48,23 +58,13 @@ class MailboxRepositoryImpl implements MailboxRepository {
     String name,
     String? parentPath,
   ) async {
-    try {
-      final path = parentPath != null ? '$parentPath/$name' : name;
-      await mailClientService.client!.createMailbox(path);
-      final mailboxes = await mailClientService.client!.listMailboxes();
-      final mailbox = mailboxes.firstWhere((box) => box.path == path);
-      return Right(model.Mailbox.fromEnoughMail(mailbox));
-    } on MailException catch (e) {
-      return Left(Failure.server(message: e.message ?? 'Unknown mail error'));
-    } catch (e) {
-      return Left(Failure.unknown(message: 'An unknown error occurred: $e'));
-    }
+    return const Left(Failure.notImplemented(message: 'Create mailbox not implemented'));
   }
 
   @override
-  Future<Either<Failure, void>> renameMailbox(
+  Future<Either<Failure, model.Mailbox>> renameMailbox(
     String accountId,
-    String currentPath,
+    String path,
     String newName,
   ) async {
     return const Left(Failure.notImplemented(message: 'Rename mailbox not implemented'));
@@ -73,9 +73,14 @@ class MailboxRepositoryImpl implements MailboxRepository {
   @override
   Future<Either<Failure, void>> deleteMailbox(String accountId, String path) async {
     try {
-      final mailboxes = await mailClientService.client!.listMailboxes();
+      final client = mailClientService.client;
+      if (client == null) {
+        return const Left(Failure.auth(message: 'Mail client not initialized. Please login first.'));
+      }
+      
+      final mailboxes = await client.listMailboxes();
       final mailbox = mailboxes.firstWhere((box) => box.path == path);
-      await mailClientService.client!.deleteMailbox(mailbox);
+      await client.deleteMailbox(mailbox);
       return const Right(null);
     } on MailException catch (e) {
       return Left(Failure.server(message: e.message ?? 'Unknown mail error'));
@@ -95,12 +100,16 @@ class MailboxRepositoryImpl implements MailboxRepository {
   }
 
   @override
-  Future<Either<Failure, MailboxStatus>> getMailboxStatus(
-    String accountId,
-    String path,
-  ) async {
+  Future<Either<Failure, MailboxStatus>> getMailboxStatus(String accountId, String path) async {
     try {
-      final mailbox = await mailClientService.client!.selectMailboxByPath(path);
+      final client = mailClientService.client;
+      if (client == null) {
+        return const Left(Failure.auth(message: 'Mail client not initialized. Please login first.'));
+      }
+      
+      final mailboxes = await client.listMailboxes();
+      final mailbox = mailboxes.firstWhere((box) => box.path == path);
+      
       return Right(MailboxStatus(
         path: path,
         messageCount: mailbox.messagesExists,
@@ -108,6 +117,7 @@ class MailboxRepositoryImpl implements MailboxRepository {
         recentCount: mailbox.messagesRecent,
         uidNext: mailbox.uidNext,
         uidValidity: mailbox.uidValidity,
+        lastSync: DateTime.now(),
       ));
     } on MailException catch (e) {
       return Left(Failure.server(message: e.message ?? 'Unknown mail error'));
@@ -127,13 +137,8 @@ class MailboxRepositoryImpl implements MailboxRepository {
   }
 
   @override
-  Future<Either<Failure, void>> emptySpam(String accountId) async {
-    return const Left(Failure.notImplemented(message: 'Empty spam not implemented'));
-  }
-
-  @override
-  Future<Either<Failure, List<model.Mailbox>>> getMailboxHierarchy(String accountId) async {
-    return getMailboxes(accountId);
+  Future<Either<Failure, void>> compactMailbox(String accountId, String path) async {
+    return const Left(Failure.notImplemented(message: 'Compact mailbox not implemented'));
   }
 
   @override
@@ -141,19 +146,56 @@ class MailboxRepositoryImpl implements MailboxRepository {
     String accountId,
     String query,
   ) async {
-    try {
-      final mailboxes = await mailClientService.client!.listMailboxes();
-      final filteredMailboxes = mailboxes
-          .where((box) => 
-              box.name.toLowerCase().contains(query.toLowerCase()) ||
-              box.path.toLowerCase().contains(query.toLowerCase()))
-          .map((e) => model.Mailbox.fromEnoughMail(e))
-          .toList();
-      return Right(filteredMailboxes);
-    } on MailException catch (e) {
-      return Left(Failure.server(message: e.message ?? 'Unknown mail error'));
-    } catch (e) {
-      return Left(Failure.unknown(message: 'An unknown error occurred: $e'));
-    }
+    return const Left(Failure.notImplemented(message: 'Search mailboxes not implemented'));
+  }
+
+  @override
+  Future<Either<Failure, void>> syncMailbox(String accountId, String path) async {
+    return const Left(Failure.notImplemented(message: 'Sync mailbox not implemented'));
+  }
+
+  @override
+  Future<Either<Failure, List<model.Mailbox>>> getMailboxHierarchy(String accountId) async {
+    return const Left(Failure.notImplemented(message: 'Get mailbox hierarchy not implemented'));
+  }
+
+  @override
+  Future<Either<Failure, void>> setMailboxQuota(
+    String accountId,
+    String path,
+    int quotaBytes,
+  ) async {
+    return const Left(Failure.notImplemented(message: 'Set mailbox quota not implemented'));
+  }
+
+  @override
+  Future<Either<Failure, int>> getMailboxQuota(String accountId, String path) async {
+    return const Left(Failure.notImplemented(message: 'Get mailbox quota not implemented'));
+  }
+
+  @override
+  Future<Either<Failure, void>> enableMailboxNotifications(
+    String accountId,
+    String path,
+  ) async {
+    return const Left(Failure.notImplemented(message: 'Enable mailbox notifications not implemented'));
+  }
+
+  @override
+  Future<Either<Failure, void>> disableMailboxNotifications(
+    String accountId,
+    String path,
+  ) async {
+    return const Left(Failure.notImplemented(message: 'Disable mailbox notifications not implemented'));
+  }
+
+  @override
+  Future<Either<Failure, List<model.Mailbox>>> getSharedMailboxes(String accountId) async {
+    return const Left(Failure.notImplemented(message: 'Get shared mailboxes not implemented'));
+  }
+
+  @override
+  Future<Either<Failure, void>> emptySpam(String accountId) async {
+    return const Left(Failure.notImplemented(message: 'Empty spam not implemented'));
   }
 }
