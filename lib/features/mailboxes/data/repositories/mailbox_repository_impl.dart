@@ -73,7 +73,9 @@ class MailboxRepositoryImpl implements MailboxRepository {
   @override
   Future<Either<Failure, void>> deleteMailbox(String accountId, String path) async {
     try {
-      await mailClientService.client!.deleteMailbox(path);
+      final mailboxes = await mailClientService.client!.listMailboxes();
+      final mailbox = mailboxes.firstWhere((box) => box.path == path);
+      await mailClientService.client!.deleteMailbox(mailbox);
       return const Right(null);
     } on MailException catch (e) {
       return Left(Failure.server(message: e.message ?? 'Unknown mail error'));

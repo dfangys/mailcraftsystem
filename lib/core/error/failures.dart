@@ -67,7 +67,8 @@ extension FailureExtension on Failure {
       storage: (message) => 'Storage error: $message',
       mail: (message, details) => 'Mail error: $message',
       notFound: (message) => 'Not found: $message',
-      unknown: (message, error) => 'An unexpected error occurred: $message',
+      notImplemented: (message) => 'Feature not implemented: $message',
+      unknown: (message, error) => 'Unknown error: $message',
     );
   }
 }

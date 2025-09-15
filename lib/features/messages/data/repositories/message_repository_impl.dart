@@ -64,11 +64,10 @@ class MessageRepositoryImpl implements MessageRepository {
       final fullMessage = await mailClientService.client!.fetchMessageContents(message);
       
       return Right(MessageContent(
-        uid: uid,
-        htmlContent: fullMessage.decodeTextHtmlPart(),
-        textContent: fullMessage.decodeTextPlainPart(),
+        textPlain: fullMessage.decodeTextPlainPart() ?? '',
+        textHtml: fullMessage.decodeTextHtmlPart(),
         attachments: [],
-        hasAttachments: fullMessage.hasAttachments(),
+        inlineAttachments: [],
       ));
     } on MailException catch (e) {
       return Left(Failure.server(message: e.message ?? 'Unknown error'));
@@ -84,7 +83,7 @@ class MessageRepositoryImpl implements MessageRepository {
     int uid,
   ) async {
     try {
-      await mailClientService.client!.markSeen(MessageSequence.fromId(uid), true);
+      await mailClientService.client!.markSeen(MessageSequence.fromId(uid));
       return const Right(null);
     } on MailException catch (e) {
       return Left(Failure.server(message: e.message ?? 'Unknown error'));
@@ -100,7 +99,7 @@ class MessageRepositoryImpl implements MessageRepository {
     int uid,
   ) async {
     try {
-      await mailClientService.client!.markSeen(MessageSequence.fromId(uid), false);
+      await mailClientService.client!.markUnseen(MessageSequence.fromId(uid));
       return const Right(null);
     } on MailException catch (e) {
       return Left(Failure.server(message: e.message ?? 'Unknown error'));
@@ -116,7 +115,7 @@ class MessageRepositoryImpl implements MessageRepository {
     int uid,
   ) async {
     try {
-      await mailClientService.client!.markFlagged(MessageSequence.fromId(uid), true);
+      await mailClientService.client!.markFlagged(MessageSequence.fromId(uid));
       return const Right(null);
     } on MailException catch (e) {
       return Left(Failure.server(message: e.message ?? 'Unknown error'));
@@ -132,7 +131,7 @@ class MessageRepositoryImpl implements MessageRepository {
     int uid,
   ) async {
     try {
-      await mailClientService.client!.markFlagged(MessageSequence.fromId(uid), false);
+      await mailClientService.client!.markUnflagged(MessageSequence.fromId(uid));
       return const Right(null);
     } on MailException catch (e) {
       return Left(Failure.server(message: e.message ?? 'Unknown error'));
@@ -149,7 +148,10 @@ class MessageRepositoryImpl implements MessageRepository {
     int uid,
   ) async {
     try {
-      await mailClientService.client!.move(MessageSequence.fromId(uid), toMailboxPath);
+      // Get target mailbox
+      final mailboxes = await mailClientService.client!.listMailboxes();
+      final targetMailbox = mailboxes.firstWhere((box) => box.path == toMailboxPath);
+      await mailClientService.client!.moveMessages(MessageSequence.fromId(uid), targetMailbox);
       return const Right(null);
     } on MailException catch (e) {
       return Left(Failure.server(message: e.message ?? 'Unknown error'));
@@ -166,10 +168,8 @@ class MessageRepositoryImpl implements MessageRepository {
     int uid,
   ) async {
     try {
-      await mailClientService.client!.copy(MessageSequence.fromId(uid), toMailboxPath);
-      return const Right(null);
-    } on MailException catch (e) {
-      return Left(Failure.server(message: e.message ?? 'Unknown error'));
+      // Copy functionality is not directly available in enough_mail
+      return const Left(Failure.notImplemented(message: 'Copy message not implemented'));
     } catch (e) {
       return Left(Failure.unknown(message: 'An unknown error occurred: $e'));
     }
@@ -183,10 +183,10 @@ class MessageRepositoryImpl implements MessageRepository {
     bool permanent = false,
   }) async {
     try {
-      await mailClientService.client!.markDeleted(MessageSequence.fromId(uid), true);
-      if (permanent) {
-        await mailClientService.client!.expunge();
-      }
+      await mailClientService.client!.deleteMessages(
+        MessageSequence.fromId(uid), 
+        expunge: permanent,
+      );
       return const Right(null);
     } on MailException catch (e) {
       return Left(Failure.server(message: e.message ?? 'Unknown error'));
@@ -245,7 +245,7 @@ class MessageRepositoryImpl implements MessageRepository {
   ) async {
     try {
       final sequence = MessageSequence.fromIds(uids);
-      await mailClientService.client!.markSeen(sequence, true);
+      await mailClientService.client!.markSeen(sequence);
       return const Right(null);
     } on MailException catch (e) {
       return Left(Failure.server(message: e.message ?? 'Unknown error'));
@@ -262,7 +262,7 @@ class MessageRepositoryImpl implements MessageRepository {
   ) async {
     try {
       final sequence = MessageSequence.fromIds(uids);
-      await mailClientService.client!.markSeen(sequence, false);
+      await mailClientService.client!.markUnseen(sequence);
       return const Right(null);
     } on MailException catch (e) {
       return Left(Failure.server(message: e.message ?? 'Unknown error'));
@@ -279,7 +279,7 @@ class MessageRepositoryImpl implements MessageRepository {
   ) async {
     try {
       final sequence = MessageSequence.fromIds(uids);
-      await mailClientService.client!.markFlagged(sequence, true);
+      await mailClientService.client!.markFlagged(sequence);
       return const Right(null);
     } on MailException catch (e) {
       return Left(Failure.server(message: e.message ?? 'Unknown error'));
@@ -296,7 +296,7 @@ class MessageRepositoryImpl implements MessageRepository {
   ) async {
     try {
       final sequence = MessageSequence.fromIds(uids);
-      await mailClientService.client!.markFlagged(sequence, false);
+      await mailClientService.client!.markUnflagged(sequence);
       return const Right(null);
     } on MailException catch (e) {
       return Left(Failure.server(message: e.message ?? 'Unknown error'));
@@ -314,7 +314,9 @@ class MessageRepositoryImpl implements MessageRepository {
   ) async {
     try {
       final sequence = MessageSequence.fromIds(uids);
-      await mailClientService.client!.move(sequence, toMailboxPath);
+      final mailboxes = await mailClientService.client!.listMailboxes();
+      final targetMailbox = mailboxes.firstWhere((box) => box.path == toMailboxPath);
+      await mailClientService.client!.moveMessages(sequence, targetMailbox);
       return const Right(null);
     } on MailException catch (e) {
       return Left(Failure.server(message: e.message ?? 'Unknown error'));
@@ -332,10 +334,7 @@ class MessageRepositoryImpl implements MessageRepository {
   }) async {
     try {
       final sequence = MessageSequence.fromIds(uids);
-      await mailClientService.client!.markDeleted(sequence, true);
-      if (permanent) {
-        await mailClientService.client!.expunge();
-      }
+      await mailClientService.client!.deleteMessages(sequence, expunge: permanent);
       return const Right(null);
     } on MailException catch (e) {
       return Left(Failure.server(message: e.message ?? 'Unknown error'));
