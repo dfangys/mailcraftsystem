@@ -9,6 +9,7 @@ import '../../../../shared/forms/app_text_field.dart';
 import '../controllers/account_controller.dart';
 import '../widgets/provider_preset_card.dart';
 import '../widgets/advanced_settings_panel.dart';
+import '../../../../core/error/failures.dart' as core;
 
 /// Account setup screen with IMAP/SMTP configuration
 class AccountSetupScreen extends ConsumerStatefulWidget {
@@ -333,7 +334,7 @@ class _AccountSetupScreenState extends ConsumerState<AccountSetupScreen>
             // Error display
             if (accountState.error != null) ...[
               AppErrorWidget(
-                failure: Failure(accountState.error!),
+                failure: core.Failure(accountState.error!),
                 onRetry: _handleAccountSetup,
               ),
               const SizedBox(height: 24),

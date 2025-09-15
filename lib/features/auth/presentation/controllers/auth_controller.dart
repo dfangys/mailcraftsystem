@@ -3,9 +3,12 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../domain/models/auth_token.dart';
 import '../../domain/models/user_profile.dart';
+import '../../domain/models/login_request.dart';
+import '../../domain/models/otp_challenge.dart';
 import '../../domain/usecases/login_usecase.dart';
 import '../../domain/usecases/verify_otp_usecase.dart';
 import '../../domain/usecases/logout_usecase.dart';
+import '../providers/auth_providers.dart';
 
 part 'auth_controller.freezed.dart';
 
@@ -58,38 +61,35 @@ class AuthController extends StateNotifier<AuthState> {
     state = state.copyWith(isLoading: true, error: null);
 
     try {
-      final result = await _loginUseCase.execute(
-        LoginParams(
-          email: email,
-          password: password,
-          rememberMe: rememberMe,
-        ),
+      final request = LoginRequest(
+        email: email,
+        password: password,
+        rememberMe: rememberMe,
       );
+      
+      final result = await _loginUseCase.call(request);
 
-      result.fold(
-        (failure) {
+      if (result.left != null) {
+        state = state.copyWith(
+          isLoading: false,
+          error: result.left!.message,
+        );
+      } else if (result.right != null) {
+        final token = result.right!;
+        if (token.requiresOtp) {
           state = state.copyWith(
             isLoading: false,
-            error: failure.message,
+            requiresOtp: true,
+            token: token,
           );
-        },
-        (loginResult) {
-          if (loginResult.requiresOtp) {
-            state = state.copyWith(
-              isLoading: false,
-              requiresOtp: true,
-              token: loginResult.tempToken,
-            );
-          } else {
-            state = state.copyWith(
-              isLoading: false,
-              isAuthenticated: true,
-              token: loginResult.token,
-              user: loginResult.user,
-            );
-          }
-        },
-      );
+        } else {
+          state = state.copyWith(
+            isLoading: false,
+            isAuthenticated: true,
+            token: token,
+          );
+        }
+      }
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
@@ -99,39 +99,36 @@ class AuthController extends StateNotifier<AuthState> {
   }
 
   /// Verify OTP code
-  Future<void> verifyOtp(String otpCode) async {
+  Future<void> verifyOtp(String code) async {
     if (state.token == null) {
-      state = state.copyWith(error: 'No temporary token available');
+      state = state.copyWith(error: 'No active session');
       return;
     }
 
     state = state.copyWith(isLoading: true, error: null);
 
     try {
-      final result = await _verifyOtpUseCase.execute(
-        VerifyOtpParams(
-          tempToken: state.token!,
-          otpCode: otpCode,
-        ),
+      final challenge = OtpChallenge(
+        token: state.token!.accessToken,
+        code: code,
       );
+      
+      final result = await _verifyOtpUseCase.call(challenge);
 
-      result.fold(
-        (failure) {
-          state = state.copyWith(
-            isLoading: false,
-            error: failure.message,
-          );
-        },
-        (verifyResult) {
-          state = state.copyWith(
-            isLoading: false,
-            isAuthenticated: true,
-            requiresOtp: false,
-            token: verifyResult.token,
-            user: verifyResult.user,
-          );
-        },
-      );
+      if (result.left != null) {
+        state = state.copyWith(
+          isLoading: false,
+          error: result.left!.message,
+        );
+      } else if (result.right != null) {
+        final token = result.right!;
+        state = state.copyWith(
+          isLoading: false,
+          isAuthenticated: true,
+          requiresOtp: false,
+          token: token,
+        );
+      }
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
@@ -142,19 +139,18 @@ class AuthController extends StateNotifier<AuthState> {
 
   /// Resend OTP code
   Future<void> resendOtp() async {
-    // Implementation would call the resend OTP endpoint
-    // For now, just show a success message
-    state = state.copyWith(error: null);
-    // TODO: Implement actual resend OTP logic
+    // Simulate resending OTP
+    await Future.delayed(const Duration(seconds: 1));
+    // In real implementation, this would call the auth repository
   }
 
-  /// Request password reset
-  Future<void> requestPasswordReset(String email) async {
+  /// Reset password
+  Future<void> resetPassword(String email) async {
     state = state.copyWith(isLoading: true, error: null);
 
     try {
-      // TODO: Implement actual password reset request
-      await Future.delayed(const Duration(seconds: 2)); // Simulate API call
+      // Simulate password reset
+      await Future.delayed(const Duration(seconds: 2));
       
       state = state.copyWith(
         isLoading: false,
@@ -168,41 +164,29 @@ class AuthController extends StateNotifier<AuthState> {
     }
   }
 
-  /// Logout user
+  /// Logout
   Future<void> logout() async {
-    state = state.copyWith(isLoading: true, error: null);
+    state = state.copyWith(isLoading: true);
 
     try {
-      final result = await _logoutUseCase.execute(NoParams());
-
-      result.fold(
-        (failure) {
-          // Even if logout fails on server, clear local state
-          _clearAuthState();
-        },
-        (_) {
-          _clearAuthState();
-        },
-      );
+      await _logoutUseCase.call();
+      
+      state = const AuthState();
     } catch (e) {
-      // Clear local state even if there's an error
-      _clearAuthState();
+      state = state.copyWith(
+        isLoading: false,
+        error: 'Logout failed: ${e.toString()}',
+      );
     }
   }
 
-  void _clearAuthState() {
-    state = const AuthState();
-  }
-
-  /// Clear error state
+  /// Clear error
   void clearError() {
     state = state.copyWith(error: null);
   }
 
-  /// Check if user is authenticated (for app initialization)
-  Future<void> checkAuthStatus() async {
-    // TODO: Check if there's a valid stored token
-    // For now, assume not authenticated
-    state = const AuthState();
+  /// Clear reset email sent flag
+  void clearResetEmailSent() {
+    state = state.copyWith(resetEmailSent: false);
   }
 }

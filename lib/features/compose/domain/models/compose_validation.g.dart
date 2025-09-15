@@ -54,7 +54,7 @@ _$AddressValidationResultImpl _$$AddressValidationResultImplFromJson(
     _$AddressValidationResultImpl(
       address: json['address'] as String,
       isValid: json['isValid'] as bool,
-      error: json['error'] as String?,
+      failure: core.Failure( json['error'] as String?,
       suggestion: json['suggestion'] as String?,
     );
 
@@ -111,7 +111,7 @@ _$SendResultImpl _$$SendResultImplFromJson(Map<String, dynamic> json) =>
     _$SendResultImpl(
       success: json['success'] as bool,
       messageId: json['messageId'] as String?,
-      error: json['error'] as String?,
+      failure: core.Failure( json['error'] as String?,
       sentAt: json['sentAt'] == null
           ? null
           : DateTime.parse(json['sentAt'] as String),

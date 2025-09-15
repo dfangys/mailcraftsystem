@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 import '../controllers/auth_controller.dart';
+import '../../../../core/error/failures.dart' as core;
 
 /// Splash screen for app initialization
 class SplashScreen extends ConsumerStatefulWidget {
@@ -110,7 +111,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                         ],
                       ),
                       child: Icon(
-                        HugeIcons.strokeRoundedMail01,
+                        Icons.email,
                         size: 64,
                         color: colorScheme.primary,
                       ),

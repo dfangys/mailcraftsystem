@@ -6,6 +6,7 @@ import 'package:hugeicons/hugeicons.dart';
 import '../../../../shared/widgets/error_widget.dart';
 import '../../../../shared/forms/app_text_field.dart';
 import '../controllers/auth_controller.dart';
+import '../../../../core/error/failures.dart' as core;
 
 /// Password reset screen
 class ResetPasswordScreen extends ConsumerStatefulWidget {
@@ -56,7 +57,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(HugeIcons.strokeRoundedArrowLeft02),
+          icon: const Icon(Icons.email),
           onPressed: () => context.go('/login'),
         ),
       ),
@@ -87,7 +88,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
         children: [
           // Icon and title
           Icon(
-            HugeIcons.strokeRoundedLockPassword,
+            Icons.email,
             size: 64,
             color: colorScheme.primary,
           ),
@@ -114,7 +115,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
           // Error display
           if (authState.error != null) ...[
             AppErrorWidget(
-              error: authState.error!,
+              failure: core.Failure(authState.error!,
               onRetry: _handleResetRequest,
             ),
             const SizedBox(height: 24),
@@ -123,11 +124,11 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
           // Email field
           AppTextField(
             controller: _emailController,
-            labelText: 'Email Address',
+            label: 'Email Address',
             hintText: 'Enter your email address',
             keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.done,
-            prefixIcon: const Icon(HugeIcons.strokeRoundedMail01),
+            prefixIcon: const Icon(Icons.email),
             onSubmitted: (_) => _handleResetRequest(),
             validator: (value) {
               if (value?.isEmpty ?? true) {
@@ -205,7 +206,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
             shape: BoxShape.circle,
           ),
           child: Icon(
-            HugeIcons.strokeRoundedCheckmarkCircle02,
+            Icons.email,
             size: 48,
             color: colorScheme.primary,
           ),
@@ -253,7 +254,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
               Row(
                 children: [
                   Icon(
-                    HugeIcons.strokeRoundedInformationCircle,
+                    Icons.email,
                     size: 20,
                     color: colorScheme.onSurfaceVariant,
                   ),
@@ -272,7 +273,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
               Row(
                 children: [
                   Icon(
-                    HugeIcons.strokeRoundedTime04,
+                    Icons.email,
                     size: 20,
                     color: colorScheme.onSurfaceVariant,
                   ),

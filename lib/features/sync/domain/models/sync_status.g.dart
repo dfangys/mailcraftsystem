@@ -19,7 +19,7 @@ _$SyncStatusImpl _$$SyncStatusImplFromJson(Map<String, dynamic> json) =>
       syncedMailboxes: (json['syncedMailboxes'] as num?)?.toInt(),
       totalMessages: (json['totalMessages'] as num?)?.toInt(),
       syncedMessages: (json['syncedMessages'] as num?)?.toInt(),
-      error: json['error'] as String?,
+      failure: core.Failure( json['error'] as String?,
       progress: json['progress'] == null
           ? null
           : SyncProgress.fromJson(json['progress'] as Map<String, dynamic>),
@@ -44,7 +44,7 @@ const _$SyncStateEnumMap = {
   SyncState.idle: 'idle',
   SyncState.syncing: 'syncing',
   SyncState.paused: 'paused',
-  SyncState.error: 'error',
+  SyncState.failure: core.Failure( 'error',
   SyncState.completed: 'completed',
 };
 

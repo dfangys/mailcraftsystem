@@ -88,7 +88,7 @@ class ProviderPresetCard extends StatelessWidget {
 
               // Arrow icon
               Icon(
-                HugeIcons.strokeRoundedArrowRight02,
+                Icons.email,
                 color: colorScheme.onSurfaceVariant,
                 size: 20,
               ),

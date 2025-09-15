@@ -71,7 +71,7 @@ class MailClientFactory {
       
       return ImapConnectionResult(
         success: false,
-        error: e.toString(),
+        failure: core.Failure( e.toString(),
       );
     }
   }
@@ -114,7 +114,7 @@ class MailClientFactory {
       
       return SmtpConnectionResult(
         success: false,
-        error: e.toString(),
+        failure: core.Failure( e.toString(),
       );
     }
   }

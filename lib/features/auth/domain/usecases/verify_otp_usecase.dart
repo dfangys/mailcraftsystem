@@ -1,53 +1,41 @@
-import 'package:mailcraftsystem/core/error/failures.dart';
-import 'package:mailcraftsystem/features/auth/domain/models/auth_token.dart';
-import 'package:mailcraftsystem/features/auth/domain/models/otp_challenge.dart';
-import 'package:mailcraftsystem/features/auth/domain/repositories/auth_repository.dart';
+import '../models/auth_token.dart';
+import '../models/otp_challenge.dart';
+import '../repositories/auth_repository.dart';
+import 'login_usecase.dart';
 
-/// OTP verification use case
+/// Verify OTP use case
 class VerifyOtpUseCase {
+  /// Creates a verify OTP use case
   const VerifyOtpUseCase(this._repository);
   
   final AuthRepository _repository;
   
   /// Execute OTP verification
-  Future<Either<Failure, AuthToken>> call(OtpVerificationRequest request) async {
+  Future<({AuthFailure? left, AuthToken? right})> call(OtpChallenge challenge) async {
     // Validate OTP code
-    if (request.code.isEmpty) {
+    if (challenge.code.isEmpty) {
       return (
-        left: const Failure.validation(
-          message: 'OTP code cannot be empty',
-        ),
+        left: AuthFailure('OTP code cannot be empty'),
         right: null,
       );
     }
     
-    if (request.code.length < 4 || request.code.length > 8) {
+    if (challenge.code.length != 6) {
       return (
-        left: const Failure.validation(
-          message: 'OTP code must be between 4 and 8 digits',
-        ),
+        left: AuthFailure('OTP code must be 6 digits'),
         right: null,
       );
     }
     
     // Check if code contains only digits
-    if (!RegExp(r'^\d+$').hasMatch(request.code)) {
+    if (!RegExp(r'^\d+$').hasMatch(challenge.code)) {
       return (
-        left: const Failure.validation(
-          message: 'OTP code must contain only numbers',
-        ),
+        left: AuthFailure('OTP code must contain only numbers'),
         right: null,
       );
     }
     
-    // Perform OTP verification
-    final result = await _repository.verifyOtp(request);
-    
-    // Store token if verification successful
-    if (result.isRight && result.right != null) {
-      await _repository.storeToken(result.right!);
-    }
-    
-    return result;
+    // Verify OTP
+    return await _repository.verifyOtp(challenge);
   }
 }

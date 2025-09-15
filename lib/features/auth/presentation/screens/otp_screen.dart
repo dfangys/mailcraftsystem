@@ -6,6 +6,7 @@ import 'package:hugeicons/hugeicons.dart';
 
 import '../../../../shared/widgets/error_widget.dart';
 import '../controllers/auth_controller.dart';
+import '../../../../core/error/failures.dart' as core;
 
 /// OTP verification screen
 class OtpScreen extends ConsumerStatefulWidget {
@@ -88,7 +89,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(HugeIcons.strokeRoundedArrowLeft02),
+          icon: const Icon(Icons.email),
           onPressed: () => context.go('/login'),
         ),
       ),
@@ -104,7 +105,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                 children: [
                   // Icon and title
                   Icon(
-                    HugeIcons.strokeRoundedShield01,
+                    Icons.email,
                     size: 64,
                     color: colorScheme.primary,
                   ),
@@ -130,7 +131,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                   // Error display
                   if (authState.error != null) ...[
                     AppErrorWidget(
-                      error: authState.error!,
+                      failure: core.Failure(authState.error!,
                       onRetry: _handleOtpSubmit,
                     ),
                     const SizedBox(height: 24),
@@ -248,7 +249,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                     child: Row(
                       children: [
                         Icon(
-                          HugeIcons.strokeRoundedInformationCircle,
+                          Icons.email,
                           size: 20,
                           color: colorScheme.onSurfaceVariant,
                         ),

@@ -578,7 +578,7 @@ class _$AddressValidationResultCopyWithImpl<$Res,
           ? _value.isValid
           : isValid // ignore: cast_nullable_to_non_nullable
               as bool,
-      error: freezed == error
+      failure: core.Failure( freezed == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
               as String?,
@@ -631,7 +631,7 @@ class __$$AddressValidationResultImplCopyWithImpl<$Res>
           ? _value.isValid
           : isValid // ignore: cast_nullable_to_non_nullable
               as bool,
-      error: freezed == error
+      failure: core.Failure( freezed == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
               as String?,
@@ -666,7 +666,7 @@ class _$AddressValidationResultImpl implements _AddressValidationResult {
 
   @override
   String toString() {
-    return 'AddressValidationResult(address: $address, isValid: $isValid, error: $error, suggestion: $suggestion)';
+    return 'AddressValidationResult(address: $address, isValid: $isValid, failure: core.Failure( $error, suggestion: $suggestion)';
   }
 
   @override
@@ -1261,7 +1261,7 @@ class _$SendResultCopyWithImpl<$Res, $Val extends SendResult>
           ? _value.messageId
           : messageId // ignore: cast_nullable_to_non_nullable
               as String?,
-      error: freezed == error
+      failure: core.Failure( freezed == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
               as String?,
@@ -1311,7 +1311,7 @@ class __$$SendResultImplCopyWithImpl<$Res>
           ? _value.messageId
           : messageId // ignore: cast_nullable_to_non_nullable
               as String?,
-      error: freezed == error
+      failure: core.Failure( freezed == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
               as String?,
@@ -1343,7 +1343,7 @@ class _$SendResultImpl implements _SendResult {
 
   @override
   String toString() {
-    return 'SendResult(success: $success, messageId: $messageId, error: $error, sentAt: $sentAt)';
+    return 'SendResult(success: $success, messageId: $messageId, failure: core.Failure( $error, sentAt: $sentAt)';
   }
 
   @override

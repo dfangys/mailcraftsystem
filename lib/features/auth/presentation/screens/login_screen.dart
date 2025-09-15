@@ -7,6 +7,8 @@ import '../../../../shared/widgets/loading_widget.dart';
 import '../../../../shared/widgets/error_widget.dart';
 import '../../../../shared/forms/app_text_field.dart';
 import '../controllers/auth_controller.dart';
+import '../../../../core/error/failures.dart' as core;
+import '../../../../core/error/failures.dart' as core;
 
 /// Login screen with Gmail-like design
 class LoginScreen extends ConsumerStatefulWidget {
@@ -72,7 +74,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   children: [
                     // Logo and title
                     Icon(
-                      HugeIcons.strokeRoundedMail01,
+                      Icons.email,
                       size: 64,
                       color: colorScheme.primary,
                     ),
@@ -98,7 +100,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     // Error display
                     if (authState.error != null) ...[
                       AppErrorWidget(
-                        error: authState.error!,
+                        failure: core.Failure(authState.error!),
                         onRetry: _handleLogin,
                       ),
                       const SizedBox(height: 16),
@@ -107,11 +109,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     // Email field
                     AppTextField(
                       controller: _emailController,
-                      labelText: 'Email',
+                      label: 'Email',
                       hintText: 'Enter your email address',
                       keyboardType: TextInputType.emailAddress,
                       textInputAction: TextInputAction.next,
-                      prefixIcon: const Icon(HugeIcons.strokeRoundedMail01),
+                      prefixIcon: const Icon(Icons.email),
                       validator: (value) {
                         if (value?.isEmpty ?? true) {
                           return 'Please enter your email';
@@ -128,16 +130,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     // Password field
                     AppTextField(
                       controller: _passwordController,
-                      labelText: 'Password',
+                      label: 'Password',
                       hintText: 'Enter your password',
                       obscureText: _obscurePassword,
                       textInputAction: TextInputAction.done,
-                      prefixIcon: const Icon(HugeIcons.strokeRoundedLockPassword),
+                      prefixIcon: const Icon(Icons.email),
                       suffixIcon: IconButton(
                         icon: Icon(
                           _obscurePassword
-                              ? HugeIcons.strokeRoundedView
-                              : HugeIcons.strokeRoundedViewOff,
+                              ? Icons.email
+                              : Icons.email,
                         ),
                         onPressed: () {
                           setState(() {
@@ -228,7 +230,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     // Setup account button
                     OutlinedButton.icon(
                       onPressed: () => context.go('/account-setup'),
-                      icon: const Icon(HugeIcons.strokeRoundedSettings02),
+                      icon: const Icon(Icons.email),
                       label: const Text('Setup New Account'),
                       style: OutlinedButton.styleFrom(
                         minimumSize: const Size.fromHeight(48),

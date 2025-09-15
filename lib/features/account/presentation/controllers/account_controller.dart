@@ -3,8 +3,10 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:enough_mail/enough_mail.dart' as enough_mail;
 
 import '../../domain/models/mail_account_config.dart';
+import '../../domain/models/mail_provider_preset.dart';
 import '../../domain/repositories/account_repository.dart';
 import '../widgets/advanced_settings_panel.dart';
+import '../../../../core/error/failures.dart';
 
 part 'account_controller.freezed.dart';
 
@@ -81,7 +83,7 @@ class AccountController extends StateNotifier<AccountState> {
   void selectProvider(String providerId) {
     state = state.copyWith(
       selectedProvider: providerId,
-      error: null,
+      failure: core.Failure( null,
     );
   }
 
@@ -126,7 +128,7 @@ class AccountController extends StateNotifier<AccountState> {
     String? smtpHost,
     int? smtpPort,
   }) async {
-    state = state.copyWith(isLoading: true, error: null);
+    state = state.copyWith(isLoading: true, failure: core.Failure( null);
 
     try {
       // Get provider preset or use manual settings
@@ -141,16 +143,16 @@ class AccountController extends StateNotifier<AccountState> {
         email: email,
         password: password,
         imapConfig: ImapConfig(
-          host: imapHost ?? preset?['imapHost'] ?? '',
-          port: imapPort ?? preset?['imapPort'] ?? 993,
-          socketType: _parseSocketType(preset?['imapSocketType'] ?? 'ssl'),
+          host: imapHost ?? (preset?['imapHost'] as String?) ?? '',
+          port: imapPort ?? (preset?['imapPort'] as int?) ?? 993,
+          socketType: _parseSocketTypeToLocal(preset?['imapSocketType'] as String? ?? 'ssl'),
         ),
         smtpConfig: SmtpConfig(
-          host: smtpHost ?? preset?['smtpHost'] ?? '',
-          port: smtpPort ?? preset?['smtpPort'] ?? 587,
-          socketType: _parseSocketType(preset?['smtpSocketType'] ?? 'starttls'),
+          host: smtpHost ?? (preset?['smtpHost'] as String?) ?? '',
+          port: smtpPort ?? (preset?['smtpPort'] as int?) ?? 587,
+          socketType: _parseSocketTypeToLocal(preset?['smtpSocketType'] as String? ?? 'starttls'),
         ),
-        allowInsecureSSL: preset?['allowInsecureSsl'] ?? false,
+        allowInsecureSSL: (preset?['allowInsecureSsl'] as bool?) ?? false,
       );
 
       // Test connection
@@ -159,7 +161,7 @@ class AccountController extends StateNotifier<AccountState> {
       if (result.left != null) {
         state = state.copyWith(
           isLoading: false,
-          error: result.left!.message,
+          failure: core.Failure( result.left!.message,
         );
       } else if (result.right != null) {
         final connectionResult = result.right!;
@@ -177,21 +179,21 @@ class AccountController extends StateNotifier<AccountState> {
         } else {
           state = state.copyWith(
             isLoading: false,
-            error: connectionResult.errorMessage ?? 'Connection failed',
+            failure: core.Failure( connectionResult.errorMessage ?? 'Connection failed',
           );
         }
       }
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: 'An unexpected error occurred: ${e.toString()}',
+        failure: core.Failure( 'An unexpected error occurred: ${e.toString()}',
       );
     }
   }
 
   /// Clear error state
   void clearError() {
-    state = state.copyWith(error: null);
+    state = state.copyWith(failure: core.Failure( null);
   }
 
   /// Reset account setup
@@ -199,17 +201,17 @@ class AccountController extends StateNotifier<AccountState> {
     state = const AccountState();
   }
 
-  /// Parse socket type from string
-  enough_mail.SocketType _parseSocketType(String socketType) {
+  /// Parse socket type from string to local SocketType
+  SocketType _parseSocketTypeToLocal(String socketType) {
     switch (socketType.toLowerCase()) {
       case 'ssl':
-        return enough_mail.SocketType.ssl;
+        return SocketType.ssl;
       case 'starttls':
-        return enough_mail.SocketType.starttls;
+        return SocketType.starttls;
       case 'plain':
-        return enough_mail.SocketType.plain;
+        return SocketType.plain;
       default:
-        return enough_mail.SocketType.ssl;
+        return SocketType.ssl;
     }
   }
 }
@@ -254,10 +256,10 @@ class MockAccountRepository implements AccountRepository {
   }
 
   @override
-  Future<({Failure? left, void right})> addAccount(MailAccountConfig config) async {
+  Future<({Failure? left, MailAccountConfig? right})> addAccount(MailAccountConfig config) async {
     // Simulate saving to secure storage
     await Future.delayed(const Duration(milliseconds: 500));
-    return (left: null, right: null);
+    return (left: null, right: config);
   }
 
   @override
@@ -271,7 +273,6 @@ class MockAccountRepository implements AccountRepository {
     return (left: null, right: null);
   }
 
-  // Add missing methods from AccountRepository interface
   @override
   Future<({Failure? left, MailAccountConfig? right})> getAccount(String accountId) async {
     return (left: Failure('Account not found'), right: null);
@@ -283,29 +284,37 @@ class MockAccountRepository implements AccountRepository {
   }
 
   @override
-  Future<({Failure? left, Map<String, dynamic>? right})> getAccountCapabilities(String accountId) async {
-    return (left: null, right: <String, dynamic>{});
+  Future<({Failure? left, AccountCapabilities? right})> getAccountCapabilities(String accountId) async {
+    return (left: null, right: const AccountCapabilities());
   }
 
   @override
-  Future<({Failure? left, void right})> updateAccount(MailAccountConfig config) async {
+  Future<({Failure? left, MailAccountConfig? right})> updateAccount(MailAccountConfig config) async {
+    return (left: null, right: config);
+  }
+
+  @override
+  Future<({Failure? left, List<MailProviderPreset>? right})> getProviderPresets() async {
+    return (left: null, right: <MailProviderPreset>[]);
+  }
+
+  @override
+  Future<({Failure? left, AccountValidationResult? right})> validateAccount(MailAccountConfig config) async {
+    return (left: null, right: const AccountValidationResult(isValid: true));
+  }
+
+  @override
+  Future<({Failure? left, void right})> setDefaultAccount(String accountId) async {
     return (left: null, right: null);
   }
 
   @override
-  Future<({Failure? left, void right})> syncAccount(String accountId) async {
-    return (left: null, right: null);
+  Future<({Failure? left, MailAccountConfig? right})> getDefaultAccount() async {
+    return (left: Failure('No default account'), right: null);
   }
 }
 
-/// Failure class
-class Failure {
-  /// Creates a failure
-  const Failure(this.message);
-
-  /// Error message
-  final String message;
-}
+// Using Failure from core/error/failures.dart
 
 /// Account connection result
 class AccountConnectionResult {

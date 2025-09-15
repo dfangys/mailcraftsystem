@@ -118,7 +118,7 @@ extension SyncStateExtension on SyncState {
         return 'Syncing';
       case SyncState.paused:
         return 'Paused';
-      case SyncState.error:
+      case SyncState.failure: core.Failure(
         return 'Error';
       case SyncState.completed:
         return 'Completed';
@@ -208,7 +208,7 @@ extension SyncConfigurationExtension on SyncConfiguration {
     final parts = <String>[];
     
     if (autoSync) {
-      parts.add('Auto-sync every $syncIntervalMinutes minutes');
+      parts.add('Auto-sync every $syncIntervalMinutes');
     } else {
       parts.add('Manual sync only');
     }
