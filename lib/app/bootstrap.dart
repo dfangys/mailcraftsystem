@@ -8,8 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:logger/logger.dart';
 
-import 'package:mailcraftsystem/core/logging/logger.dart';
-import 'package:mailcraftsystem/main.dart';
+import '../core/logging/logger.dart';
 
 /// Bootstrap the application with proper error handling and initialization
 void bootstrap() {
@@ -18,7 +17,17 @@ void bootstrap() {
       WidgetsFlutterBinding.ensureInitialized();
       
       // Load environment variables
-      await dotenv.load();
+      try {
+        await dotenv.load(fileName: '.env');
+      } catch (e) {
+        // If .env file doesn't exist or is empty, load from .env.example
+        try {
+          await dotenv.load(fileName: '.env.example');
+        } catch (e2) {
+          // If neither file exists, continue with empty environment
+          AppLogger.warning('No .env or .env.example file found, using default configuration');
+        }
+      }
       
       // Initialize logger
       AppLogger.init();
@@ -34,7 +43,7 @@ void bootstrap() {
       // Run the app
       runApp(
         ProviderScope(
-          child: const MailCraftApp(),
+          child: const _MailCraftApp(),
         ),
       );
     },
@@ -45,6 +54,31 @@ void bootstrap() {
       // In production, you might want to send this to a crash reporting service
     },
   );
+}
+
+/// Main application widget for MailCraft System (internal)
+class _MailCraftApp extends ConsumerWidget {
+  /// Creates a new instance of [_MailCraftApp]
+  const _MailCraftApp();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return MaterialApp.router(
+      title: 'MailCraft System',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        useMaterial3: true,
+      ),
+      darkTheme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blue,
+          brightness: Brightness.dark,
+        ),
+        useMaterial3: true,
+      ),
+      routerConfig: ref.watch(routerProvider),
+    );
+  }
 }
 
 /// Router provider for navigation configuration
