@@ -238,7 +238,7 @@ extension ComposeMessageExtension on ComposeMessage {
   bool get isReadyToSend {
     return hasRecipients && 
            (hasContent || hasAttachments) &&
-           subject?.isNotEmpty ?? false;
+           (subject?.isNotEmpty ?? false);
   }
   
   /// Get validation errors

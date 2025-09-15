@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dartz/dartz.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mailcraftsystem/core/error/failures.dart';
 import 'package:mailcraftsystem/core/logging/logger.dart';
@@ -27,7 +28,7 @@ class AuthRepositoryImpl implements AuthRepository {
   static const String _tokenKey = 'auth_token';
 
   @override
-  Future<({Failure? left, AuthToken? right})> login(LoginRequest request) async {
+  Future<Either<Failure, AuthToken>> login(LoginRequest request) async {
     try {
       AppLogger.info('Attempting login for ${request.email}');
       
@@ -48,18 +49,15 @@ class AuthRepositoryImpl implements AuthRepository {
       }
       
       AppLogger.info('Login successful for ${request.email}');
-      return (left: null, right: token);
+      return Right(token);
     } catch (e, stackTrace) {
       AppLogger.error('Login failed', e, stackTrace);
-      return (
-        left: Failure.network(message: 'Login failed: $e'),
-        right: null,
-      );
+      return Left(Failure.network(message: 'Login failed: $e'));
     }
   }
 
   @override
-  Future<({Failure? left, AuthToken? right})> verifyOtp(OtpChallenge challenge) async {
+  Future<Either<Failure, AuthToken>> verifyOtp(OtpChallenge challenge) async {
     try {
       AppLogger.info('Verifying OTP');
       
@@ -67,10 +65,7 @@ class AuthRepositoryImpl implements AuthRepository {
       await Future.delayed(const Duration(seconds: 1));
       
       if (challenge.code != '123456') {
-        return (
-          left: const Failure.validation(message: 'Invalid OTP code'),
-          right: null,
-        );
+        return const Left(Failure.validation(message: 'Invalid OTP code'));
       }
       
       final token = AuthToken(
@@ -85,18 +80,15 @@ class AuthRepositoryImpl implements AuthRepository {
       await storeToken(token);
       
       AppLogger.info('OTP verification successful');
-      return (left: null, right: token);
+      return Right(token);
     } catch (e, stackTrace) {
       AppLogger.error('OTP verification failed', e, stackTrace);
-      return (
-        left: Failure.validation(message: 'OTP verification failed: $e'),
-        right: null,
-      );
+      return Left(Failure.validation(message: 'OTP verification failed: $e'));
     }
   }
 
   @override
-  Future<({Failure? left, UserProfile? right})> getUserProfile() async {
+  Future<Either<Failure, UserProfile>> getUserProfile() async {
     try {
       AppLogger.info('Getting user profile');
       
@@ -107,22 +99,17 @@ class AuthRepositoryImpl implements AuthRepository {
         id: 'mock_user_id',
         email: 'user@example.com',
         name: 'Mock User',
-        avatarUrl: null,
-        isEmailVerified: true,
       );
       
-      return (left: null, right: profile);
+      return const Right(profile);
     } catch (e, stackTrace) {
       AppLogger.error('Failed to get user profile', e, stackTrace);
-      return (
-        left: Failure.network(message: 'Failed to get user profile: $e'),
-        right: null,
-      );
+      return Left(Failure.network(message: 'Failed to get user profile: $e'));
     }
   }
 
   @override
-  Future<({Failure? left, void right})> resetPassword(String email) async {
+  Future<Either<Failure, void>> resetPassword(String email) async {
     try {
       AppLogger.info('Requesting password reset for $email');
       
@@ -130,23 +117,20 @@ class AuthRepositoryImpl implements AuthRepository {
       await Future.delayed(const Duration(seconds: 1));
       
       AppLogger.info('Password reset email sent to $email');
-      return (left: null, right: null);
+      return const Right(null);
     } catch (e, stackTrace) {
       AppLogger.error('Password reset request failed', e, stackTrace);
-      return (
-        left: Failure.network(message: 'Password reset request failed: $e'),
-        right: null,
-      );
+      return Left(Failure.network(message: 'Password reset request failed: $e'));
     }
   }
 
   @override
-  Future<({Failure? left, void right})> requestPasswordReset(String email) async {
+  Future<Either<Failure, void>> requestPasswordReset(String email) async {
     return resetPassword(email);
   }
 
   @override
-  Future<({Failure? left, void right})> confirmPasswordReset(
+  Future<Either<Failure, void>> confirmPasswordReset(
     String token,
     String newPassword,
   ) async {
@@ -157,45 +141,36 @@ class AuthRepositoryImpl implements AuthRepository {
       await Future.delayed(const Duration(seconds: 1));
       
       AppLogger.info('Password reset confirmed successfully');
-      return (left: null, right: null);
+      return const Right(null);
     } catch (e, stackTrace) {
       AppLogger.error('Password reset confirmation failed', e, stackTrace);
-      return (
-        left: Failure.network(message: 'Password reset confirmation failed: $e'),
-        right: null,
-      );
+      return Left(Failure.network(message: 'Password reset confirmation failed: $e'));
     }
   }
 
   @override
-  Future<({Failure? left, void right})> logout() async {
+  Future<Either<Failure, void>> logout() async {
     try {
       AppLogger.info('Logging out user');
       
       await clearToken();
       
       AppLogger.info('User logged out successfully');
-      return (left: null, right: null);
+      return const Right(null);
     } catch (e, stackTrace) {
       AppLogger.error('Logout failed', e, stackTrace);
-      return (
-        left: Failure.unknown(message: 'Logout failed: $e'),
-        right: null,
-      );
+      return Left(Failure.unknown(message: 'Logout failed: $e'));
     }
   }
 
   @override
-  Future<({Failure? left, AuthToken? right})> refreshToken() async {
+  Future<Either<Failure, AuthToken>> refreshToken() async {
     try {
       AppLogger.info('Refreshing auth token');
       
       final currentToken = await getStoredToken();
       if (currentToken?.refreshToken == null) {
-        return (
-          left: const Failure.validation(message: 'No refresh token available'),
-          right: null,
-        );
+        return const Left(Failure.validation(message: 'No refresh token available'));
       }
       
       // Mock token refresh
@@ -213,13 +188,10 @@ class AuthRepositoryImpl implements AuthRepository {
       await storeToken(newToken);
       
       AppLogger.info('Token refreshed successfully');
-      return (left: null, right: newToken);
+      return Right(newToken);
     } catch (e, stackTrace) {
       AppLogger.error('Token refresh failed', e, stackTrace);
-      return (
-        left: Failure.network(message: 'Token refresh failed: $e'),
-        right: null,
-      );
+      return Left(Failure.network(message: 'Token refresh failed: $e'));
     }
   }
 

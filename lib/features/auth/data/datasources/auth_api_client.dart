@@ -4,6 +4,7 @@ import 'package:mailcraftsystem/core/network/dio_client.dart';
 import 'package:mailcraftsystem/features/auth/domain/models/auth_token.dart';
 import 'package:mailcraftsystem/features/auth/domain/models/login_request.dart';
 import 'package:mailcraftsystem/features/auth/domain/models/otp_challenge.dart';
+import 'package:mailcraftsystem/features/auth/domain/models/otp_verification_request.dart';
 import 'package:mailcraftsystem/features/auth/domain/models/user_profile.dart';
 
 /// Auth API client

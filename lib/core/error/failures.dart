@@ -39,6 +39,11 @@ class Failure with _$Failure {
     String? details,
   }) = MailFailure;
   
+  /// Resource not found failure
+  const factory Failure.notFound({
+    required String message,
+  }) = NotFoundFailure;
+  
   /// Unknown or unexpected failure
   const factory Failure.unknown({
     required String message,
@@ -56,6 +61,7 @@ extension FailureExtension on Failure {
       validation: (message, fieldErrors) => 'Validation error: $message',
       storage: (message) => 'Storage error: $message',
       mail: (message, details) => 'Mail error: $message',
+      notFound: (message) => 'Not found: $message',
       unknown: (message, error) => 'An unexpected error occurred: $message',
     );
   }
