@@ -280,12 +280,43 @@ extension MailboxExtension on Mailbox {
 
 
 MailboxType _getMailboxType(enough_mail.Mailbox mailbox) {
-  if (mailbox.hasFlag(MailboxFlag.inbox)) return MailboxType.inbox;
-  if (mailbox.hasFlag(MailboxFlag.sent)) return MailboxType.sent;
-  if (mailbox.hasFlag(MailboxFlag.drafts)) return MailboxType.drafts;
-  if (mailbox.hasFlag(MailboxFlag.trash)) return MailboxType.trash;
-  if (mailbox.hasFlag(MailboxFlag.junk)) return MailboxType.spam;
-  if (mailbox.hasFlag(MailboxFlag.archive)) return MailboxType.archive;
+  final name = mailbox.name.toLowerCase();
+  final path = mailbox.path.toLowerCase();
+  
+  // Check for common inbox patterns
+  if (name == 'inbox' || path.contains('inbox')) {
+    return MailboxType.inbox;
+  }
+  
+  // Check for sent patterns
+  if (name.contains('sent') || path.contains('sent') ||
+      name.contains('outbox') || path.contains('outbox')) {
+    return MailboxType.sent;
+  }
+  
+  // Check for drafts patterns
+  if (name.contains('draft') || path.contains('draft')) {
+    return MailboxType.drafts;
+  }
+  
+  // Check for trash patterns
+  if (name.contains('trash') || path.contains('trash') ||
+      name.contains('deleted') || path.contains('deleted') ||
+      name.contains('bin') || path.contains('bin')) {
+    return MailboxType.trash;
+  }
+  
+  // Check for spam patterns
+  if (name.contains('spam') || path.contains('spam') ||
+      name.contains('junk') || path.contains('junk')) {
+    return MailboxType.spam;
+  }
+  
+  // Check for archive patterns
+  if (name.contains('archive') || path.contains('archive')) {
+    return MailboxType.archive;
+  }
+  
   return MailboxType.custom;
 }
 

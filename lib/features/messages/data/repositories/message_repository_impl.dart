@@ -11,7 +11,7 @@ class MessageRepositoryImpl implements MessageRepository {
   final MailClientService mailClientService;
 
   @override
-  Future<Either<Failure, List<model.Message>>> fetchMessages(
+  Future<Either<Failure, List<model.Message>>> getMessages(
     String accountId,
     String mailboxPath,
   ) async {

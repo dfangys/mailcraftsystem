@@ -45,7 +45,7 @@ class Message with _$Message {
     return Message(
       id: message.uid.toString(),
       uid: message.uid!,
-      mailboxPath: message.mailbox!.path,
+      mailboxPath: 'INBOX', // Default mailbox path since MimeMessage doesn't have mailbox property
       subject: message.decodeSubject(),
       from: message.from?.isNotEmpty == true
           ? MessageAddress.fromEnoughMail(message.from!.first)

@@ -11,7 +11,7 @@ class MailboxRepositoryImpl implements MailboxRepository {
   final MailClientService mailClientService;
 
   @override
-  Future<Either<Failure, List<model.Mailbox>>> fetchMailboxes(String accountId) async {
+  Future<Either<Failure, List<model.Mailbox>>> getMailboxes(String accountId) async {
     try {
       final mailboxes = await mailClientService.client!.listMailboxes(accountId);
       final mappedMailboxes = mailboxes.map((e) => model.Mailbox.fromEnoughMail(e)).toList();
