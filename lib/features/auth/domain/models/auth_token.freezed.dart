@@ -25,7 +25,7 @@ mixin _$AuthToken {
   int get expiresIn => throw _privateConstructorUsedError;
   String? get refreshToken => throw _privateConstructorUsedError;
   @JsonKey(name: 'requires_otp')
-  bool? get requiresOtp => throw _privateConstructorUsedError;
+  bool get requiresOtp => throw _privateConstructorUsedError;
   String? get delivery => throw _privateConstructorUsedError;
   DateTime? get expiresAt => throw _privateConstructorUsedError;
 
@@ -49,7 +49,7 @@ abstract class $AuthTokenCopyWith<$Res> {
       String tokenType,
       int expiresIn,
       String? refreshToken,
-      @JsonKey(name: 'requires_otp') bool? requiresOtp,
+      @JsonKey(name: 'requires_otp') bool requiresOtp,
       String? delivery,
       DateTime? expiresAt});
 }
@@ -73,7 +73,7 @@ class _$AuthTokenCopyWithImpl<$Res, $Val extends AuthToken>
     Object? tokenType = null,
     Object? expiresIn = null,
     Object? refreshToken = freezed,
-    Object? requiresOtp = freezed,
+    Object? requiresOtp = null,
     Object? delivery = freezed,
     Object? expiresAt = freezed,
   }) {
@@ -94,10 +94,10 @@ class _$AuthTokenCopyWithImpl<$Res, $Val extends AuthToken>
           ? _value.refreshToken
           : refreshToken // ignore: cast_nullable_to_non_nullable
               as String?,
-      requiresOtp: freezed == requiresOtp
+      requiresOtp: null == requiresOtp
           ? _value.requiresOtp
           : requiresOtp // ignore: cast_nullable_to_non_nullable
-              as bool?,
+              as bool,
       delivery: freezed == delivery
           ? _value.delivery
           : delivery // ignore: cast_nullable_to_non_nullable
@@ -123,7 +123,7 @@ abstract class _$$AuthTokenImplCopyWith<$Res>
       String tokenType,
       int expiresIn,
       String? refreshToken,
-      @JsonKey(name: 'requires_otp') bool? requiresOtp,
+      @JsonKey(name: 'requires_otp') bool requiresOtp,
       String? delivery,
       DateTime? expiresAt});
 }
@@ -145,7 +145,7 @@ class __$$AuthTokenImplCopyWithImpl<$Res>
     Object? tokenType = null,
     Object? expiresIn = null,
     Object? refreshToken = freezed,
-    Object? requiresOtp = freezed,
+    Object? requiresOtp = null,
     Object? delivery = freezed,
     Object? expiresAt = freezed,
   }) {
@@ -166,10 +166,10 @@ class __$$AuthTokenImplCopyWithImpl<$Res>
           ? _value.refreshToken
           : refreshToken // ignore: cast_nullable_to_non_nullable
               as String?,
-      requiresOtp: freezed == requiresOtp
+      requiresOtp: null == requiresOtp
           ? _value.requiresOtp
           : requiresOtp // ignore: cast_nullable_to_non_nullable
-              as bool?,
+              as bool,
       delivery: freezed == delivery
           ? _value.delivery
           : delivery // ignore: cast_nullable_to_non_nullable
@@ -190,7 +190,7 @@ class _$AuthTokenImpl implements _AuthToken {
       required this.tokenType,
       required this.expiresIn,
       this.refreshToken,
-      @JsonKey(name: 'requires_otp') this.requiresOtp,
+      @JsonKey(name: 'requires_otp') this.requiresOtp = false,
       this.delivery,
       this.expiresAt});
 
@@ -207,7 +207,7 @@ class _$AuthTokenImpl implements _AuthToken {
   final String? refreshToken;
   @override
   @JsonKey(name: 'requires_otp')
-  final bool? requiresOtp;
+  final bool requiresOtp;
   @override
   final String? delivery;
   @override
@@ -266,7 +266,7 @@ abstract class _AuthToken implements AuthToken {
       required final String tokenType,
       required final int expiresIn,
       final String? refreshToken,
-      @JsonKey(name: 'requires_otp') final bool? requiresOtp,
+      @JsonKey(name: 'requires_otp') final bool requiresOtp,
       final String? delivery,
       final DateTime? expiresAt}) = _$AuthTokenImpl;
 
@@ -283,7 +283,7 @@ abstract class _AuthToken implements AuthToken {
   String? get refreshToken;
   @override
   @JsonKey(name: 'requires_otp')
-  bool? get requiresOtp;
+  bool get requiresOtp;
   @override
   String? get delivery;
   @override

@@ -27,6 +27,17 @@ class Mailbox with _$Mailbox {
 
   factory Mailbox.fromJson(Map<String, dynamic> json) =>
       _$MailboxFromJson(json);
+
+  factory Mailbox.fromEnoughMail(enough_mail.Mailbox mailbox) {
+    return Mailbox(
+      id: mailbox.path,
+      name: mailbox.name,
+      path: mailbox.path,
+      type: _getMailboxType(mailbox),
+      isSelectable: !mailbox.isNotSelectable,
+      hasChildren: mailbox.hasChildren,
+    );
+  }
 }
 
 /// Mailbox type enumeration
@@ -266,3 +277,15 @@ extension MailboxExtension on Mailbox {
     return flags.isNotEmpty ? flags : null;
   }
 }
+
+
+MailboxType _getMailboxType(enough_mail.Mailbox mailbox) {
+  if (mailbox.hasFlag(MailboxFlag.inbox)) return MailboxType.inbox;
+  if (mailbox.hasFlag(MailboxFlag.sent)) return MailboxType.sent;
+  if (mailbox.hasFlag(MailboxFlag.drafts)) return MailboxType.drafts;
+  if (mailbox.hasFlag(MailboxFlag.trash)) return MailboxType.trash;
+  if (mailbox.hasFlag(MailboxFlag.junk)) return MailboxType.spam;
+  if (mailbox.hasFlag(MailboxFlag.archive)) return MailboxType.archive;
+  return MailboxType.custom;
+}
+

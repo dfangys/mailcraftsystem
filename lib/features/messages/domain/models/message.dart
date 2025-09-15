@@ -40,6 +40,20 @@ class Message with _$Message {
 
   factory Message.fromJson(Map<String, dynamic> json) =>
       _$MessageFromJson(json);
+
+  factory Message.fromEnoughMail(enough_mail.MimeMessage message) {
+    return Message(
+      id: message.uid.toString(),
+      uid: message.uid!,
+      mailboxPath: message.mailbox!.path,
+      subject: message.decodeSubject(),
+      from: message.from?.isNotEmpty == true
+          ? MessageAddress.fromEnoughMail(message.from!.first)
+          : null,
+      date: message.decodeDate(),
+      isRead: message.isSeen,
+    );
+  }
 }
 
 /// Message address model
@@ -52,6 +66,13 @@ class MessageAddress with _$MessageAddress {
 
   factory MessageAddress.fromJson(Map<String, dynamic> json) =>
       _$MessageAddressFromJson(json);
+
+  factory MessageAddress.fromEnoughMail(enough_mail.MailAddress address) {
+    return MessageAddress(
+      email: address.email,
+      name: address.personalName,
+    );
+  }
 }
 
 /// Message attachment model

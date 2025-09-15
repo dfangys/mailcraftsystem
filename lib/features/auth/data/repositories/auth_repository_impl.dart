@@ -31,10 +31,11 @@ class AuthRepositoryImpl implements AuthRepository {
       final data = response['data'] as Map<String, dynamic>;
       final requiresOtp = data['requires_otp'] as bool;
 
-      if (requiresOtp) {
-        return Right(AuthToken.fromJson(data));
+      final token = AuthToken.fromJson(data);
+      if (token.requiresOtp) {
+        // Don't store the temporary token, just return it
+        return Right(token);
       } else {
-        final token = AuthToken.fromJson(data);
         await storeToken(token);
         return Right(token);
       }
@@ -48,12 +49,9 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Either<Failure, AuthToken>> verifyOtp(OtpChallenge challenge) async {
     try {
-      final tempToken = await getStoredToken();
-      if (tempToken == null) {
-        return const Left(Failure.auth(message: 'No temporary token found'));
-      }
+
       final request = OtpVerificationRequest(email: challenge.email, otp: challenge.code);
-      final response = await apiClient.verifyOtp(request, tempToken.accessToken);
+      final response = await apiClient.verifyOtp(request);
       final token = AuthToken.fromJson(response['data'] as Map<String, dynamic>);
       await storeToken(token);
       return Right(token);

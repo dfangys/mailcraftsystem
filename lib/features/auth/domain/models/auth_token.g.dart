@@ -12,7 +12,7 @@ _$AuthTokenImpl _$$AuthTokenImplFromJson(Map<String, dynamic> json) =>
       tokenType: json['tokenType'] as String,
       expiresIn: (json['expiresIn'] as num).toInt(),
       refreshToken: json['refreshToken'] as String?,
-      requiresOtp: json['requires_otp'] as bool?,
+      requiresOtp: json['requires_otp'] as bool? ?? false,
       delivery: json['delivery'] as String?,
       expiresAt: json['expiresAt'] == null
           ? null

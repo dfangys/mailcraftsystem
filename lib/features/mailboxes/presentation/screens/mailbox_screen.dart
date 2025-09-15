@@ -17,8 +17,10 @@ class _MailboxScreenState extends ConsumerState<MailboxScreen> {
     super.initState();
     // Fetch initial data
     // TODO: Replace 'dummy_account' with the actual account ID
-    ref.read(mailboxControllerProvider.notifier).getMailboxes('dummy_account');
-    ref.read(mailboxControllerProvider.notifier).getMessages('dummy_account', 'INBOX');
+    Future.microtask(() {
+      ref.read(mailboxControllerProvider.notifier).getMailboxes("dummy_account");
+      ref.read(mailboxControllerProvider.notifier).getMessages("dummy_account", "INBOX");
+    });
   }
 
   @override

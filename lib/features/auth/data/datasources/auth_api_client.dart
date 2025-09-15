@@ -25,14 +25,10 @@ class AuthApiClient {
   /// Verify OTP endpoint
   Future<Map<String, dynamic>> verifyOtp(
     OtpVerificationRequest request,
-    String tempToken,
   ) async {
     final response = await _dio.post(
       '/api/verify-otp',
       data: request.toJson(),
-      options: Options(
-        headers: {'Authorization': 'Bearer $tempToken'},
-      ),
     );
     return response.data as Map<String, dynamic>;
   }

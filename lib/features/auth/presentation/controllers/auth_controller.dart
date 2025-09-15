@@ -51,7 +51,6 @@ class AuthState {
 class AuthController extends _$AuthController {
   @override
   AuthState build() {
-    _checkAuthStatus();
     return const AuthState();
   }
 

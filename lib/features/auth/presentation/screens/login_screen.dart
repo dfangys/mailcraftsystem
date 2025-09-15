@@ -67,28 +67,37 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Logo and title
-                    Icon(
-                      Icons.email,
-                      size: 64,
-                      color: colorScheme.primary,
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'MailCraft System',
-                      style: theme.textTheme.headlineMedium?.copyWith(
-                        color: colorScheme.onSurface,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Sign in to your account',
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
-                      ),
-                      textAlign: TextAlign.center,
+                    // Animated logo and title
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 500),
+                      child: authState.isLoading
+                          ? const SizedBox.shrink()
+                          : Column(
+                              children: [
+                                Icon(
+                                  Icons.email,
+                                  size: 64,
+                                  color: colorScheme.primary,
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'MailCraft System',
+                                  style: theme.textTheme.headlineMedium?.copyWith(
+                                    color: colorScheme.onSurface,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Sign in to your account',
+                                  style: theme.textTheme.bodyLarge?.copyWith(
+                                    color: colorScheme.onSurfaceVariant,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
                     ),
                     const SizedBox(height: 48),
 
@@ -108,7 +117,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       hintText: 'Enter your email address',
                       keyboardType: TextInputType.emailAddress,
                       textInputAction: TextInputAction.next,
-                      prefixIcon: const Icon(Icons.email),
+                      prefixIcon: const Icon(Icons.alternate_email),
                       validator: (value) {
                         if (value?.isEmpty ?? true) {
                           return 'Please enter your email';
@@ -129,7 +138,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       hintText: 'Enter your password',
                       obscureText: _obscurePassword,
                       textInputAction: TextInputAction.done,
-                      prefixIcon: const Icon(Icons.email),
+                      prefixIcon: const Icon(Icons.alternate_email),
                       suffixIcon: IconButton(
                         icon: Icon(
                           _obscurePassword

@@ -20,17 +20,17 @@ class MailboxState with _$MailboxState {
 }
 
 class MailboxController extends StateNotifier<MailboxState> {
-  MailboxController({
-    required this.mailboxRepository,
-    required this.messageRepository,
-  }) : super(const MailboxState());
+  MailboxController(
+    this.mailboxRepository,
+    this.messageRepository,
+  ) : super(const MailboxState());
 
   final MailboxRepository mailboxRepository;
   final MessageRepository messageRepository;
 
   Future<void> getMailboxes(String accountId) async {
     state = state.copyWith(isLoading: true);
-    final result = await mailboxRepository.getMailboxes(accountId);
+    final result = await mailboxRepository.fetchMailboxes(accountId);
     result.fold(
       (failure) => state = state.copyWith(isLoading: false, failure: failure),
       (mailboxes) => state = state.copyWith(isLoading: false, mailboxes: mailboxes),
@@ -39,7 +39,7 @@ class MailboxController extends StateNotifier<MailboxState> {
 
   Future<void> getMessages(String accountId, String mailboxPath) async {
     state = state.copyWith(isLoading: true);
-    final result = await messageRepository.getMessages(accountId, mailboxPath);
+    final result = await messageRepository.fetchMessages(accountId, mailboxPath);
     result.fold(
       (failure) => state = state.copyWith(isLoading: false, failure: failure),
       (messages) => state = state.copyWith(isLoading: false, messages: messages),
