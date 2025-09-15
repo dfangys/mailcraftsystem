@@ -44,6 +44,11 @@ class Failure with _$Failure {
     required String message,
   }) = NotFoundFailure;
   
+  /// Feature not implemented failure
+  const factory Failure.notImplemented({
+    required String message,
+  }) = NotImplementedFailure;
+  
   /// Unknown or unexpected failure
   const factory Failure.unknown({
     required String message,

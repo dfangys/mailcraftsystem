@@ -27,6 +27,7 @@ mixin _$Failure {
     required TResult Function(String message) storage,
     required TResult Function(String message, String? details) mail,
     required TResult Function(String message) notFound,
+    required TResult Function(String message) notImplemented,
     required TResult Function(String message, Object? error) unknown,
   }) =>
       throw _privateConstructorUsedError;
@@ -40,6 +41,7 @@ mixin _$Failure {
     TResult? Function(String message)? storage,
     TResult? Function(String message, String? details)? mail,
     TResult? Function(String message)? notFound,
+    TResult? Function(String message)? notImplemented,
     TResult? Function(String message, Object? error)? unknown,
   }) =>
       throw _privateConstructorUsedError;
@@ -53,6 +55,7 @@ mixin _$Failure {
     TResult Function(String message)? storage,
     TResult Function(String message, String? details)? mail,
     TResult Function(String message)? notFound,
+    TResult Function(String message)? notImplemented,
     TResult Function(String message, Object? error)? unknown,
     required TResult orElse(),
   }) =>
@@ -66,6 +69,7 @@ mixin _$Failure {
     required TResult Function(StorageFailure value) storage,
     required TResult Function(MailFailure value) mail,
     required TResult Function(NotFoundFailure value) notFound,
+    required TResult Function(NotImplementedFailure value) notImplemented,
     required TResult Function(UnknownFailure value) unknown,
   }) =>
       throw _privateConstructorUsedError;
@@ -78,6 +82,7 @@ mixin _$Failure {
     TResult? Function(StorageFailure value)? storage,
     TResult? Function(MailFailure value)? mail,
     TResult? Function(NotFoundFailure value)? notFound,
+    TResult? Function(NotImplementedFailure value)? notImplemented,
     TResult? Function(UnknownFailure value)? unknown,
   }) =>
       throw _privateConstructorUsedError;
@@ -90,6 +95,7 @@ mixin _$Failure {
     TResult Function(StorageFailure value)? storage,
     TResult Function(MailFailure value)? mail,
     TResult Function(NotFoundFailure value)? notFound,
+    TResult Function(NotImplementedFailure value)? notImplemented,
     TResult Function(UnknownFailure value)? unknown,
     required TResult orElse(),
   }) =>
@@ -222,6 +228,7 @@ class _$ServerFailureImpl implements ServerFailure {
     required TResult Function(String message) storage,
     required TResult Function(String message, String? details) mail,
     required TResult Function(String message) notFound,
+    required TResult Function(String message) notImplemented,
     required TResult Function(String message, Object? error) unknown,
   }) {
     return server(message, statusCode);
@@ -238,6 +245,7 @@ class _$ServerFailureImpl implements ServerFailure {
     TResult? Function(String message)? storage,
     TResult? Function(String message, String? details)? mail,
     TResult? Function(String message)? notFound,
+    TResult? Function(String message)? notImplemented,
     TResult? Function(String message, Object? error)? unknown,
   }) {
     return server?.call(message, statusCode);
@@ -254,6 +262,7 @@ class _$ServerFailureImpl implements ServerFailure {
     TResult Function(String message)? storage,
     TResult Function(String message, String? details)? mail,
     TResult Function(String message)? notFound,
+    TResult Function(String message)? notImplemented,
     TResult Function(String message, Object? error)? unknown,
     required TResult orElse(),
   }) {
@@ -273,6 +282,7 @@ class _$ServerFailureImpl implements ServerFailure {
     required TResult Function(StorageFailure value) storage,
     required TResult Function(MailFailure value) mail,
     required TResult Function(NotFoundFailure value) notFound,
+    required TResult Function(NotImplementedFailure value) notImplemented,
     required TResult Function(UnknownFailure value) unknown,
   }) {
     return server(this);
@@ -288,6 +298,7 @@ class _$ServerFailureImpl implements ServerFailure {
     TResult? Function(StorageFailure value)? storage,
     TResult? Function(MailFailure value)? mail,
     TResult? Function(NotFoundFailure value)? notFound,
+    TResult? Function(NotImplementedFailure value)? notImplemented,
     TResult? Function(UnknownFailure value)? unknown,
   }) {
     return server?.call(this);
@@ -303,6 +314,7 @@ class _$ServerFailureImpl implements ServerFailure {
     TResult Function(StorageFailure value)? storage,
     TResult Function(MailFailure value)? mail,
     TResult Function(NotFoundFailure value)? notFound,
+    TResult Function(NotImplementedFailure value)? notImplemented,
     TResult Function(UnknownFailure value)? unknown,
     required TResult orElse(),
   }) {
@@ -409,6 +421,7 @@ class _$NetworkFailureImpl implements NetworkFailure {
     required TResult Function(String message) storage,
     required TResult Function(String message, String? details) mail,
     required TResult Function(String message) notFound,
+    required TResult Function(String message) notImplemented,
     required TResult Function(String message, Object? error) unknown,
   }) {
     return network(message);
@@ -425,6 +438,7 @@ class _$NetworkFailureImpl implements NetworkFailure {
     TResult? Function(String message)? storage,
     TResult? Function(String message, String? details)? mail,
     TResult? Function(String message)? notFound,
+    TResult? Function(String message)? notImplemented,
     TResult? Function(String message, Object? error)? unknown,
   }) {
     return network?.call(message);
@@ -441,6 +455,7 @@ class _$NetworkFailureImpl implements NetworkFailure {
     TResult Function(String message)? storage,
     TResult Function(String message, String? details)? mail,
     TResult Function(String message)? notFound,
+    TResult Function(String message)? notImplemented,
     TResult Function(String message, Object? error)? unknown,
     required TResult orElse(),
   }) {
@@ -460,6 +475,7 @@ class _$NetworkFailureImpl implements NetworkFailure {
     required TResult Function(StorageFailure value) storage,
     required TResult Function(MailFailure value) mail,
     required TResult Function(NotFoundFailure value) notFound,
+    required TResult Function(NotImplementedFailure value) notImplemented,
     required TResult Function(UnknownFailure value) unknown,
   }) {
     return network(this);
@@ -475,6 +491,7 @@ class _$NetworkFailureImpl implements NetworkFailure {
     TResult? Function(StorageFailure value)? storage,
     TResult? Function(MailFailure value)? mail,
     TResult? Function(NotFoundFailure value)? notFound,
+    TResult? Function(NotImplementedFailure value)? notImplemented,
     TResult? Function(UnknownFailure value)? unknown,
   }) {
     return network?.call(this);
@@ -490,6 +507,7 @@ class _$NetworkFailureImpl implements NetworkFailure {
     TResult Function(StorageFailure value)? storage,
     TResult Function(MailFailure value)? mail,
     TResult Function(NotFoundFailure value)? notFound,
+    TResult Function(NotImplementedFailure value)? notImplemented,
     TResult Function(UnknownFailure value)? unknown,
     required TResult orElse(),
   }) {
@@ -593,6 +611,7 @@ class _$AuthFailureImpl implements AuthFailure {
     required TResult Function(String message) storage,
     required TResult Function(String message, String? details) mail,
     required TResult Function(String message) notFound,
+    required TResult Function(String message) notImplemented,
     required TResult Function(String message, Object? error) unknown,
   }) {
     return auth(message);
@@ -609,6 +628,7 @@ class _$AuthFailureImpl implements AuthFailure {
     TResult? Function(String message)? storage,
     TResult? Function(String message, String? details)? mail,
     TResult? Function(String message)? notFound,
+    TResult? Function(String message)? notImplemented,
     TResult? Function(String message, Object? error)? unknown,
   }) {
     return auth?.call(message);
@@ -625,6 +645,7 @@ class _$AuthFailureImpl implements AuthFailure {
     TResult Function(String message)? storage,
     TResult Function(String message, String? details)? mail,
     TResult Function(String message)? notFound,
+    TResult Function(String message)? notImplemented,
     TResult Function(String message, Object? error)? unknown,
     required TResult orElse(),
   }) {
@@ -644,6 +665,7 @@ class _$AuthFailureImpl implements AuthFailure {
     required TResult Function(StorageFailure value) storage,
     required TResult Function(MailFailure value) mail,
     required TResult Function(NotFoundFailure value) notFound,
+    required TResult Function(NotImplementedFailure value) notImplemented,
     required TResult Function(UnknownFailure value) unknown,
   }) {
     return auth(this);
@@ -659,6 +681,7 @@ class _$AuthFailureImpl implements AuthFailure {
     TResult? Function(StorageFailure value)? storage,
     TResult? Function(MailFailure value)? mail,
     TResult? Function(NotFoundFailure value)? notFound,
+    TResult? Function(NotImplementedFailure value)? notImplemented,
     TResult? Function(UnknownFailure value)? unknown,
   }) {
     return auth?.call(this);
@@ -674,6 +697,7 @@ class _$AuthFailureImpl implements AuthFailure {
     TResult Function(StorageFailure value)? storage,
     TResult Function(MailFailure value)? mail,
     TResult Function(NotFoundFailure value)? notFound,
+    TResult Function(NotImplementedFailure value)? notImplemented,
     TResult Function(UnknownFailure value)? unknown,
     required TResult orElse(),
   }) {
@@ -797,6 +821,7 @@ class _$ValidationFailureImpl implements ValidationFailure {
     required TResult Function(String message) storage,
     required TResult Function(String message, String? details) mail,
     required TResult Function(String message) notFound,
+    required TResult Function(String message) notImplemented,
     required TResult Function(String message, Object? error) unknown,
   }) {
     return validation(message, fieldErrors);
@@ -813,6 +838,7 @@ class _$ValidationFailureImpl implements ValidationFailure {
     TResult? Function(String message)? storage,
     TResult? Function(String message, String? details)? mail,
     TResult? Function(String message)? notFound,
+    TResult? Function(String message)? notImplemented,
     TResult? Function(String message, Object? error)? unknown,
   }) {
     return validation?.call(message, fieldErrors);
@@ -829,6 +855,7 @@ class _$ValidationFailureImpl implements ValidationFailure {
     TResult Function(String message)? storage,
     TResult Function(String message, String? details)? mail,
     TResult Function(String message)? notFound,
+    TResult Function(String message)? notImplemented,
     TResult Function(String message, Object? error)? unknown,
     required TResult orElse(),
   }) {
@@ -848,6 +875,7 @@ class _$ValidationFailureImpl implements ValidationFailure {
     required TResult Function(StorageFailure value) storage,
     required TResult Function(MailFailure value) mail,
     required TResult Function(NotFoundFailure value) notFound,
+    required TResult Function(NotImplementedFailure value) notImplemented,
     required TResult Function(UnknownFailure value) unknown,
   }) {
     return validation(this);
@@ -863,6 +891,7 @@ class _$ValidationFailureImpl implements ValidationFailure {
     TResult? Function(StorageFailure value)? storage,
     TResult? Function(MailFailure value)? mail,
     TResult? Function(NotFoundFailure value)? notFound,
+    TResult? Function(NotImplementedFailure value)? notImplemented,
     TResult? Function(UnknownFailure value)? unknown,
   }) {
     return validation?.call(this);
@@ -878,6 +907,7 @@ class _$ValidationFailureImpl implements ValidationFailure {
     TResult Function(StorageFailure value)? storage,
     TResult Function(MailFailure value)? mail,
     TResult Function(NotFoundFailure value)? notFound,
+    TResult Function(NotImplementedFailure value)? notImplemented,
     TResult Function(UnknownFailure value)? unknown,
     required TResult orElse(),
   }) {
@@ -984,6 +1014,7 @@ class _$StorageFailureImpl implements StorageFailure {
     required TResult Function(String message) storage,
     required TResult Function(String message, String? details) mail,
     required TResult Function(String message) notFound,
+    required TResult Function(String message) notImplemented,
     required TResult Function(String message, Object? error) unknown,
   }) {
     return storage(message);
@@ -1000,6 +1031,7 @@ class _$StorageFailureImpl implements StorageFailure {
     TResult? Function(String message)? storage,
     TResult? Function(String message, String? details)? mail,
     TResult? Function(String message)? notFound,
+    TResult? Function(String message)? notImplemented,
     TResult? Function(String message, Object? error)? unknown,
   }) {
     return storage?.call(message);
@@ -1016,6 +1048,7 @@ class _$StorageFailureImpl implements StorageFailure {
     TResult Function(String message)? storage,
     TResult Function(String message, String? details)? mail,
     TResult Function(String message)? notFound,
+    TResult Function(String message)? notImplemented,
     TResult Function(String message, Object? error)? unknown,
     required TResult orElse(),
   }) {
@@ -1035,6 +1068,7 @@ class _$StorageFailureImpl implements StorageFailure {
     required TResult Function(StorageFailure value) storage,
     required TResult Function(MailFailure value) mail,
     required TResult Function(NotFoundFailure value) notFound,
+    required TResult Function(NotImplementedFailure value) notImplemented,
     required TResult Function(UnknownFailure value) unknown,
   }) {
     return storage(this);
@@ -1050,6 +1084,7 @@ class _$StorageFailureImpl implements StorageFailure {
     TResult? Function(StorageFailure value)? storage,
     TResult? Function(MailFailure value)? mail,
     TResult? Function(NotFoundFailure value)? notFound,
+    TResult? Function(NotImplementedFailure value)? notImplemented,
     TResult? Function(UnknownFailure value)? unknown,
   }) {
     return storage?.call(this);
@@ -1065,6 +1100,7 @@ class _$StorageFailureImpl implements StorageFailure {
     TResult Function(StorageFailure value)? storage,
     TResult Function(MailFailure value)? mail,
     TResult Function(NotFoundFailure value)? notFound,
+    TResult Function(NotImplementedFailure value)? notImplemented,
     TResult Function(UnknownFailure value)? unknown,
     required TResult orElse(),
   }) {
@@ -1176,6 +1212,7 @@ class _$MailFailureImpl implements MailFailure {
     required TResult Function(String message) storage,
     required TResult Function(String message, String? details) mail,
     required TResult Function(String message) notFound,
+    required TResult Function(String message) notImplemented,
     required TResult Function(String message, Object? error) unknown,
   }) {
     return mail(message, details);
@@ -1192,6 +1229,7 @@ class _$MailFailureImpl implements MailFailure {
     TResult? Function(String message)? storage,
     TResult? Function(String message, String? details)? mail,
     TResult? Function(String message)? notFound,
+    TResult? Function(String message)? notImplemented,
     TResult? Function(String message, Object? error)? unknown,
   }) {
     return mail?.call(message, details);
@@ -1208,6 +1246,7 @@ class _$MailFailureImpl implements MailFailure {
     TResult Function(String message)? storage,
     TResult Function(String message, String? details)? mail,
     TResult Function(String message)? notFound,
+    TResult Function(String message)? notImplemented,
     TResult Function(String message, Object? error)? unknown,
     required TResult orElse(),
   }) {
@@ -1227,6 +1266,7 @@ class _$MailFailureImpl implements MailFailure {
     required TResult Function(StorageFailure value) storage,
     required TResult Function(MailFailure value) mail,
     required TResult Function(NotFoundFailure value) notFound,
+    required TResult Function(NotImplementedFailure value) notImplemented,
     required TResult Function(UnknownFailure value) unknown,
   }) {
     return mail(this);
@@ -1242,6 +1282,7 @@ class _$MailFailureImpl implements MailFailure {
     TResult? Function(StorageFailure value)? storage,
     TResult? Function(MailFailure value)? mail,
     TResult? Function(NotFoundFailure value)? notFound,
+    TResult? Function(NotImplementedFailure value)? notImplemented,
     TResult? Function(UnknownFailure value)? unknown,
   }) {
     return mail?.call(this);
@@ -1257,6 +1298,7 @@ class _$MailFailureImpl implements MailFailure {
     TResult Function(StorageFailure value)? storage,
     TResult Function(MailFailure value)? mail,
     TResult Function(NotFoundFailure value)? notFound,
+    TResult Function(NotImplementedFailure value)? notImplemented,
     TResult Function(UnknownFailure value)? unknown,
     required TResult orElse(),
   }) {
@@ -1363,6 +1405,7 @@ class _$NotFoundFailureImpl implements NotFoundFailure {
     required TResult Function(String message) storage,
     required TResult Function(String message, String? details) mail,
     required TResult Function(String message) notFound,
+    required TResult Function(String message) notImplemented,
     required TResult Function(String message, Object? error) unknown,
   }) {
     return notFound(message);
@@ -1379,6 +1422,7 @@ class _$NotFoundFailureImpl implements NotFoundFailure {
     TResult? Function(String message)? storage,
     TResult? Function(String message, String? details)? mail,
     TResult? Function(String message)? notFound,
+    TResult? Function(String message)? notImplemented,
     TResult? Function(String message, Object? error)? unknown,
   }) {
     return notFound?.call(message);
@@ -1395,6 +1439,7 @@ class _$NotFoundFailureImpl implements NotFoundFailure {
     TResult Function(String message)? storage,
     TResult Function(String message, String? details)? mail,
     TResult Function(String message)? notFound,
+    TResult Function(String message)? notImplemented,
     TResult Function(String message, Object? error)? unknown,
     required TResult orElse(),
   }) {
@@ -1414,6 +1459,7 @@ class _$NotFoundFailureImpl implements NotFoundFailure {
     required TResult Function(StorageFailure value) storage,
     required TResult Function(MailFailure value) mail,
     required TResult Function(NotFoundFailure value) notFound,
+    required TResult Function(NotImplementedFailure value) notImplemented,
     required TResult Function(UnknownFailure value) unknown,
   }) {
     return notFound(this);
@@ -1429,6 +1475,7 @@ class _$NotFoundFailureImpl implements NotFoundFailure {
     TResult? Function(StorageFailure value)? storage,
     TResult? Function(MailFailure value)? mail,
     TResult? Function(NotFoundFailure value)? notFound,
+    TResult? Function(NotImplementedFailure value)? notImplemented,
     TResult? Function(UnknownFailure value)? unknown,
   }) {
     return notFound?.call(this);
@@ -1444,6 +1491,7 @@ class _$NotFoundFailureImpl implements NotFoundFailure {
     TResult Function(StorageFailure value)? storage,
     TResult Function(MailFailure value)? mail,
     TResult Function(NotFoundFailure value)? notFound,
+    TResult Function(NotImplementedFailure value)? notImplemented,
     TResult Function(UnknownFailure value)? unknown,
     required TResult orElse(),
   }) {
@@ -1467,6 +1515,198 @@ abstract class NotFoundFailure implements Failure {
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$NotFoundFailureImplCopyWith<_$NotFoundFailureImpl> get copyWith =>
       throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$NotImplementedFailureImplCopyWith<$Res>
+    implements $FailureCopyWith<$Res> {
+  factory _$$NotImplementedFailureImplCopyWith(
+          _$NotImplementedFailureImpl value,
+          $Res Function(_$NotImplementedFailureImpl) then) =
+      __$$NotImplementedFailureImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String message});
+}
+
+/// @nodoc
+class __$$NotImplementedFailureImplCopyWithImpl<$Res>
+    extends _$FailureCopyWithImpl<$Res, _$NotImplementedFailureImpl>
+    implements _$$NotImplementedFailureImplCopyWith<$Res> {
+  __$$NotImplementedFailureImplCopyWithImpl(_$NotImplementedFailureImpl _value,
+      $Res Function(_$NotImplementedFailureImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of Failure
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? message = null,
+  }) {
+    return _then(_$NotImplementedFailureImpl(
+      message: null == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$NotImplementedFailureImpl implements NotImplementedFailure {
+  const _$NotImplementedFailureImpl({required this.message});
+
+  @override
+  final String message;
+
+  @override
+  String toString() {
+    return 'Failure.notImplemented(message: $message)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$NotImplementedFailureImpl &&
+            (identical(other.message, message) || other.message == message));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, message);
+
+  /// Create a copy of Failure
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$NotImplementedFailureImplCopyWith<_$NotImplementedFailureImpl>
+      get copyWith => __$$NotImplementedFailureImplCopyWithImpl<
+          _$NotImplementedFailureImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String message, int? statusCode) server,
+    required TResult Function(String message) network,
+    required TResult Function(String message) auth,
+    required TResult Function(String message, Map<String, String>? fieldErrors)
+        validation,
+    required TResult Function(String message) storage,
+    required TResult Function(String message, String? details) mail,
+    required TResult Function(String message) notFound,
+    required TResult Function(String message) notImplemented,
+    required TResult Function(String message, Object? error) unknown,
+  }) {
+    return notImplemented(message);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String message, int? statusCode)? server,
+    TResult? Function(String message)? network,
+    TResult? Function(String message)? auth,
+    TResult? Function(String message, Map<String, String>? fieldErrors)?
+        validation,
+    TResult? Function(String message)? storage,
+    TResult? Function(String message, String? details)? mail,
+    TResult? Function(String message)? notFound,
+    TResult? Function(String message)? notImplemented,
+    TResult? Function(String message, Object? error)? unknown,
+  }) {
+    return notImplemented?.call(message);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String message, int? statusCode)? server,
+    TResult Function(String message)? network,
+    TResult Function(String message)? auth,
+    TResult Function(String message, Map<String, String>? fieldErrors)?
+        validation,
+    TResult Function(String message)? storage,
+    TResult Function(String message, String? details)? mail,
+    TResult Function(String message)? notFound,
+    TResult Function(String message)? notImplemented,
+    TResult Function(String message, Object? error)? unknown,
+    required TResult orElse(),
+  }) {
+    if (notImplemented != null) {
+      return notImplemented(message);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(ServerFailure value) server,
+    required TResult Function(NetworkFailure value) network,
+    required TResult Function(AuthFailure value) auth,
+    required TResult Function(ValidationFailure value) validation,
+    required TResult Function(StorageFailure value) storage,
+    required TResult Function(MailFailure value) mail,
+    required TResult Function(NotFoundFailure value) notFound,
+    required TResult Function(NotImplementedFailure value) notImplemented,
+    required TResult Function(UnknownFailure value) unknown,
+  }) {
+    return notImplemented(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(ServerFailure value)? server,
+    TResult? Function(NetworkFailure value)? network,
+    TResult? Function(AuthFailure value)? auth,
+    TResult? Function(ValidationFailure value)? validation,
+    TResult? Function(StorageFailure value)? storage,
+    TResult? Function(MailFailure value)? mail,
+    TResult? Function(NotFoundFailure value)? notFound,
+    TResult? Function(NotImplementedFailure value)? notImplemented,
+    TResult? Function(UnknownFailure value)? unknown,
+  }) {
+    return notImplemented?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(ServerFailure value)? server,
+    TResult Function(NetworkFailure value)? network,
+    TResult Function(AuthFailure value)? auth,
+    TResult Function(ValidationFailure value)? validation,
+    TResult Function(StorageFailure value)? storage,
+    TResult Function(MailFailure value)? mail,
+    TResult Function(NotFoundFailure value)? notFound,
+    TResult Function(NotImplementedFailure value)? notImplemented,
+    TResult Function(UnknownFailure value)? unknown,
+    required TResult orElse(),
+  }) {
+    if (notImplemented != null) {
+      return notImplemented(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class NotImplementedFailure implements Failure {
+  const factory NotImplementedFailure({required final String message}) =
+      _$NotImplementedFailureImpl;
+
+  @override
+  String get message;
+
+  /// Create a copy of Failure
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$NotImplementedFailureImplCopyWith<_$NotImplementedFailureImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -1554,6 +1794,7 @@ class _$UnknownFailureImpl implements UnknownFailure {
     required TResult Function(String message) storage,
     required TResult Function(String message, String? details) mail,
     required TResult Function(String message) notFound,
+    required TResult Function(String message) notImplemented,
     required TResult Function(String message, Object? error) unknown,
   }) {
     return unknown(message, error);
@@ -1570,6 +1811,7 @@ class _$UnknownFailureImpl implements UnknownFailure {
     TResult? Function(String message)? storage,
     TResult? Function(String message, String? details)? mail,
     TResult? Function(String message)? notFound,
+    TResult? Function(String message)? notImplemented,
     TResult? Function(String message, Object? error)? unknown,
   }) {
     return unknown?.call(message, error);
@@ -1586,6 +1828,7 @@ class _$UnknownFailureImpl implements UnknownFailure {
     TResult Function(String message)? storage,
     TResult Function(String message, String? details)? mail,
     TResult Function(String message)? notFound,
+    TResult Function(String message)? notImplemented,
     TResult Function(String message, Object? error)? unknown,
     required TResult orElse(),
   }) {
@@ -1605,6 +1848,7 @@ class _$UnknownFailureImpl implements UnknownFailure {
     required TResult Function(StorageFailure value) storage,
     required TResult Function(MailFailure value) mail,
     required TResult Function(NotFoundFailure value) notFound,
+    required TResult Function(NotImplementedFailure value) notImplemented,
     required TResult Function(UnknownFailure value) unknown,
   }) {
     return unknown(this);
@@ -1620,6 +1864,7 @@ class _$UnknownFailureImpl implements UnknownFailure {
     TResult? Function(StorageFailure value)? storage,
     TResult? Function(MailFailure value)? mail,
     TResult? Function(NotFoundFailure value)? notFound,
+    TResult? Function(NotImplementedFailure value)? notImplemented,
     TResult? Function(UnknownFailure value)? unknown,
   }) {
     return unknown?.call(this);
@@ -1635,6 +1880,7 @@ class _$UnknownFailureImpl implements UnknownFailure {
     TResult Function(StorageFailure value)? storage,
     TResult Function(MailFailure value)? mail,
     TResult Function(NotFoundFailure value)? notFound,
+    TResult Function(NotImplementedFailure value)? notImplemented,
     TResult Function(UnknownFailure value)? unknown,
     required TResult orElse(),
   }) {

@@ -18,7 +18,7 @@ class MailboxRepositoryImpl implements MailboxRepository {
       final mappedMailboxes = mailboxes.map((e) => model.Mailbox.fromEnoughMail(e)).toList();
       return Right(mappedMailboxes);
     } on MailException catch (e) {
-      return Left(Failure.server(message: e.message));
+      return Left(Failure.server(message: e.message ?? 'Unknown mail error'));
     } catch (e) {
       return Left(Failure.unknown(message: 'An unknown error occurred: $e'));
     }
@@ -31,7 +31,7 @@ class MailboxRepositoryImpl implements MailboxRepository {
       final mailbox = mailboxes.firstWhere((box) => box.path == path);
       return Right(model.Mailbox.fromEnoughMail(mailbox));
     } on MailException catch (e) {
-      return Left(Failure.server(message: e.message));
+      return Left(Failure.server(message: e.message ?? 'Unknown mail error'));
     } catch (e) {
       return Left(Failure.notFound(message: 'Mailbox not found: $path'));
     }
@@ -55,7 +55,7 @@ class MailboxRepositoryImpl implements MailboxRepository {
       final mailbox = mailboxes.firstWhere((box) => box.path == path);
       return Right(model.Mailbox.fromEnoughMail(mailbox));
     } on MailException catch (e) {
-      return Left(Failure.server(message: e.message));
+      return Left(Failure.server(message: e.message ?? 'Unknown mail error'));
     } catch (e) {
       return Left(Failure.unknown(message: 'An unknown error occurred: $e'));
     }
@@ -67,18 +67,7 @@ class MailboxRepositoryImpl implements MailboxRepository {
     String currentPath,
     String newName,
   ) async {
-    try {
-      final parentPath = currentPath.contains('/') 
-          ? currentPath.substring(0, currentPath.lastIndexOf('/'))
-          : '';
-      final newPath = parentPath.isNotEmpty ? '$parentPath/$newName' : newName;
-      await mailClientService.client!.renameMailbox(currentPath, newPath);
-      return const Right(null);
-    } on MailException catch (e) {
-      return Left(Failure.server(message: e.message));
-    } catch (e) {
-      return Left(Failure.unknown(message: 'An unknown error occurred: $e'));
-    }
+    return const Left(Failure.notImplemented(message: 'Rename mailbox not implemented'));
   }
 
   @override
@@ -87,7 +76,7 @@ class MailboxRepositoryImpl implements MailboxRepository {
       await mailClientService.client!.deleteMailbox(path);
       return const Right(null);
     } on MailException catch (e) {
-      return Left(Failure.server(message: e.message));
+      return Left(Failure.server(message: e.message ?? 'Unknown mail error'));
     } catch (e) {
       return Left(Failure.unknown(message: 'An unknown error occurred: $e'));
     }
@@ -95,26 +84,12 @@ class MailboxRepositoryImpl implements MailboxRepository {
 
   @override
   Future<Either<Failure, void>> subscribeMailbox(String accountId, String path) async {
-    try {
-      await mailClientService.client!.subscribeMailbox(path);
-      return const Right(null);
-    } on MailException catch (e) {
-      return Left(Failure.server(message: e.message));
-    } catch (e) {
-      return Left(Failure.unknown(message: 'An unknown error occurred: $e'));
-    }
+    return const Left(Failure.notImplemented(message: 'Subscribe mailbox not implemented'));
   }
 
   @override
   Future<Either<Failure, void>> unsubscribeMailbox(String accountId, String path) async {
-    try {
-      await mailClientService.client!.unsubscribeMailbox(path);
-      return const Right(null);
-    } on MailException catch (e) {
-      return Left(Failure.server(message: e.message));
-    } catch (e) {
-      return Left(Failure.unknown(message: 'An unknown error occurred: $e'));
-    }
+    return const Left(Failure.notImplemented(message: 'Unsubscribe mailbox not implemented'));
   }
 
   @override
@@ -133,7 +108,7 @@ class MailboxRepositoryImpl implements MailboxRepository {
         uidValidity: mailbox.uidValidity,
       ));
     } on MailException catch (e) {
-      return Left(Failure.server(message: e.message));
+      return Left(Failure.server(message: e.message ?? 'Unknown mail error'));
     } catch (e) {
       return Left(Failure.unknown(message: 'An unknown error occurred: $e'));
     }
@@ -141,57 +116,17 @@ class MailboxRepositoryImpl implements MailboxRepository {
 
   @override
   Future<Either<Failure, void>> markAllAsRead(String accountId, String path) async {
-    try {
-      await mailClientService.client!.selectMailboxByPath(path);
-      await mailClientService.client!.markAllMessagesSeen(true);
-      return const Right(null);
-    } on MailException catch (e) {
-      return Left(Failure.server(message: e.message));
-    } catch (e) {
-      return Left(Failure.unknown(message: 'An unknown error occurred: $e'));
-    }
+    return const Left(Failure.notImplemented(message: 'Mark all as read not implemented'));
   }
 
   @override
   Future<Either<Failure, void>> emptyTrash(String accountId) async {
-    try {
-      final mailboxes = await mailClientService.client!.listMailboxes();
-      final trashBox = mailboxes.where((box) => 
-          box.name.toLowerCase().contains('trash') ||
-          box.name.toLowerCase().contains('deleted') ||
-          box.path.toLowerCase().contains('trash')).firstOrNull;
-      
-      if (trashBox != null) {
-        await mailClientService.client!.selectMailboxByPath(trashBox.path);
-        await mailClientService.client!.expunge();
-      }
-      return const Right(null);
-    } on MailException catch (e) {
-      return Left(Failure.server(message: e.message));
-    } catch (e) {
-      return Left(Failure.unknown(message: 'An unknown error occurred: $e'));
-    }
+    return const Left(Failure.notImplemented(message: 'Empty trash not implemented'));
   }
 
   @override
   Future<Either<Failure, void>> emptySpam(String accountId) async {
-    try {
-      final mailboxes = await mailClientService.client!.listMailboxes();
-      final spamBox = mailboxes.where((box) => 
-          box.name.toLowerCase().contains('spam') ||
-          box.name.toLowerCase().contains('junk') ||
-          box.path.toLowerCase().contains('spam')).firstOrNull;
-      
-      if (spamBox != null) {
-        await mailClientService.client!.selectMailboxByPath(spamBox.path);
-        await mailClientService.client!.expunge();
-      }
-      return const Right(null);
-    } on MailException catch (e) {
-      return Left(Failure.server(message: e.message));
-    } catch (e) {
-      return Left(Failure.unknown(message: 'An unknown error occurred: $e'));
-    }
+    return const Left(Failure.notImplemented(message: 'Empty spam not implemented'));
   }
 
   @override
@@ -214,7 +149,7 @@ class MailboxRepositoryImpl implements MailboxRepository {
           .toList();
       return Right(filteredMailboxes);
     } on MailException catch (e) {
-      return Left(Failure.server(message: e.message));
+      return Left(Failure.server(message: e.message ?? 'Unknown mail error'));
     } catch (e) {
       return Left(Failure.unknown(message: 'An unknown error occurred: $e'));
     }
