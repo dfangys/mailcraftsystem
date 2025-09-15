@@ -14,6 +14,13 @@ import 'package:mailcraftsystem/features/auth/presentation/screens/otp_screen.da
 import 'package:mailcraftsystem/features/auth/presentation/screens/reset_password_screen.dart';
 import 'package:mailcraftsystem/features/auth/presentation/screens/splash_screen.dart';
 import 'package:mailcraftsystem/features/compose/presentation/screens/compose_screen.dart';
+import 'package:mailcraftsystem/features/compose/presentation/screens/rich_compose_screen.dart';
+import 'package:mailcraftsystem/features/search/presentation/screens/search_screen.dart';
+import 'package:mailcraftsystem/features/settings/presentation/screens/settings_screen.dart';
+import 'package:mailcraftsystem/features/enterprise/presentation/screens/enterprise_features_screen.dart';
+import 'package:mailcraftsystem/features/dashboard/presentation/screens/dashboard_screen.dart';
+import 'package:mailcraftsystem/features/mailboxes/presentation/screens/advanced_mailbox_screen.dart';
+import 'package:mailcraftsystem/features/messages/presentation/screens/message_handling_screen.dart';
 import 'package:mailcraftsystem/features/mailboxes/presentation/screens/mailbox_screen.dart';
 import 'package:mailcraftsystem/features/messages/domain/models/message.dart';
 import 'package:mailcraftsystem/features/messages/presentation/screens/message_detail_screen.dart';
@@ -135,10 +142,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           );
         },
       ),
-      GoRoute(
-        path: '/compose',
-        builder: (context, state) => const ComposeScreen(),
-      ),
+
     ],
   );
 });

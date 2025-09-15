@@ -25,7 +25,7 @@ dependencies:
   go_router: ^14.2.0
   hooks_riverpod: ^2.5.1
   hugeicons: ^1.0.2
-  intl: ^0.19.0
+  intl: ^0.20.2
   json_annotation: ^4.9.0
   logger: ^2.0.2+1
   package_info_plus: ^4.2.0
@@ -58,4 +58,7 @@ flutter_intl:
 
 dependency_overrides:
   pointycastle: ^4.0.0
+
+
+
 
