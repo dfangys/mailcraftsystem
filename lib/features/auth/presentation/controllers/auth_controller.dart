@@ -1,8 +1,9 @@
-import 'package:mailcraftsystem/core/logging/logger.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mailcraftsystem/features/auth/domain/models/auth_token.dart';
 import 'package:mailcraftsystem/features/auth/domain/models/login_request.dart';
 import 'package:mailcraftsystem/features/auth/domain/models/otp_challenge.dart';
 import 'package:mailcraftsystem/features/auth/presentation/providers/auth_providers.dart';
+import 'package:mailcraftsystem/features/account/data/datasources/mail_client_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'auth_controller.g.dart';
@@ -16,6 +17,8 @@ class AuthState {
     this.requiresOtp = false,
     this.otpDelivery,
     this.resetEmailSent = false,
+    this.userEmail,
+    this.userPassword,
   });
 
   final bool isLoading;
@@ -25,6 +28,8 @@ class AuthState {
   final bool requiresOtp;
   final String? otpDelivery;
   final bool resetEmailSent;
+  final String? userEmail;
+  final String? userPassword;
 
   AuthState copyWith({
     bool? isLoading,
@@ -34,6 +39,8 @@ class AuthState {
     bool? requiresOtp,
     String? otpDelivery,
     bool? resetEmailSent,
+    String? userEmail,
+    String? userPassword,
   }) {
     return AuthState(
       isLoading: isLoading ?? this.isLoading,
@@ -43,9 +50,16 @@ class AuthState {
       requiresOtp: requiresOtp ?? this.requiresOtp,
       otpDelivery: otpDelivery ?? this.otpDelivery,
       resetEmailSent: resetEmailSent ?? this.resetEmailSent,
+      userEmail: userEmail ?? this.userEmail,
+      userPassword: userPassword ?? this.userPassword,
     );
   }
 }
+
+// Provider for mail client service
+final mailClientServiceProvider = Provider<MailClientService>((ref) {
+  return MailClientService();
+});
 
 @riverpod
 class AuthController extends _$AuthController {
@@ -63,8 +77,26 @@ class AuthController extends _$AuthController {
     }
   }
 
+  Future<void> _initializeMailClient(String email, String password) async {
+    try {
+      final mailClientService = ref.read(mailClientServiceProvider);
+      final success = await mailClientService.initializeAndConnect(email, password);
+      if (!success) {
+        throw Exception('Failed to connect to mail server');
+      }
+    } catch (e) {
+      // Log error but don't fail authentication
+      print('Warning: Mail client initialization failed: $e');
+    }
+  }
+
   Future<void> login(String email, String password) async {
-    state = state.copyWith(isLoading: true, error: null);
+    state = state.copyWith(
+      isLoading: true, 
+      error: null,
+      userEmail: email,
+      userPassword: password,
+    );
     final loginUseCase = ref.read(loginUseCaseProvider);
     final result = await loginUseCase(LoginRequest(email: email, password: password));
 
@@ -79,6 +111,8 @@ class AuthController extends _$AuthController {
             token: token, // Store temporary token
           );
         } else {
+          // Initialize mail client after successful authentication
+          _initializeMailClient(email, password);
           state = state.copyWith(
             isLoading: false,
             isAuthenticated: true,
@@ -96,12 +130,18 @@ class AuthController extends _$AuthController {
 
     result.fold(
       (failure) => state = state.copyWith(isLoading: false, error: failure.message),
-      (token) => state = state.copyWith(
-        isLoading: false,
-        isAuthenticated: true,
-        token: token,
-        requiresOtp: false,
-      ),
+      (token) async {
+        // Initialize mail client after successful OTP verification
+        if (state.userEmail != null && state.userPassword != null) {
+          await _initializeMailClient(state.userEmail!, state.userPassword!);
+        }
+        state = state.copyWith(
+          isLoading: false,
+          isAuthenticated: true,
+          token: token,
+          requiresOtp: false,
+        );
+      },
     );
   }
 
@@ -129,6 +169,12 @@ class AuthController extends _$AuthController {
 
   Future<void> logout() async {
     state = state.copyWith(isLoading: true);
+    
+    // Disconnect mail client
+    final mailClientService = ref.read(mailClientServiceProvider);
+    await mailClientService.disconnect();
+    mailClientService.reset();
+    
     final logoutUseCase = ref.read(logoutUseCaseProvider);
     await logoutUseCase();
     state = const AuthState();
@@ -149,4 +195,3 @@ class AuthController extends _$AuthController {
     state = state.copyWith(error: null);
   }
 }
-

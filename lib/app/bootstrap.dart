@@ -14,7 +14,6 @@ import 'package:mailcraftsystem/features/auth/presentation/screens/otp_screen.da
 import 'package:mailcraftsystem/features/auth/presentation/screens/reset_password_screen.dart';
 import 'package:mailcraftsystem/features/auth/presentation/screens/splash_screen.dart';
 import 'package:mailcraftsystem/features/compose/presentation/screens/compose_screen.dart';
-import 'package:mailcraftsystem/features/compose/presentation/screens/rich_compose_screen.dart';
 import 'package:mailcraftsystem/features/search/presentation/screens/search_screen.dart';
 import 'package:mailcraftsystem/features/settings/presentation/screens/settings_screen.dart';
 import 'package:mailcraftsystem/features/enterprise/presentation/screens/enterprise_features_screen.dart';
@@ -71,9 +70,9 @@ void bootstrap() {
   );
 }
 
-/// Main application widget for MailCraft System (internal)
+/// Main application widget for MailCraft System
 class MailCraftApp extends ConsumerWidget {
-  /// Creates a new instance of [_MailCraftApp]
+  /// Creates a new instance of [MailCraftApp]
   const MailCraftApp({super.key});
 
   @override
@@ -125,8 +124,20 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const AccountSetupScreen(),
       ),
       GoRoute(
+        path: '/dashboard',
+        builder: (context, state) => const DashboardScreen(),
+      ),
+      GoRoute(
         path: '/home',
         builder: (context, state) => const MailboxScreen(),
+      ),
+      GoRoute(
+        path: '/mailbox',
+        builder: (context, state) => const AdvancedMailboxScreen(),
+      ),
+      GoRoute(
+        path: '/message-handling',
+        builder: (context, state) => const MessageHandlingScreen(),
       ),
       GoRoute(
         path: '/message-detail',
@@ -142,8 +153,22 @@ final routerProvider = Provider<GoRouter>((ref) {
           );
         },
       ),
-
+      GoRoute(
+        path: '/compose',
+        builder: (context, state) => const ComposeScreen(),
+      ),
+      GoRoute(
+        path: '/search',
+        builder: (context, state) => const SearchScreen(),
+      ),
+      GoRoute(
+        path: '/enterprise',
+        builder: (context, state) => const EnterpriseFeaturesScreen(),
+      ),
+      GoRoute(
+        path: '/settings',
+        builder: (context, state) => const SettingsScreen(),
+      ),
     ],
   );
 });
-

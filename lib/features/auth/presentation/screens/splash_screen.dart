@@ -63,7 +63,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     if (mounted) {
       final authState = ref.read(authControllerProvider);
       if (authState.isAuthenticated) {
-        context.go('/home');
+        context.go('/dashboard');
       } else {
         context.go('/login');
       }
@@ -84,7 +84,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     // Listen to auth state changes in build method
     ref.listen<AuthState>(authControllerProvider, (previous, next) {
       if (next.isAuthenticated) {
-        context.go('/home');
+        context.go('/dashboard');
       } else if (next.error != null) {
         context.go('/login');
       }
