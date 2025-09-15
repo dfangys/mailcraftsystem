@@ -51,8 +51,4 @@ class MailboxController extends StateNotifier<MailboxState> {
   }
 }
 
-final mailboxControllerProvider =
-    StateNotifierProvider<MailboxController, MailboxState>((ref) {
-  // This will be properly initialized later with the actual repositories
-  throw UnimplementedError();
-});
+

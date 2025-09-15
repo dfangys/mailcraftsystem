@@ -7,7 +7,7 @@ import 'package:mailcraftsystem/shared/widgets/email_list_item.dart';
 import 'package:mailcraftsystem/shared/widgets/loading_widget.dart';
 import 'package:mailcraftsystem/shared/widgets/app_button.dart';
 import 'package:mailcraftsystem/features/messages/domain/models/message.dart';
-import 'package:mailcraftsystem/features/mailboxes/presentation/controllers/mailbox_controller.dart';
+
 
 /// Enterprise-grade mailbox screen with comprehensive email management
 class MailboxScreen extends ConsumerStatefulWidget {
@@ -290,7 +290,7 @@ class _MailboxScreenState extends ConsumerState<MailboxScreen> {
           onTap: () => _handleMessageTap(message),
           onLongPress: () => _handleMessageLongPress(message),
           onSelectionChanged: (selected) =>
-              _handleMessageSelection(message.id, selected),
+              _handleMessageSelection(message.id, selected ?? false),
         );
       },
     );
@@ -498,7 +498,7 @@ class _MailboxScreenState extends ConsumerState<MailboxScreen> {
   void _selectAll() {
     final state = ref.read(mailboxControllerProvider);
     setState(() {
-      _selectedMessages.addAll(state.messages.map((m) => m.id));
+      _selectedMessages.addAll(state.messages.map((m) => m.id).toList());
     });
   }
 
