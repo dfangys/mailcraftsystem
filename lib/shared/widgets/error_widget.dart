@@ -10,13 +10,13 @@ class AppErrorWidget extends StatelessWidget {
     super.key,
     this.onRetry,
   });
-  
+
   /// The failure to display
   final Failure failure;
-  
+
   /// Callback for retry action
   final VoidCallback? onRetry;
-  
+
   @override
   Widget build(BuildContext context) {
     return Center(

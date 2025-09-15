@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mailcraftsystem/features/messages/domain/models/message.dart';
 import 'package:mailcraftsystem/features/navigation/presentation/widgets/app_drawer.dart';
-import 'package:mailcraftsystem/shared/widgets/email_list_item.dart';
-import 'package:mailcraftsystem/shared/widgets/loading_widget.dart';
 import 'package:mailcraftsystem/shared/widgets/app_button.dart';
 import 'package:mailcraftsystem/shared/widgets/app_card.dart';
-import 'package:mailcraftsystem/features/messages/domain/models/message.dart';
+import 'package:mailcraftsystem/shared/widgets/email_list_item.dart';
+import 'package:mailcraftsystem/shared/widgets/loading_widget.dart';
 
 /// Enterprise-grade email search screen with advanced filtering
 class SearchScreen extends ConsumerStatefulWidget {
@@ -20,14 +20,14 @@ class SearchScreen extends ConsumerStatefulWidget {
 class _SearchScreenState extends ConsumerState<SearchScreen> {
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
-  
+
   bool _isSearching = false;
   bool _showFilters = false;
   List<Message> _searchResults = [];
   String _currentQuery = '';
-  
+
   // Filter options
-  SearchFilter _currentFilter = SearchFilter();
+  SearchFilter _currentFilter = const SearchFilter();
   final List<String> _recentSearches = [
     'project update',
     'meeting notes',
@@ -50,9 +50,6 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
     return Scaffold(
       appBar: _buildSearchAppBar(context),
       drawer: const AppDrawer(),
@@ -60,7 +57,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         children: [
           // Search filters
           if (_showFilters) _buildFiltersSection(context),
-          
+
           // Search content
           Expanded(
             child: _buildSearchContent(context),
@@ -78,7 +75,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
       title: Container(
         height: 40,
         decoration: BoxDecoration(
-          color: colorScheme.surfaceVariant.withOpacity(0.5),
+          color: colorScheme.surfaceContainerHighest.withAlpha(128),
           borderRadius: BorderRadius.circular(20),
         ),
         child: TextField(
@@ -94,7 +91,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   )
                 : null,
             border: InputBorder.none,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           ),
           onChanged: _onSearchChanged,
           onSubmitted: _performSearch,
@@ -149,10 +147,10 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: colorScheme.surfaceVariant.withOpacity(0.3),
+        color: colorScheme.surfaceContainerHighest.withAlpha(77),
         border: Border(
           bottom: BorderSide(
-            color: colorScheme.outline.withOpacity(0.2),
+            color: colorScheme.outline.withAlpha(51),
           ),
         ),
       ),
@@ -166,7 +164,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
             ),
           ),
           const SizedBox(height: 12),
-          
+
           // Filter chips
           Wrap(
             spacing: 8,
@@ -176,7 +174,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                 label: const Text('Unread'),
                 selected: _currentFilter.unreadOnly,
                 onSelected: (selected) => setState(() {
-                  _currentFilter = _currentFilter.copyWith(unreadOnly: selected);
+                  _currentFilter =
+                      _currentFilter.copyWith(unreadOnly: selected);
                   _applyFilters();
                 }),
               ),
@@ -184,7 +183,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                 label: const Text('Has Attachments'),
                 selected: _currentFilter.hasAttachments,
                 onSelected: (selected) => setState(() {
-                  _currentFilter = _currentFilter.copyWith(hasAttachments: selected);
+                  _currentFilter =
+                      _currentFilter.copyWith(hasAttachments: selected);
                   _applyFilters();
                 }),
               ),
@@ -192,7 +192,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                 label: const Text('Flagged'),
                 selected: _currentFilter.flaggedOnly,
                 onSelected: (selected) => setState(() {
-                  _currentFilter = _currentFilter.copyWith(flaggedOnly: selected);
+                  _currentFilter =
+                      _currentFilter.copyWith(flaggedOnly: selected);
                   _applyFilters();
                 }),
               ),
@@ -200,21 +201,22 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                 label: const Text('High Priority'),
                 selected: _currentFilter.highPriorityOnly,
                 onSelected: (selected) => setState(() {
-                  _currentFilter = _currentFilter.copyWith(highPriorityOnly: selected);
+                  _currentFilter =
+                      _currentFilter.copyWith(highPriorityOnly: selected);
                   _applyFilters();
                 }),
               ),
             ],
           ),
-          
+
           const SizedBox(height: 12),
-          
+
           // Date range and folder filters
           Row(
             children: [
               Expanded(
                 child: DropdownButtonFormField<String>(
-                  value: _currentFilter.dateRange,
+                  initialValue: _currentFilter.dateRange,
                   decoration: const InputDecoration(
                     labelText: 'Date Range',
                     border: OutlineInputBorder(),
@@ -236,7 +238,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               const SizedBox(width: 12),
               Expanded(
                 child: DropdownButtonFormField<String>(
-                  value: _currentFilter.folder,
+                  initialValue: _currentFilter.folder,
                   decoration: const InputDecoration(
                     labelText: 'Folder',
                     border: OutlineInputBorder(),
@@ -257,9 +259,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               ),
             ],
           ),
-          
+
           const SizedBox(height: 12),
-          
+
           // Clear filters button
           if (_currentFilter.hasActiveFilters)
             AppButton(
@@ -294,7 +296,6 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 
   Widget _buildSearchSuggestions(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -312,20 +313,22 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
             const SizedBox(height: 12),
             AppCard(
               child: Column(
-                children: _recentSearches.map((search) => ListTile(
-                  leading: const Icon(Icons.history_outlined),
-                  title: Text(search),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.north_west_outlined),
-                    onPressed: () => _useRecentSearch(search),
-                  ),
-                  onTap: () => _useRecentSearch(search),
-                )).toList(),
+                children: _recentSearches
+                    .map((search) => ListTile(
+                          leading: const Icon(Icons.history_outlined),
+                          title: Text(search),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.north_west_outlined),
+                            onPressed: () => _useRecentSearch(search),
+                          ),
+                          onTap: () => _useRecentSearch(search),
+                        ))
+                    .toList(),
               ),
             ),
             const SizedBox(height: 24),
           ],
-          
+
           // Search suggestions
           Text(
             'Search Suggestions',
@@ -370,9 +373,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               ],
             ),
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           // Quick actions
           Text(
             'Quick Actions',
@@ -420,9 +423,10 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     );
   }
 
-  Widget _buildSuggestionTile(BuildContext context, String title, String query, IconData icon) {
+  Widget _buildSuggestionTile(
+      BuildContext context, String title, String query, IconData icon) {
     final theme = Theme.of(context);
-    
+
     return ListTile(
       leading: Icon(icon),
       title: Text(title),
@@ -437,7 +441,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     );
   }
 
-  Widget _buildQuickActionCard(BuildContext context, String title, IconData icon, VoidCallback onTap) {
+  Widget _buildQuickActionCard(
+      BuildContext context, String title, IconData icon, VoidCallback onTap) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -489,17 +494,27 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               DropdownButton<String>(
                 value: 'relevance',
                 items: const [
-                  DropdownMenuItem(value: 'relevance', child: Text('Relevance')),
-                  DropdownMenuItem(value: 'date_desc', child: Text('Newest first')),
-                  DropdownMenuItem(value: 'date_asc', child: Text('Oldest first')),
-                  DropdownMenuItem(value: 'sender', child: Text('Sender')),
+                  DropdownMenuItem(
+                    value: 'relevance',
+                    child: Text('Relevance'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'date_desc',
+                    child: Text('Newest first'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'date_asc',
+                    child: Text('Oldest first'),
+                  ),
                 ],
-                onChanged: (value) => _sortResults(value!),
+                onChanged: (value) {
+                  // Handle sort change
+                },
               ),
             ],
           ),
         ),
-        
+
         // Results list
         Expanded(
           child: ListView.builder(
@@ -508,7 +523,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               final message = _searchResults[index];
               return EmailListItem(
                 message: message,
-                onTap: () => context.go('/message-detail', extra: message),
+                onTap: () => context.go('/messages/${message.id}'),
               );
             },
           ),
@@ -519,56 +534,44 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 
   Widget _buildNoResults(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
 
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
+          const Icon(
             Icons.search_off_outlined,
             size: 64,
-            color: colorScheme.onSurfaceVariant,
+            color: Colors.grey,
           ),
           const SizedBox(height: 16),
           Text(
-            'No results found',
+            'No results found for "$_currentQuery"',
             style: theme.textTheme.titleLarge,
           ),
           const SizedBox(height: 8),
           Text(
-            'Try different keywords or adjust your filters',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onSurfaceVariant,
-            ),
-            textAlign: TextAlign.center,
+            'Try a different search term or adjust your filters.',
+            style: theme.textTheme.bodyMedium,
           ),
           const SizedBox(height: 24),
           AppButton(
             text: 'Clear Search',
-            icon: Icons.clear_outlined,
             onPressed: _clearSearch,
+            style: AppButtonStyle.secondary,
           ),
         ],
       ),
     );
   }
 
-  // Event handlers
   void _onSearchChanged(String query) {
-    setState(() => _currentQuery = query);
-    
-    if (query.isNotEmpty) {
-      // Debounce search
-      Future.delayed(const Duration(milliseconds: 500), () {
-        if (_currentQuery == query && query.isNotEmpty) {
-          _performSearch(query);
-        }
-      });
-    }
+    setState(() {
+      _currentQuery = query;
+    });
   }
 
-  Future<void> _performSearch(String query) async {
+  void _performSearch(String query) {
     if (query.isEmpty) return;
 
     setState(() {
@@ -576,63 +579,58 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
       _currentQuery = query;
     });
 
-    try {
-      // Simulate search
-      await Future.delayed(const Duration(seconds: 1));
-      
-      // Mock search results
-      final results = _generateMockResults(query);
-      
+    // Simulate network request
+    Future.delayed(const Duration(seconds: 1), () {
       setState(() {
-        _searchResults = results;
+        _searchResults = _generateDummyResults(query);
         _isSearching = false;
       });
-      
-      // Add to recent searches
-      if (!_recentSearches.contains(query)) {
-        _recentSearches.insert(0, query);
-        if (_recentSearches.length > 10) {
-          _recentSearches.removeLast();
-        }
-      }
-    } catch (e) {
-      setState(() => _isSearching = false);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Search failed: $e')),
-        );
-      }
-    }
+    });
   }
 
   void _clearSearch() {
     _searchController.clear();
     setState(() {
       _currentQuery = '';
-      _searchResults.clear();
+      _searchResults = [];
     });
   }
 
   void _toggleFilters() {
-    setState(() => _showFilters = !_showFilters);
+    setState(() {
+      _showFilters = !_showFilters;
+    });
   }
 
   void _applyFilters() {
-    if (_currentQuery.isNotEmpty) {
-      _performSearch(_currentQuery);
-    }
+    // In a real app, you would re-run the search with the new filters
+    _performSearch(_currentQuery);
   }
 
   void _clearFilters() {
     setState(() {
-      _currentFilter = SearchFilter();
+      _currentFilter = const SearchFilter();
     });
     _applyFilters();
   }
 
-  void _useRecentSearch(String search) {
-    _searchController.text = search;
-    _performSearch(search);
+  void _handleMenuAction(String action) {
+    switch (action) {
+      case 'advanced_search':
+        // Navigate to advanced search screen
+        break;
+      case 'search_history':
+        // Show search history
+        break;
+      case 'clear_history':
+        // Clear search history
+        break;
+    }
+  }
+
+  void _useRecentSearch(String query) {
+    _searchController.text = query;
+    _performSearch(query);
   }
 
   void _useSearchSuggestion(String query) {
@@ -645,116 +643,30 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     _performSearch(query);
   }
 
-  void _sortResults(String sortBy) {
-    setState(() {
-      switch (sortBy) {
-        case 'date_desc':
-          _searchResults.sort((a, b) => (b.receivedDate ?? DateTime.now())
-              .compareTo(a.receivedDate ?? DateTime.now()));
-          break;
-        case 'date_asc':
-          _searchResults.sort((a, b) => (a.receivedDate ?? DateTime.now())
-              .compareTo(b.receivedDate ?? DateTime.now()));
-          break;
-        case 'sender':
-          _searchResults.sort((a, b) => (a.from?.name ?? '')
-              .compareTo(b.from?.name ?? ''));
-          break;
-        case 'relevance':
-        default:
-          // Keep current order (relevance)
-          break;
-      }
+  List<Message> _generateDummyResults(String query) {
+    // This is a dummy implementation. In a real app, you would fetch results
+    // from your backend or local database.
+    return List.generate(15, (index) {
+      return Message(
+        id: 'msg${index + 1}',
+        uid: index + 1,
+        mailboxPath: 'INBOX',
+        from: MessageAddress(email: 'sender${index + 1}@example.com'),
+        to: [const MessageAddress(email: 'user@example.com')],
+        subject: 'Search result ${index + 1} for "$query"',
+        preview:
+            'This is a dummy email snippet for search result ${index + 1}.',
+        date: DateTime.now().subtract(Duration(hours: index)),
+        isRead: index % 3 == 0,
+        isFlagged: index % 5 == 0,
+      );
     });
-  }
-
-  void _handleMenuAction(String action) {
-    switch (action) {
-      case 'advanced_search':
-        _showAdvancedSearchDialog();
-        break;
-      case 'search_history':
-        _showSearchHistoryDialog();
-        break;
-      case 'clear_history':
-        _clearSearchHistory();
-        break;
-    }
-  }
-
-  void _showAdvancedSearchDialog() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Advanced search not implemented')),
-    );
-  }
-
-  void _showSearchHistoryDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Search History'),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: _recentSearches.length,
-            itemBuilder: (context, index) {
-              final search = _recentSearches[index];
-              return ListTile(
-                title: Text(search),
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete_outline),
-                  onPressed: () {
-                    setState(() => _recentSearches.removeAt(index));
-                    Navigator.of(context).pop();
-                  },
-                ),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  _useRecentSearch(search);
-                },
-              );
-            },
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Close'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _clearSearchHistory() {
-    setState(() => _recentSearches.clear());
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Search history cleared')),
-    );
-  }
-
-  List<Message> _generateMockResults(String query) {
-    // Mock search results generation
-    return List.generate(5, (index) => Message(
-      id: 'search_result_$index',
-      subject: 'Search result $index for "$query"',
-      from: EmailAddress(
-        name: 'Sender $index',
-        email: 'sender$index@example.com',
-      ),
-      to: [EmailAddress(email: 'user@example.com')],
-      receivedDate: DateTime.now().subtract(Duration(days: index)),
-      isRead: index % 2 == 0,
-      hasAttachments: index % 3 == 0,
-      isFlagged: index % 4 == 0,
-      preview: 'This is a preview of search result $index containing "$query"...',
-    ));
   }
 }
 
-/// Search filter configuration
+/// Search filter data class
 class SearchFilter {
+  /// Creates a search filter
   const SearchFilter({
     this.unreadOnly = false,
     this.hasAttachments = false,
@@ -764,13 +676,25 @@ class SearchFilter {
     this.folder = 'all',
   });
 
+  /// Whether to show unread emails only
   final bool unreadOnly;
-  final bool hasAttachments;
-  final bool flaggedOnly;
-  final bool highPriorityOnly;
-  final String dateRange;
-  final String folder;
 
+  /// Whether to show emails with attachments only
+  final bool hasAttachments;
+
+  /// Whether to show flagged emails only
+  final bool flaggedOnly;
+
+  /// Whether to show high priority emails only
+  final bool highPriorityOnly;
+
+  /// The date range to filter by
+  final String? dateRange;
+
+  /// The folder to filter by
+  final String? folder;
+
+  /// Whether any filters are active
   bool get hasActiveFilters =>
       unreadOnly ||
       hasAttachments ||
@@ -779,6 +703,7 @@ class SearchFilter {
       dateRange != 'any' ||
       folder != 'all';
 
+  /// Creates a copy of this search filter with the given fields replaced
   SearchFilter copyWith({
     bool? unreadOnly,
     bool? hasAttachments,
@@ -797,3 +722,4 @@ class SearchFilter {
     );
   }
 }
+

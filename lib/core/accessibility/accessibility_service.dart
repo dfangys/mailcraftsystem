@@ -424,4 +424,3 @@ enum Assertiveness {
   /// Assertive announcement (interrupts current speech).
   assertive,
 }
-

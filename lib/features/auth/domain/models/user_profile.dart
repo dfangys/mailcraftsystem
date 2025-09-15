@@ -5,6 +5,7 @@ part 'user_profile.g.dart';
 
 /// User profile model
 @freezed
+
 /// UserProfile class
 class UserProfile with _$UserProfile {
   const factory UserProfile({
@@ -24,6 +25,7 @@ class UserProfile with _$UserProfile {
 
 /// User quota information
 @freezed
+
 /// UserQuota class
 class UserQuota with _$UserQuota {
   const factory UserQuota({
@@ -40,10 +42,10 @@ class UserQuota with _$UserQuota {
 extension UserQuotaExtension on UserQuota {
   /// Get usage percentage
   double get usagePercentage => total > 0 ? (used / total) * 100 : 0;
-  
+
   /// Check if quota is nearly full (>90%)
   bool get isNearlyFull => usagePercentage > 90;
-  
+
   /// Get formatted usage string
   String get formattedUsage {
     final unitStr = unit ?? 'MB';

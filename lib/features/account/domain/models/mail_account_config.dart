@@ -6,6 +6,7 @@ part 'mail_account_config.g.dart';
 
 /// Mail account configuration model
 @freezed
+
 /// MailAccountConfig class
 class MailAccountConfig with _$MailAccountConfig {
   const factory MailAccountConfig({
@@ -27,6 +28,7 @@ class MailAccountConfig with _$MailAccountConfig {
 
 /// IMAP configuration
 @freezed
+
 /// ImapConfig class
 class ImapConfig with _$ImapConfig {
   const factory ImapConfig({
@@ -43,6 +45,7 @@ class ImapConfig with _$ImapConfig {
 
 /// SMTP configuration
 @freezed
+
 /// SmtpConfig class
 class SmtpConfig with _$SmtpConfig {
   const factory SmtpConfig({
@@ -61,12 +64,15 @@ class SmtpConfig with _$SmtpConfig {
 /// Socket type enum
 enum SocketType {
   @JsonValue('plain')
+
   /// plain
   plain,
   @JsonValue('ssl')
+
   /// ssl
   ssl,
   @JsonValue('starttls')
+
   /// starttls
   starttls,
 }
@@ -84,7 +90,7 @@ extension SocketTypeExtension on SocketType {
         return enough_mail.SocketType.starttls;
     }
   }
-  
+
   /// Get display name
   String get displayName {
     switch (this) {
@@ -116,14 +122,14 @@ extension MailAccountConfigExtension on MailAccountConfig {
       outgoingClientDomain: smtpConfig.clientDomain ?? 'localhost',
     );
   }
-  
+
   /// Get account display name
   String get displayName => '$name ($email)';
-  
+
   /// Check if account has insecure configuration
   bool get hasInsecureConfig {
-    return allowInsecureSSL || 
-           imapConfig.socketType == SocketType.plain ||
-           smtpConfig.socketType == SocketType.plain;
+    return allowInsecureSSL ||
+        imapConfig.socketType == SocketType.plain ||
+        smtpConfig.socketType == SocketType.plain;
   }
 }

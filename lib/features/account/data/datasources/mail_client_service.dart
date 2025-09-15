@@ -39,11 +39,11 @@ class MailClientService {
       // Connect to the mail server
       await _client!.connect();
       _isConnected = true;
-      
+
       if (kDebugMode) {
         print('Mail client connected successfully for $email');
       }
-      
+
       return true;
     } catch (e) {
       if (kDebugMode) {

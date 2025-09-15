@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mailcraftsystem/core/error/failures.dart';
 import 'package:mailcraftsystem/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:mailcraftsystem/shared/widgets/error_widget.dart';
-
+import 'package:mailcraftsystem/shared/widgets/app_button.dart';
 
 /// OTP verification screen
 class OtpScreen extends ConsumerStatefulWidget {
@@ -49,7 +49,9 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
 
   void _handleOtpSubmit() {
     if (_otpCode.length == 6) {
-      ref.read(authControllerProvider.notifier).verifyOtp(widget.email, _otpCode);
+      ref
+          .read(authControllerProvider.notifier)
+          .verifyOtp(widget.email, _otpCode);
     }
   }
 
@@ -174,15 +176,18 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                               ),
                             ),
                             filled: true,
-                            fillColor: colorScheme.surfaceContainerHighest.withOpacity(0.3),
+                            fillColor: colorScheme.surfaceContainerHighest
+                                .withOpacity(0.3),
                           ),
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
                           ],
                           onChanged: (value) => _onOtpChanged(value, index),
                           onTap: () {
-                            _controllers[index].selection = TextSelection.fromPosition(
-                              TextPosition(offset: _controllers[index].text.length),
+                            _controllers[index].selection =
+                                TextSelection.fromPosition(
+                              TextPosition(
+                                  offset: _controllers[index].text.length),
                             );
                           },
                           onEditingComplete: () {
@@ -197,23 +202,14 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                   const SizedBox(height: 32),
 
                   // Verify button
-                  FilledButton(
+                  AppButton(
+                    text: 'Verify Code',
                     onPressed: authState.isLoading || _otpCode.length != 6
                         ? null
                         : _handleOtpSubmit,
-                    style: FilledButton.styleFrom(
-                      minimumSize: const Size.fromHeight(48),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: authState.isLoading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Text('Verify Code'),
+                    isLoading: authState.isLoading,
+                    style: AppButtonStyle.filled,
+                    size: AppButtonSize.large,
                   ),
                   const SizedBox(height: 24),
 
@@ -228,7 +224,8 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                         ),
                       ),
                       TextButton(
-                        onPressed: authState.isLoading ? null : _handleResendOtp,
+                        onPressed:
+                            authState.isLoading ? null : _handleResendOtp,
                         child: Text(
                           'Resend',
                           style: TextStyle(
@@ -245,7 +242,8 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: colorScheme.surfaceContainerHighest.withOpacity(0.3),
+                      color:
+                          colorScheme.surfaceContainerHighest.withOpacity(0.3),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
                         color: colorScheme.outline.withOpacity(0.2),

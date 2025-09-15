@@ -13,7 +13,7 @@ class AccountConnectionResult with _$AccountConnectionResult {
     String? errorMessage,
     List<String>? capabilities,
   }) = _AccountConnectionResult;
-  
+
   /// Creates from JSON
   factory AccountConnectionResult.fromJson(Map<String, dynamic> json) =>
       _$AccountConnectionResultFromJson(json);

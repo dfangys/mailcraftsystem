@@ -46,7 +46,9 @@ abstract class SyncRepository {
   Future<Either<Failure, dynamic>> getLastSyncResult(String accountId);
 
   /// Check if sync is available (network, permissions, etc.)
-  Future<Either<Failure, SyncAvailability>> checkSyncAvailability(String accountId);
+  Future<Either<Failure, SyncAvailability>> checkSyncAvailability(
+    String accountId,
+  );
 
   /// Estimate sync time and data usage
   Future<Either<Failure, dynamic>> estimateSync(String accountId);
@@ -63,7 +65,3 @@ abstract class SyncRepository {
   /// Stream of sync progress updates
   Stream<dynamic> watchSyncProgress(String accountId);
 }
-
-
-
-

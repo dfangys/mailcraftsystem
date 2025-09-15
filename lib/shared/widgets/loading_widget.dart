@@ -48,7 +48,7 @@ class LoadingWidget extends StatelessWidget {
       width: indicatorSize,
       height: indicatorSize,
       child: CircularProgressIndicator(
-        strokeWidth: size == LoadingSize.small ? 2.0 : 3.0,
+        strokeWidth: size == LoadingSize.small ? 2 : 3,
         valueColor: AlwaysStoppedAnimation<Color>(
           color ?? colorScheme.primary,
         ),
@@ -82,8 +82,10 @@ class LoadingWidget extends StatelessWidget {
 enum LoadingSize {
   /// Small loading indicator (20px)
   small,
+
   /// Medium loading indicator (32px)
   medium,
+
   /// Large loading indicator (48px)
   large,
 }
@@ -92,8 +94,8 @@ enum LoadingSize {
 class ShimmerLoading extends StatefulWidget {
   /// Creates a shimmer loading widget
   const ShimmerLoading({
-    super.key,
     required this.child,
+    super.key,
     this.isLoading = true,
   });
 
@@ -110,7 +112,6 @@ class ShimmerLoading extends StatefulWidget {
 class _ShimmerLoadingState extends State<ShimmerLoading>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
-  late Animation<double> _animation;
 
   @override
   void initState() {
@@ -118,27 +119,18 @@ class _ShimmerLoadingState extends State<ShimmerLoading>
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 1500),
       vsync: this,
-    );
-    _animation = Tween<double>(
-      begin: -1.0,
-      end: 2.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
-    
-    if (widget.isLoading) {
-      _animationController.repeat();
-    }
+    )..repeat();
   }
 
   @override
   void didUpdateWidget(ShimmerLoading oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.isLoading && !oldWidget.isLoading) {
-      _animationController.repeat();
-    } else if (!widget.isLoading && oldWidget.isLoading) {
-      _animationController.stop();
+    if (widget.isLoading != oldWidget.isLoading) {
+      if (widget.isLoading) {
+        _animationController.repeat();
+      } else {
+        _animationController.stop();
+      }
     }
   }
 
@@ -157,29 +149,23 @@ class _ShimmerLoadingState extends State<ShimmerLoading>
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    return AnimatedBuilder(
-      animation: _animation,
-      builder: (context, child) {
-        return Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              stops: [
-                _animation.value - 1,
-                _animation.value,
-                _animation.value + 1,
-              ],
-              colors: [
-                colorScheme.surfaceVariant,
-                colorScheme.surface,
-                colorScheme.surfaceVariant,
-              ],
-            ),
-          ),
-          child: widget.child,
-        );
+    return ShaderMask(
+      blendMode: BlendMode.srcATop,
+      shaderCallback: (bounds) {
+        return LinearGradient(
+          stops: const [
+            0.4,
+            0.5,
+            0.6,
+          ],
+          colors: [
+            colorScheme.surfaceContainerHighest,
+            colorScheme.surface,
+            colorScheme.surfaceContainerHighest,
+          ],
+        ).createShader(bounds);
       },
+      child: widget.child,
     );
   }
 }
@@ -212,7 +198,7 @@ class SkeletonLoading extends StatelessWidget {
       height: height,
       width: width,
       decoration: BoxDecoration(
-        color: colorScheme.surfaceVariant,
+        color: colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(borderRadius),
       ),
     );
@@ -223,9 +209,9 @@ class SkeletonLoading extends StatelessWidget {
 class LoadingOverlay extends StatelessWidget {
   /// Creates a loading overlay
   const LoadingOverlay({
-    super.key,
     required this.isLoading,
     required this.child,
+    super.key,
     this.message,
     this.color,
   });
@@ -248,7 +234,7 @@ class LoadingOverlay extends StatelessWidget {
       children: [
         child,
         if (isLoading)
-          Container(
+          ColoredBox(
             color: color ?? Colors.black54,
             child: LoadingWidget(
               message: message,
@@ -260,3 +246,4 @@ class LoadingOverlay extends StatelessWidget {
     );
   }
 }
+

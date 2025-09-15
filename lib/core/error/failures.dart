@@ -4,6 +4,7 @@ part 'failures.freezed.dart';
 
 /// Base class for all failures in the application
 @freezed
+
 /// Failure class
 class Failure with _$Failure {
   /// Server-related failure with optional status code
@@ -11,44 +12,44 @@ class Failure with _$Failure {
     required String message,
     int? statusCode,
   }) = ServerFailure;
-  
+
   /// Network connectivity failure
   const factory Failure.network({
     required String message,
   }) = NetworkFailure;
-  
+
   /// Authentication and authorization failure
   const factory Failure.auth({
     required String message,
   }) = AuthFailure;
-  
+
   /// Input validation failure with optional field errors
   const factory Failure.validation({
     required String message,
     Map<String, String>? fieldErrors,
   }) = ValidationFailure;
-  
+
   /// Local storage operation failure
   const factory Failure.storage({
     required String message,
   }) = StorageFailure;
-  
+
   /// Email protocol and mail operation failure
   const factory Failure.mail({
     required String message,
     String? details,
   }) = MailFailure;
-  
+
   /// Resource not found failure
   const factory Failure.notFound({
     required String message,
   }) = NotFoundFailure;
-  
+
   /// Feature not implemented failure
   const factory Failure.notImplemented({
     required String message,
   }) = NotImplementedFailure;
-  
+
   /// Unknown or unexpected failure
   const factory Failure.unknown({
     required String message,

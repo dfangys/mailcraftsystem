@@ -29,7 +29,7 @@ void bootstrap() {
   runZonedGuarded(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
-      
+
       // Load environment variables
       try {
         await dotenv.load();
@@ -39,13 +39,14 @@ void bootstrap() {
           await dotenv.load(fileName: '.env.example');
         } catch (e2) {
           // If neither file exists, continue with empty environment
-          AppLogger.warning('No .env or .env.example file found, using default configuration');
+          AppLogger.warning(
+              'No .env or .env.example file found, using default configuration');
         }
       }
-      
+
       // Initialize logger
       AppLogger.init();
-      
+
       // Set preferred orientations
       await SystemChrome.setPreferredOrientations([
         DeviceOrientation.portraitUp,
@@ -53,7 +54,7 @@ void bootstrap() {
         DeviceOrientation.landscapeLeft,
         DeviceOrientation.landscapeRight,
       ]);
-      
+
       // Run the app
       runApp(
         const ProviderScope(

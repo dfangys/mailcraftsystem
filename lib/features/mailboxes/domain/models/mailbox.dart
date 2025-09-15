@@ -6,6 +6,7 @@ part 'mailbox.g.dart';
 
 /// Mailbox model representing an IMAP folder
 @freezed
+
 /// Mailbox class
 class Mailbox with _$Mailbox {
   const factory Mailbox({
@@ -43,27 +44,35 @@ class Mailbox with _$Mailbox {
 /// Mailbox type enumeration
 enum MailboxType {
   @JsonValue('inbox')
+
   /// inbox
   inbox,
   @JsonValue('sent')
+
   /// sent
   sent,
   @JsonValue('drafts')
+
   /// drafts
   drafts,
   @JsonValue('trash')
+
   /// trash
   trash,
   @JsonValue('spam')
+
   /// spam
   spam,
   @JsonValue('archive')
+
   /// archive
   archive,
   @JsonValue('custom')
+
   /// custom
   custom,
   @JsonValue('unknown')
+
   /// unknown
   unknown,
 }
@@ -71,21 +80,27 @@ enum MailboxType {
 /// Mailbox flags
 enum MailboxFlag {
   @JsonValue('noselect')
+
   /// noselect
   noselect,
   @JsonValue('noinferiors')
+
   /// noinferiors
   noinferiors,
   @JsonValue('marked')
+
   /// marked
   marked,
   @JsonValue('unmarked')
+
   /// unmarked
   unmarked,
   @JsonValue('haschildren')
+
   /// haschildren
   haschildren,
   @JsonValue('hasnochildren')
+
   /// hasnochildren
   hasnochildren,
 }
@@ -113,7 +128,7 @@ extension MailboxTypeExtension on MailboxType {
         return 'Unknown';
     }
   }
-  
+
   /// Get icon name for the mailbox type
   String get iconName {
     switch (this) {
@@ -135,7 +150,7 @@ extension MailboxTypeExtension on MailboxType {
         return 'folder';
     }
   }
-  
+
   /// Check if this is a system mailbox
   bool get isSystem {
     return this != MailboxType.custom && this != MailboxType.unknown;
@@ -151,32 +166,32 @@ extension MailboxExtension on Mailbox {
     }
     return name;
   }
-  
+
   /// Check if mailbox has unread messages
   bool get hasUnread => unreadCount > 0;
-  
+
   /// Check if mailbox is empty
   bool get isEmpty => messageCount == 0;
-  
+
   /// Get unread count display string
   String get unreadCountDisplay {
     if (unreadCount == 0) return '';
     if (unreadCount > 999) return '999+';
     return unreadCount.toString();
   }
-  
+
   /// Check if mailbox can be deleted
   bool get canDelete => type == MailboxType.custom;
-  
+
   /// Check if mailbox can be renamed
   bool get canRename => type == MailboxType.custom;
-  
+
   /// Get full hierarchy path
   String get hierarchyPath {
     if (parentPath == null) return name;
     return '$parentPath/$name';
   }
-  
+
   /// Convert from enough_mail Mailbox
   static Mailbox fromEnoughMail(enough_mail.Mailbox enoughMailbox) {
     return Mailbox(
@@ -194,14 +209,14 @@ extension MailboxExtension on Mailbox {
       parentPath: _getParentPath(enoughMailbox.path),
     );
   }
-  
+
   /// Convert to enough_mail Mailbox
   enough_mail.Mailbox toEnoughMail() {
     final flags = <enough_mail.MailboxFlag>[];
     if (isSubscribed) {
       flags.add(enough_mail.MailboxFlag.subscribed);
     }
-    
+
     final enoughMailbox = enough_mail.Mailbox(
       encodedName: name,
       encodedPath: path,
@@ -211,112 +226,124 @@ extension MailboxExtension on Mailbox {
       messagesUnseen: unreadCount,
       messagesRecent: recentCount,
     );
-    
+
     return enoughMailbox;
   }
-  
+
   /// Determine mailbox type from enough_mail Mailbox
   static MailboxType _getMailboxType(enough_mail.Mailbox mailbox) {
     final name = mailbox.name.toLowerCase();
     final path = mailbox.path.toLowerCase();
-    
+
     // Check for common inbox patterns
     if (name == 'inbox' || path.contains('inbox')) {
       return MailboxType.inbox;
     }
-    
+
     // Check for sent patterns
-    if (name.contains('sent') || path.contains('sent') ||
-        name.contains('outbox') || path.contains('outbox')) {
+    if (name.contains('sent') ||
+        path.contains('sent') ||
+        name.contains('outbox') ||
+        path.contains('outbox')) {
       return MailboxType.sent;
     }
-    
+
     // Check for drafts patterns
     if (name.contains('draft') || path.contains('draft')) {
       return MailboxType.drafts;
     }
-    
+
     // Check for trash patterns
-    if (name.contains('trash') || path.contains('trash') ||
-        name.contains('deleted') || path.contains('deleted') ||
-        name.contains('bin') || path.contains('bin')) {
+    if (name.contains('trash') ||
+        path.contains('trash') ||
+        name.contains('deleted') ||
+        path.contains('deleted') ||
+        name.contains('bin') ||
+        path.contains('bin')) {
       return MailboxType.trash;
     }
-    
+
     // Check for spam patterns
-    if (name.contains('spam') || path.contains('spam') ||
-        name.contains('junk') || path.contains('junk')) {
+    if (name.contains('spam') ||
+        path.contains('spam') ||
+        name.contains('junk') ||
+        path.contains('junk')) {
       return MailboxType.spam;
     }
-    
+
     // Check for archive patterns
     if (name.contains('archive') || path.contains('archive')) {
       return MailboxType.archive;
     }
-    
+
     return MailboxType.custom;
   }
-  
+
   /// Get parent path from mailbox path
   static String? _getParentPath(String path) {
     final lastSeparatorIndex = path.lastIndexOf('/');
     if (lastSeparatorIndex <= 0) return null;
     return path.substring(0, lastSeparatorIndex);
   }
-  
+
   /// Get mailbox flags from enough_mail Mailbox
   static List<MailboxFlag>? _getMailboxFlags(enough_mail.Mailbox mailbox) {
     final flags = <MailboxFlag>[];
-    
+
     if (mailbox.isNotSelectable) flags.add(MailboxFlag.noselect);
     if (!mailbox.hasChildren) flags.add(MailboxFlag.hasnochildren);
     if (mailbox.hasChildren) flags.add(MailboxFlag.haschildren);
     if (mailbox.isMarked) flags.add(MailboxFlag.marked);
     if (!mailbox.isMarked) flags.add(MailboxFlag.unmarked);
-    
+
     return flags.isNotEmpty ? flags : null;
   }
 }
 
-
 MailboxType _getMailboxType(enough_mail.Mailbox mailbox) {
   final name = mailbox.name.toLowerCase();
   final path = mailbox.path.toLowerCase();
-  
+
   // Check for common inbox patterns
   if (name == 'inbox' || path.contains('inbox')) {
     return MailboxType.inbox;
   }
-  
+
   // Check for sent patterns
-  if (name.contains('sent') || path.contains('sent') ||
-      name.contains('outbox') || path.contains('outbox')) {
+  if (name.contains('sent') ||
+      path.contains('sent') ||
+      name.contains('outbox') ||
+      path.contains('outbox')) {
     return MailboxType.sent;
   }
-  
+
   // Check for drafts patterns
   if (name.contains('draft') || path.contains('draft')) {
     return MailboxType.drafts;
   }
-  
+
   // Check for trash patterns
-  if (name.contains('trash') || path.contains('trash') ||
-      name.contains('deleted') || path.contains('deleted') ||
-      name.contains('bin') || path.contains('bin')) {
+  if (name.contains('trash') ||
+      path.contains('trash') ||
+      name.contains('deleted') ||
+      path.contains('deleted') ||
+      name.contains('bin') ||
+      path.contains('bin')) {
     return MailboxType.trash;
   }
-  
+
   // Check for spam patterns
-  if (name.contains('spam') || path.contains('spam') ||
-      name.contains('junk') || path.contains('junk')) {
+  if (name.contains('spam') ||
+      path.contains('spam') ||
+      name.contains('junk') ||
+      path.contains('junk')) {
     return MailboxType.spam;
   }
-  
+
   // Check for archive patterns
   if (name.contains('archive') || path.contains('archive')) {
     return MailboxType.archive;
   }
-  
+
   return MailboxType.custom;
 }
-

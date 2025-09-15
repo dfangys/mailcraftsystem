@@ -5,8 +5,10 @@ part 'sync_availability.g.dart';
 
 /// Sync availability model
 @freezed
+
 /// SyncAvailability class
 class SyncAvailability with _$SyncAvailability {
+  /// Creates a SyncAvailability object.
   const factory SyncAvailability({
     required bool isAvailable,
     required bool hasNetworkConnection,
@@ -16,15 +18,18 @@ class SyncAvailability with _$SyncAvailability {
     List<String>? restrictions,
     String? reason,
   }) = _SyncAvailability;
-  
+
+  /// Creates a SyncAvailability object from a JSON object.
   factory SyncAvailability.fromJson(Map<String, dynamic> json) =>
       _$SyncAvailabilityFromJson(json);
 }
 
 /// Sync estimate model
 @freezed
+
 /// SyncEstimate class
 class SyncEstimate with _$SyncEstimate {
+  /// Creates a SyncEstimate object.
   const factory SyncEstimate({
     required Duration estimatedDuration,
     required int estimatedDataUsage,
@@ -32,15 +37,18 @@ class SyncEstimate with _$SyncEstimate {
     required Map<String, int> mailboxEstimates,
     DateTime? estimatedCompletion,
   }) = _SyncEstimate;
-  
+
+  /// Creates a SyncEstimate object from a JSON object.
   factory SyncEstimate.fromJson(Map<String, dynamic> json) =>
       _$SyncEstimateFromJson(json);
 }
 
 /// Sync statistics model
 @freezed
+
 /// SyncStatistics class
 class SyncStatistics with _$SyncStatistics {
+  /// Creates a SyncStatistics object.
   const factory SyncStatistics({
     required String accountId,
     required int totalSyncs,
@@ -54,7 +62,8 @@ class SyncStatistics with _$SyncStatistics {
     DateTime? lastSuccessfulSync,
     Map<String, int>? errorCounts,
   }) = _SyncStatistics;
-  
+
+  /// Creates a SyncStatistics object from a JSON object.
   factory SyncStatistics.fromJson(Map<String, dynamic> json) =>
       _$SyncStatisticsFromJson(json);
 }
@@ -66,7 +75,7 @@ extension SyncAvailabilityExtension on SyncAvailability {
     if (isAvailable) return 'Sync available';
     return reason ?? 'Sync not available';
   }
-  
+
   /// Get restriction summary
   String? get restrictionSummary {
     if (restrictions?.isEmpty ?? true) return null;
@@ -86,24 +95,25 @@ extension SyncEstimateExtension on SyncEstimate {
       return '${estimatedDuration.inHours}h ${estimatedDuration.inMinutes % 60}m';
     }
   }
-  
+
   /// Get formatted data usage
   String get formattedDataUsage {
     const units = ['B', 'KB', 'MB', 'GB'];
     var size = estimatedDataUsage.toDouble();
     var unitIndex = 0;
-    
+
     while (size >= 1024 && unitIndex < units.length - 1) {
       size /= 1024;
       unitIndex++;
     }
-    
+
     return '${size.toStringAsFixed(1)} ${units[unitIndex]}';
   }
-  
+
   /// Get estimate summary
   String get estimateSummary {
-    return 'Estimated: $formattedDuration, $formattedDataUsage, $estimatedNewMessages new messages';
+    return 'Estimated: $formattedDuration, $formattedDataUsage, '
+        '$estimatedNewMessages new messages';
   }
 }
 
@@ -114,12 +124,12 @@ extension SyncStatisticsExtension on SyncStatistics {
     if (totalSyncs == 0) return 0;
     return (successfulSyncs / totalSyncs) * 100;
   }
-  
+
   /// Get formatted success rate
   String get formattedSuccessRate {
     return '${successRate.toStringAsFixed(1)}%';
   }
-  
+
   /// Get formatted average sync time
   String get formattedAverageSyncTime {
     if (averageSyncTime.inMinutes < 1) {
@@ -128,23 +138,25 @@ extension SyncStatisticsExtension on SyncStatistics {
       return '${averageSyncTime.inMinutes}m ${averageSyncTime.inSeconds % 60}s';
     }
   }
-  
+
   /// Get formatted total data transferred
   String get formattedTotalDataTransferred {
     const units = ['B', 'KB', 'MB', 'GB'];
     var size = totalDataTransferred.toDouble();
     var unitIndex = 0;
-    
+
     while (size >= 1024 && unitIndex < units.length - 1) {
       size /= 1024;
       unitIndex++;
     }
-    
+
     return '${size.toStringAsFixed(1)} ${units[unitIndex]}';
   }
-  
+
   /// Get statistics summary
   String get statisticsSummary {
-    return '$totalSyncs syncs ($formattedSuccessRate success), avg $formattedAverageSyncTime';
+    return '$totalSyncs syncs ($formattedSuccessRate success), '
+        'avg $formattedAverageSyncTime';
   }
 }
+

@@ -66,7 +66,3 @@ abstract class SearchRepository {
   /// Get search analytics
   Future<Either<Failure, dynamic>> getSearchAnalytics(String accountId);
 }
-
-
-
-

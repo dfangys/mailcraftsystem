@@ -8,7 +8,8 @@ class AdvancedMailboxScreen extends StatefulWidget {
 }
 
 class _AdvancedMailboxScreenState extends State<AdvancedMailboxScreen> {
-  final List<String> _emails = List.generate(20, (index) => 'Email ${index + 1}');
+  final List<String> _emails =
+      List.generate(20, (index) => 'Email ${index + 1}');
 
   @override
   Widget build(BuildContext context) {
@@ -30,15 +31,19 @@ class _AdvancedMailboxScreenState extends State<AdvancedMailboxScreen> {
           final email = _emails[index];
           return Dismissible(
             key: Key(email),
-            background: _buildDismissibleBackground(Alignment.centerLeft, Colors.green, Icons.archive, 'Archive'),
-            secondaryBackground: _buildDismissibleBackground(Alignment.centerRight, Colors.red, Icons.delete, 'Delete'),
+            background: _buildDismissibleBackground(
+                Alignment.centerLeft, Colors.green, Icons.archive, 'Archive'),
+            secondaryBackground: _buildDismissibleBackground(
+                Alignment.centerRight, Colors.red, Icons.delete, 'Delete'),
             onDismissed: (direction) {
               setState(() {
                 _emails.removeAt(index);
               });
 
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('$email ${direction == DismissDirection.startToEnd ? 'archived' : 'deleted'}')),
+                SnackBar(
+                    content: Text(
+                        '$email ${direction == DismissDirection.startToEnd ? 'archived' : 'deleted'}')),
               );
             },
             child: ListTile(
@@ -58,7 +63,8 @@ class _AdvancedMailboxScreenState extends State<AdvancedMailboxScreen> {
     );
   }
 
-  Widget _buildDismissibleBackground(AlignmentGeometry alignment, Color color, IconData icon, String label) {
+  Widget _buildDismissibleBackground(
+      AlignmentGeometry alignment, Color color, IconData icon, String label) {
     return Container(
       color: color,
       child: Padding(
@@ -78,4 +84,3 @@ class _AdvancedMailboxScreenState extends State<AdvancedMailboxScreen> {
     );
   }
 }
-

@@ -7,13 +7,13 @@ import 'package:mailcraftsystem/core/logging/logger.dart';
 /// HTTP client configuration using Dio
 class DioClient {
   static Dio? _instance;
-  
+
   /// Get configured Dio instance
   static Dio get instance {
     _instance ??= _createDio();
     return _instance!;
   }
-  
+
   static Dio _createDio() {
     final dio = Dio(
       BaseOptions(
@@ -27,7 +27,7 @@ class DioClient {
         },
       ),
     );
-    
+
     // Add interceptors
     if (kDebugMode) {
       dio.interceptors.add(
@@ -39,13 +39,13 @@ class DioClient {
         ),
       );
     }
-    
+
     // Add auth interceptor
     dio.interceptors.add(_AuthInterceptor());
-    
+
     // Add error interceptor
     dio.interceptors.add(_ErrorInterceptor());
-    
+
     return dio;
   }
 }
@@ -69,11 +69,12 @@ class _ErrorInterceptor extends Interceptor {
   void onError(DioException err, ErrorInterceptorHandler handler) {
     AppLogger.error(
       'HTTP Error: ${err.type} - ${err.message}',
+
       /// err
       err,
       err.stackTrace,
     );
-    
+
     // Handle specific error types
     switch (err.type) {
       case DioExceptionType.connectionTimeout:
@@ -84,12 +85,14 @@ class _ErrorInterceptor extends Interceptor {
         );
       case DioExceptionType.connectionError:
         err = err.copyWith(
-          message: 'Unable to connect to server. Please check your internet connection.',
+          message:
+              'Unable to connect to server. Please check your internet connection.',
         );
       case DioExceptionType.badResponse:
         final statusCode = err.response?.statusCode;
         if (statusCode == 401) {
-          err = err.copyWith(message: 'Authentication failed. Please login again.');
+          err = err.copyWith(
+              message: 'Authentication failed. Please login again.');
         } else if (statusCode == 403) {
           err = err.copyWith(message: 'Access denied.');
         } else if (statusCode == 404) {
@@ -104,7 +107,7 @@ class _ErrorInterceptor extends Interceptor {
       case DioExceptionType.badCertificate:
         err = err.copyWith(message: 'Certificate verification failed.');
     }
-    
+
     handler.next(err);
   }
 }

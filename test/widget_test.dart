@@ -23,7 +23,3 @@ void main() {
     expect(find.text('MailCraft System'), findsOneWidget);
   });
 }
-
-
-
-

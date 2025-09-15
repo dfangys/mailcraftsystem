@@ -6,6 +6,7 @@ part 'message.g.dart';
 
 /// Email message model
 @freezed
+
 /// Message class
 class Message with _$Message {
   const factory Message({
@@ -45,7 +46,8 @@ class Message with _$Message {
     return Message(
       id: message.uid.toString(),
       uid: message.uid!,
-      mailboxPath: 'INBOX', // Default mailbox path since MimeMessage doesn't have mailbox property
+      mailboxPath:
+          'INBOX', // Default mailbox path since MimeMessage doesn't have mailbox property
       subject: message.decodeSubject(),
       from: message.from?.isNotEmpty == true
           ? MessageAddress.fromEnoughMail(message.from!.first)
@@ -58,10 +60,12 @@ class Message with _$Message {
 
 /// Message address model
 @freezed
+
 /// MessageAddress class
 class MessageAddress with _$MessageAddress {
   const factory MessageAddress({
-    required String email, String? name,
+    required String email,
+    String? name,
   }) = _MessageAddress;
 
   factory MessageAddress.fromJson(Map<String, dynamic> json) =>
@@ -77,6 +81,7 @@ class MessageAddress with _$MessageAddress {
 
 /// Message attachment model
 @freezed
+
 /// MessageAttachment class
 class MessageAttachment with _$MessageAttachment {
   const factory MessageAttachment({
@@ -96,18 +101,23 @@ class MessageAttachment with _$MessageAttachment {
 /// Message priority enumeration
 enum MessagePriority {
   @JsonValue('highest')
+
   /// highest
   highest,
   @JsonValue('high')
+
   /// high
   high,
   @JsonValue('normal')
+
   /// normal
   normal,
   @JsonValue('low')
+
   /// low
   low,
   @JsonValue('lowest')
+
   /// lowest
   lowest,
 }
@@ -116,7 +126,7 @@ enum MessagePriority {
 extension MessageAddressExtension on MessageAddress {
   /// Get display name (name if available, otherwise email)
   String get displayName => name?.isNotEmpty ?? false ? name! : email;
-  
+
   /// Get formatted address string
   String get formatted {
     if (name?.isNotEmpty ?? false) {
@@ -124,7 +134,7 @@ extension MessageAddressExtension on MessageAddress {
     }
     return email;
   }
-  
+
   /// Convert from enough_mail MailAddress
   static MessageAddress fromEnoughMail(enough_mail.MailAddress address) {
     return MessageAddress(
@@ -132,7 +142,7 @@ extension MessageAddressExtension on MessageAddress {
       email: address.email,
     );
   }
-  
+
   /// Convert to enough_mail MailAddress
   enough_mail.MailAddress toEnoughMail() {
     return enough_mail.MailAddress(name, email);
@@ -146,34 +156,34 @@ extension MessageAttachmentExtension on MessageAttachment {
     if (mimeType == null) return false;
     return mimeType!.startsWith('image/');
   }
-  
+
   /// Check if attachment is a document
   bool get isDocument {
     if (mimeType == null) return false;
     return mimeType!.startsWith('application/') ||
-           mimeType!.startsWith('text/');
+        mimeType!.startsWith('text/');
   }
-  
+
   /// Get file extension from name
   String? get fileExtension {
     final lastDot = name.lastIndexOf('.');
     if (lastDot == -1) return null;
     return name.substring(lastDot + 1).toLowerCase();
   }
-  
+
   /// Get formatted size string
   String get formattedSize {
     if (size == null) return 'Unknown size';
-    
+
     const units = ['B', 'KB', 'MB', 'GB'];
     var fileSize = size!.toDouble();
     var unitIndex = 0;
-    
+
     while (fileSize >= 1024 && unitIndex < units.length - 1) {
       fileSize /= 1024;
       unitIndex++;
     }
-    
+
     return '${fileSize.toStringAsFixed(1)} ${units[unitIndex]}';
   }
 }
@@ -195,7 +205,7 @@ extension MessagePriorityExtension on MessagePriority {
         return 'Lowest';
     }
   }
-  
+
   /// Get priority level (1-5, where 1 is highest)
   int get level {
     switch (this) {
@@ -217,28 +227,29 @@ extension MessagePriorityExtension on MessagePriority {
 extension MessageExtension on Message {
   /// Get sender display name
   String get senderName => from?.displayName ?? 'Unknown Sender';
-  
+
   /// Get sender email
   String get senderEmail => from?.email ?? '';
-  
+
   /// Get subject or default
-  String get displaySubject => subject?.isNotEmpty ?? false ? subject! : '(No Subject)';
-  
+  String get displaySubject =>
+      subject?.isNotEmpty ?? false ? subject! : '(No Subject)';
+
   /// Check if message has attachments
   bool get hasAttachments => attachments?.isNotEmpty ?? false;
-  
+
   /// Get attachment count
   int get attachmentCount => attachments?.length ?? 0;
-  
+
   /// Check if message is today
   bool get isToday {
     if (date == null) return false;
     final now = DateTime.now();
     return date!.year == now.year &&
-           date!.month == now.month &&
-           date!.day == now.day;
+        date!.month == now.month &&
+        date!.day == now.day;
   }
-  
+
   /// Check if message is from this week
   bool get isThisWeek {
     if (date == null) return false;
@@ -246,26 +257,26 @@ extension MessageExtension on Message {
     final weekStart = now.subtract(Duration(days: now.weekday - 1));
     return date!.isAfter(weekStart);
   }
-  
+
   /// Get formatted date string
   String get formattedDate {
     if (date == null) return '';
-    
+
     final now = DateTime.now();
     final messageDate = date!;
-    
+
     if (isToday) {
       return '${messageDate.hour.toString().padLeft(2, '0')}:${messageDate.minute.toString().padLeft(2, '0')}';
     }
-    
+
     if (isThisWeek) {
       const weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
       return weekdays[messageDate.weekday - 1];
     }
-    
+
     return '${messageDate.day}/${messageDate.month}/${messageDate.year}';
   }
-  
+
   /// Get message preview text
   String get previewText {
     if (preview?.isNotEmpty ?? false) return preview!;
@@ -281,14 +292,14 @@ extension MessageExtension on Message {
     }
     return '';
   }
-  
+
   /// Get truncated preview text
   String getTruncatedPreview(int maxLength) {
     final preview = previewText;
     if (preview.length <= maxLength) return preview;
     return '${preview.substring(0, maxLength)}...';
   }
-  
+
   /// Convert from enough_mail MimeMessage
   static Message fromEnoughMail(
     enough_mail.MimeMessage mimeMessage,
@@ -298,22 +309,30 @@ extension MessageExtension on Message {
       id: '${mimeMessage.uid}-$mailboxPath',
       uid: mimeMessage.uid ?? 0,
       mailboxPath: mailboxPath,
-      messageId: mimeMessage.decodeHeaderMailAddressValue('message-id')?.first.email,
+      messageId:
+          mimeMessage.decodeHeaderMailAddressValue('message-id')?.first.email,
       subject: mimeMessage.decodeSubject(),
       from: mimeMessage.from?.isNotEmpty ?? false
           ? MessageAddressExtension.fromEnoughMail(mimeMessage.from!.first)
           : null,
       to: mimeMessage.to?.map(MessageAddressExtension.fromEnoughMail).toList(),
       cc: mimeMessage.cc?.map(MessageAddressExtension.fromEnoughMail).toList(),
-      bcc: mimeMessage.bcc?.map(MessageAddressExtension.fromEnoughMail).toList(),
-      replyTo: mimeMessage.replyTo?.map(MessageAddressExtension.fromEnoughMail).toList(),
+      bcc:
+          mimeMessage.bcc?.map(MessageAddressExtension.fromEnoughMail).toList(),
+      replyTo: mimeMessage.replyTo
+          ?.map(MessageAddressExtension.fromEnoughMail)
+          .toList(),
       date: mimeMessage.decodeDate(),
       isRead: mimeMessage.isSeen,
       isFlagged: mimeMessage.isFlagged,
       isAnswered: mimeMessage.isAnswered,
-      isDraft: mimeMessage.flags?.any((f) => f.toLowerCase() == r'\draft') ?? false,
-      isDeleted: mimeMessage.flags?.any((f) => f.toLowerCase() == r'\deleted') ?? false,
-      isRecent: mimeMessage.flags?.any((f) => f.toLowerCase() == r'\recent') ?? false,
+      isDraft:
+          mimeMessage.flags?.any((f) => f.toLowerCase() == r'\draft') ?? false,
+      isDeleted:
+          mimeMessage.flags?.any((f) => f.toLowerCase() == r'\deleted') ??
+              false,
+      isRecent:
+          mimeMessage.flags?.any((f) => f.toLowerCase() == r'\recent') ?? false,
       priority: _getPriorityFromMime(mimeMessage),
       textPlain: mimeMessage.decodeTextPlainPart(),
       textHtml: mimeMessage.decodeTextHtmlPart(),
@@ -325,14 +344,15 @@ extension MessageExtension on Message {
       receivedAt: DateTime.now(),
     );
   }
-  
+
   /// Get priority from MIME message
-  static MessagePriority? _getPriorityFromMime(enough_mail.MimeMessage message) {
+  static MessagePriority? _getPriorityFromMime(
+      enough_mail.MimeMessage message) {
     final priority = message.decodeHeaderValue('x-priority') ??
-                    message.decodeHeaderValue('priority');
-    
+        message.decodeHeaderValue('priority');
+
     if (priority == null) return MessagePriority.normal;
-    
+
     switch (priority.toLowerCase()) {
       case '1':
       case 'highest':
@@ -353,13 +373,13 @@ extension MessageExtension on Message {
         return MessagePriority.normal;
     }
   }
-  
+
   /// Get attachments from MIME message
   static List<MessageAttachment>? _getAttachmentsFromMime(
     enough_mail.MimeMessage message,
   ) {
     final attachments = <MessageAttachment>[];
-    
+
     message.findContentInfo().forEach((contentInfo) {
       if (contentInfo.fileName != null) {
         attachments.add(
@@ -370,12 +390,14 @@ extension MessageExtension on Message {
             size: contentInfo.size,
             isInline: contentInfo.contentDisposition?.disposition == 'inline',
             contentId: contentInfo.cid,
-            disposition: contentInfo.contentDisposition?.disposition.toString() ?? 'attachment',
+            disposition:
+                contentInfo.contentDisposition?.disposition.toString() ??
+                    'attachment',
           ),
         );
       }
     });
-    
+
     return attachments.isNotEmpty ? attachments : null;
   }
 }

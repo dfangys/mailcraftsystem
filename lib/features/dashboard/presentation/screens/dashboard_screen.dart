@@ -76,37 +76,37 @@ class DashboardScreen extends ConsumerWidget {
                 userName: authState.user?.name ?? 'User',
                 userEmail: authState.user?.email ?? 'user@example.com',
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // Email statistics
               _buildSectionHeader(context, 'Email Overview'),
               const SizedBox(height: 12),
               _EmailStatsGrid(),
-              
+
               const SizedBox(height: 24),
-              
+
               // Quick actions
               _buildSectionHeader(context, 'Quick Actions'),
               const SizedBox(height: 12),
               _QuickActionsGrid(),
-              
+
               const SizedBox(height: 24),
-              
+
               // Recent activity
               _buildSectionHeader(context, 'Recent Activity'),
               const SizedBox(height: 12),
               _RecentActivityList(),
-              
+
               const SizedBox(height: 24),
-              
+
               // System status
               _buildSectionHeader(context, 'System Status'),
               const SizedBox(height: 12),
               _SystemStatusCard(),
-              
+
               const SizedBox(height: 24),
-              
+
               // Enterprise features
               _buildSectionHeader(context, 'Enterprise Features'),
               const SizedBox(height: 12),
@@ -183,7 +183,7 @@ class _WelcomeSection extends StatelessWidget {
     final colorScheme = theme.colorScheme;
     final now = DateTime.now();
     final hour = now.hour;
-    
+
     String greeting;
     if (hour < 12) {
       greeting = 'Good morning';
@@ -229,7 +229,8 @@ class _WelcomeSection extends StatelessWidget {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: Colors.green.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(16),
@@ -581,8 +582,8 @@ class _EnterpriseFeaturesCard extends StatelessWidget {
               Text(
                 'Enterprise Features',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+                      fontWeight: FontWeight.w600,
+                    ),
               ),
             ],
           ),
@@ -590,8 +591,8 @@ class _EnterpriseFeaturesCard extends StatelessWidget {
           Text(
             'Access advanced security, analytics, and management tools designed for enterprise environments.',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
           ),
           const SizedBox(height: 16),
           AppButton(
@@ -604,160 +605,99 @@ class _EnterpriseFeaturesCard extends StatelessWidget {
       ),
     );
   }
-              ],
-            ),
-            const SizedBox(height: 16),
-
-            // Email Statistics
-            Text(
-              'Email Statistics',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Expanded(
-                  child: _StatCard(
-                    title: 'Unread',
-                    value: '12',
-                    icon: Icons.mark_email_unread,
-                    color: Colors.orange,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: _StatCard(
-                    title: 'Total',
-                    value: '156',
-                    icon: Icons.email,
-                    color: Colors.blue,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Expanded(
-                  child: _StatCard(
-                    title: 'Sent',
-                    value: '89',
-                    icon: Icons.send,
-                    color: Colors.green,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: _StatCard(
-                    title: 'Drafts',
-                    value: '3',
-                    icon: Icons.drafts,
-                    color: Colors.grey,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => context.go('/compose'),
-        tooltip: 'Compose Email',
-        child: const Icon(Icons.add),
-      ),
-    );
-  }
 }
 
-class _QuickActionCard extends StatelessWidget {
-  const _QuickActionCard({
-    required this.icon,
+class ActionCard extends StatelessWidget {
+  const ActionCard({
     required this.title,
-    required this.subtitle,
+    required this.icon,
     required this.onTap,
   });
 
-  final IconData icon;
   final String title;
-  final String subtitle;
+  final IconData icon;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                icon,
-                size: 32,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                title,
-                style: Theme.of(context).textTheme.titleMedium,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 4),
-              Text(
-                subtitle,
-                style: Theme.of(context).textTheme.bodySmall,
-                textAlign: TextAlign.center,
-              ),
-            ],
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return AppCard(
+      onTap: onTap,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            icon,
+            size: 32,
+            color: colorScheme.primary,
           ),
-        ),
+          const SizedBox(height: 12),
+          Text(
+            title,
+            style: theme.textTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
     );
   }
 }
 
-class _StatCard extends StatelessWidget {
-  const _StatCard({
+class StatCard extends StatelessWidget {
+  const StatCard({
     required this.title,
     required this.value,
     required this.icon,
     required this.color,
+    this.onTap,
   });
 
   final String title;
   final String value;
   final IconData icon;
   final Color color;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Icon(icon, color: color, size: 20),
-                const SizedBox(width: 8),
-                Text(
-                  title,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              value,
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return AppCard(
+      onTap: onTap,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                icon,
                 color: color,
-                fontWeight: FontWeight.bold,
+                size: 20,
               ),
+              const SizedBox(width: 8),
+              Text(
+                title,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            value,
+            style: theme.textTheme.headlineMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: color,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

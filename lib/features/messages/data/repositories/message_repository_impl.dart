@@ -2,7 +2,8 @@ import 'package:dartz/dartz.dart';
 import 'package:enough_mail/enough_mail.dart';
 import 'package:mailcraftsystem/core/error/failures.dart';
 import 'package:mailcraftsystem/features/account/data/datasources/mail_client_service.dart';
-import 'package:mailcraftsystem/features/messages/domain/models/message.dart' as model;
+import 'package:mailcraftsystem/features/messages/domain/models/message.dart'
+    as model;
 import 'package:mailcraftsystem/features/messages/domain/models/message_content.dart';
 import 'package:mailcraftsystem/features/messages/domain/repositories/message_repository.dart';
 
@@ -22,14 +23,16 @@ class MessageRepositoryImpl implements MessageRepository {
     try {
       final client = mailClientService.client;
       if (client == null) {
-        return const Left(Failure.auth(message: 'Mail client not initialized. Please login first.'));
+        return const Left(Failure.auth(
+            message: 'Mail client not initialized. Please login first.'));
       }
-      
+
       final messages = await client.fetchMessages(
         count: limit ?? 20,
         page: (offset ?? 0) ~/ (limit ?? 20) + 1,
       );
-      final mappedMessages = messages.map((e) => model.Message.fromEnoughMail(e)).toList();
+      final mappedMessages =
+          messages.map((e) => model.Message.fromEnoughMail(e)).toList();
       return Right(mappedMessages);
     } on MailException catch (e) {
       return Left(Failure.server(message: e.message ?? 'Unknown error'));
@@ -47,9 +50,10 @@ class MessageRepositoryImpl implements MessageRepository {
     try {
       final client = mailClientService.client;
       if (client == null) {
-        return const Left(Failure.auth(message: 'Mail client not initialized. Please login first.'));
+        return const Left(Failure.auth(
+            message: 'Mail client not initialized. Please login first.'));
       }
-      
+
       final messages = await client.fetchMessages();
       final message = messages.firstWhere((m) => m.uid == uid);
       final fullMessage = await client.fetchMessageContents(message);
@@ -71,13 +75,14 @@ class MessageRepositoryImpl implements MessageRepository {
     try {
       final client = mailClientService.client;
       if (client == null) {
-        return const Left(Failure.auth(message: 'Mail client not initialized. Please login first.'));
+        return const Left(Failure.auth(
+            message: 'Mail client not initialized. Please login first.'));
       }
-      
+
       final messages = await client.fetchMessages();
       final message = messages.firstWhere((m) => m.uid == uid);
       final fullMessage = await client.fetchMessageContents(message);
-      
+
       return Right(MessageContent(
         textPlain: fullMessage.decodeTextPlainPart() ?? '',
         textHtml: fullMessage.decodeTextHtmlPart() ?? '',
@@ -99,9 +104,10 @@ class MessageRepositoryImpl implements MessageRepository {
     try {
       final client = mailClientService.client;
       if (client == null) {
-        return const Left(Failure.auth(message: 'Mail client not initialized. Please login first.'));
+        return const Left(Failure.auth(
+            message: 'Mail client not initialized. Please login first.'));
       }
-      
+
       final messages = await client.fetchMessages();
       final message = messages.firstWhere((m) => m.uid == uid);
       await client.markSeen(MessageSequence.fromMessage(message));
@@ -122,9 +128,10 @@ class MessageRepositoryImpl implements MessageRepository {
     try {
       final client = mailClientService.client;
       if (client == null) {
-        return const Left(Failure.auth(message: 'Mail client not initialized. Please login first.'));
+        return const Left(Failure.auth(
+            message: 'Mail client not initialized. Please login first.'));
       }
-      
+
       final messages = await client.fetchMessages();
       final message = messages.firstWhere((m) => m.uid == uid);
       await client.markUnseen(MessageSequence.fromMessage(message));
@@ -145,9 +152,10 @@ class MessageRepositoryImpl implements MessageRepository {
     try {
       final client = mailClientService.client;
       if (client == null) {
-        return const Left(Failure.auth(message: 'Mail client not initialized. Please login first.'));
+        return const Left(Failure.auth(
+            message: 'Mail client not initialized. Please login first.'));
       }
-      
+
       final messages = await client.fetchMessages();
       final message = messages.firstWhere((m) => m.uid == uid);
       await client.markFlagged(MessageSequence.fromMessage(message));
@@ -168,9 +176,10 @@ class MessageRepositoryImpl implements MessageRepository {
     try {
       final client = mailClientService.client;
       if (client == null) {
-        return const Left(Failure.auth(message: 'Mail client not initialized. Please login first.'));
+        return const Left(Failure.auth(
+            message: 'Mail client not initialized. Please login first.'));
       }
-      
+
       final messages = await client.fetchMessages();
       final message = messages.firstWhere((m) => m.uid == uid);
       await client.markUnflagged(MessageSequence.fromMessage(message));
@@ -192,9 +201,10 @@ class MessageRepositoryImpl implements MessageRepository {
     try {
       final client = mailClientService.client;
       if (client == null) {
-        return const Left(Failure.auth(message: 'Mail client not initialized. Please login first.'));
+        return const Left(Failure.auth(
+            message: 'Mail client not initialized. Please login first.'));
       }
-      
+
       final messages = await client.fetchMessages();
       final message = messages.firstWhere((m) => m.uid == uid);
       await client.markDeleted(MessageSequence.fromMessage(message));
@@ -216,15 +226,18 @@ class MessageRepositoryImpl implements MessageRepository {
     try {
       final client = mailClientService.client;
       if (client == null) {
-        return const Left(Failure.auth(message: 'Mail client not initialized. Please login first.'));
+        return const Left(Failure.auth(
+            message: 'Mail client not initialized. Please login first.'));
       }
-      
+
       final mailboxes = await client.listMailboxes();
-      final toMailbox = mailboxes.firstWhere((box) => box.path == toMailboxPath);
+      final toMailbox =
+          mailboxes.firstWhere((box) => box.path == toMailboxPath);
       final messages = await client.fetchMessages();
       final message = messages.firstWhere((m) => m.uid == uid);
-      
-      await client.moveMessages(MessageSequence.fromMessage(message), toMailbox);
+
+      await client.moveMessages(
+          MessageSequence.fromMessage(message), toMailbox);
       return const Right(null);
     } on MailException catch (e) {
       return Left(Failure.server(message: e.message ?? 'Unknown error'));
@@ -240,7 +253,8 @@ class MessageRepositoryImpl implements MessageRepository {
     String toMailboxPath,
     int uid,
   ) async {
-    return const Left(Failure.notImplemented(message: 'Copy message not implemented'));
+    return const Left(
+        Failure.notImplemented(message: 'Copy message not implemented'));
   }
 
   @override
@@ -249,7 +263,8 @@ class MessageRepositoryImpl implements MessageRepository {
     String mailboxPath,
     dynamic criteria,
   ) async {
-    return const Left(Failure.notImplemented(message: 'Search messages not implemented'));
+    return const Left(
+        Failure.notImplemented(message: 'Search messages not implemented'));
   }
 
   @override
@@ -261,9 +276,10 @@ class MessageRepositoryImpl implements MessageRepository {
     try {
       final client = mailClientService.client;
       if (client == null) {
-        return const Left(Failure.auth(message: 'Mail client not initialized. Please login first.'));
+        return const Left(Failure.auth(
+            message: 'Mail client not initialized. Please login first.'));
       }
-      
+
       await client.markSeen(MessageSequence.fromIds(uids));
       return const Right(null);
     } on MailException catch (e) {
@@ -282,9 +298,10 @@ class MessageRepositoryImpl implements MessageRepository {
     try {
       final client = mailClientService.client;
       if (client == null) {
-        return const Left(Failure.auth(message: 'Mail client not initialized. Please login first.'));
+        return const Left(Failure.auth(
+            message: 'Mail client not initialized. Please login first.'));
       }
-      
+
       await client.markUnseen(MessageSequence.fromIds(uids));
       return const Right(null);
     } on MailException catch (e) {
@@ -303,9 +320,10 @@ class MessageRepositoryImpl implements MessageRepository {
     try {
       final client = mailClientService.client;
       if (client == null) {
-        return const Left(Failure.auth(message: 'Mail client not initialized. Please login first.'));
+        return const Left(Failure.auth(
+            message: 'Mail client not initialized. Please login first.'));
       }
-      
+
       await client.markDeleted(MessageSequence.fromIds(uids));
       return const Right(null);
     } on MailException catch (e) {
@@ -325,12 +343,14 @@ class MessageRepositoryImpl implements MessageRepository {
     try {
       final client = mailClientService.client;
       if (client == null) {
-        return const Left(Failure.auth(message: 'Mail client not initialized. Please login first.'));
+        return const Left(Failure.auth(
+            message: 'Mail client not initialized. Please login first.'));
       }
-      
+
       final mailboxes = await client.listMailboxes();
-      final toMailbox = mailboxes.firstWhere((box) => box.path == toMailboxPath);
-      
+      final toMailbox =
+          mailboxes.firstWhere((box) => box.path == toMailboxPath);
+
       await client.moveMessages(MessageSequence.fromIds(uids), toMailbox);
       return const Right(null);
     } on MailException catch (e) {
@@ -346,7 +366,8 @@ class MessageRepositoryImpl implements MessageRepository {
     String mailboxPath,
     int uid,
   ) async {
-    return const Left(Failure.notImplemented(message: 'Archive message not implemented'));
+    return const Left(
+        Failure.notImplemented(message: 'Archive message not implemented'));
   }
 
   @override
@@ -355,7 +376,8 @@ class MessageRepositoryImpl implements MessageRepository {
     String mailboxPath,
     int uid,
   ) async {
-    return const Left(Failure.notImplemented(message: 'Unarchive message not implemented'));
+    return const Left(
+        Failure.notImplemented(message: 'Unarchive message not implemented'));
   }
 
   @override
@@ -364,7 +386,8 @@ class MessageRepositoryImpl implements MessageRepository {
     String mailboxPath,
     int uid,
   ) async {
-    return const Left(Failure.notImplemented(message: 'Spam message not implemented'));
+    return const Left(
+        Failure.notImplemented(message: 'Spam message not implemented'));
   }
 
   @override
@@ -373,7 +396,8 @@ class MessageRepositoryImpl implements MessageRepository {
     String mailboxPath,
     int uid,
   ) async {
-    return const Left(Failure.notImplemented(message: 'Unspam message not implemented'));
+    return const Left(
+        Failure.notImplemented(message: 'Unspam message not implemented'));
   }
 
   @override
@@ -401,7 +425,8 @@ class MessageRepositoryImpl implements MessageRepository {
     int uid,
     String attachmentId,
   ) async {
-    return const Left(Failure.notImplemented(message: 'Download attachment not implemented'));
+    return const Left(
+        Failure.notImplemented(message: 'Download attachment not implemented'));
   }
 
   @override
@@ -409,7 +434,8 @@ class MessageRepositoryImpl implements MessageRepository {
     String accountId,
     String messageId,
   ) async {
-    return const Left(Failure.notImplemented(message: 'Get message thread not implemented'));
+    return const Left(
+        Failure.notImplemented(message: 'Get message thread not implemented'));
   }
 
   @override
@@ -436,7 +462,8 @@ class MessageRepositoryImpl implements MessageRepository {
     String mailboxPath,
     List<int> uids,
   ) async {
-    return const Left(Failure.notImplemented(message: 'Bulk flag not implemented'));
+    return const Left(
+        Failure.notImplemented(message: 'Bulk flag not implemented'));
   }
 
   @override
@@ -445,7 +472,8 @@ class MessageRepositoryImpl implements MessageRepository {
     String mailboxPath,
     List<int> uids,
   ) async {
-    return const Left(Failure.notImplemented(message: 'Bulk unflag not implemented'));
+    return const Left(
+        Failure.notImplemented(message: 'Bulk unflag not implemented'));
   }
 
   @override
@@ -455,7 +483,8 @@ class MessageRepositoryImpl implements MessageRepository {
     String toMailboxPath,
     List<int> uids,
   ) async {
-    return moveMultipleMessages(accountId, fromMailboxPath, toMailboxPath, uids);
+    return moveMultipleMessages(
+        accountId, fromMailboxPath, toMailboxPath, uids);
   }
 
   @override

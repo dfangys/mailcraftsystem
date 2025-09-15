@@ -31,8 +31,12 @@ class _MailboxScreenState extends ConsumerState<MailboxScreen> {
 
   void _loadInitialData() {
     Future.microtask(() {
-      ref.read(mailboxControllerProvider.notifier).getMailboxes("dummy_account");
-      ref.read(mailboxControllerProvider.notifier).getMessages("dummy_account", _currentFolder);
+      ref
+          .read(mailboxControllerProvider.notifier)
+          .getMailboxes("dummy_account");
+      ref
+          .read(mailboxControllerProvider.notifier)
+          .getMessages("dummy_account", _currentFolder);
     });
   }
 
@@ -51,12 +55,12 @@ class _MailboxScreenState extends ConsumerState<MailboxScreen> {
           children: [
             // Folder selector
             _buildFolderSelector(context, state),
-            
+
             // Email list
             Expanded(
               child: _buildEmailList(context, state),
             ),
-            
+
             // Selection actions bar
             if (_isSelectionMode) _buildSelectionActionsBar(context),
           ],
@@ -74,7 +78,7 @@ class _MailboxScreenState extends ConsumerState<MailboxScreen> {
 
   PreferredSizeWidget _buildAppBar(BuildContext context, MailboxState state) {
     final theme = Theme.of(context);
-    
+
     if (_isSelectionMode) {
       return AppBar(
         leading: IconButton(
@@ -284,7 +288,8 @@ class _MailboxScreenState extends ConsumerState<MailboxScreen> {
           showCheckbox: _isSelectionMode,
           onTap: () => _handleMessageTap(message),
           onLongPress: () => _handleMessageLongPress(message),
-          onSelectionChanged: (selected) => _handleMessageSelection(message.id, selected),
+          onSelectionChanged: (selected) =>
+              _handleMessageSelection(message.id, selected),
         );
       },
     );
@@ -452,7 +457,8 @@ class _MailboxScreenState extends ConsumerState<MailboxScreen> {
   // Event handlers
   void _handleMessageTap(Message message) {
     if (_isSelectionMode) {
-      _handleMessageSelection(message.id, !_selectedMessages.contains(message.id));
+      _handleMessageSelection(
+          message.id, !_selectedMessages.contains(message.id));
     } else {
       context.go('/message-detail', extra: message);
     }
@@ -474,7 +480,7 @@ class _MailboxScreenState extends ConsumerState<MailboxScreen> {
       } else {
         _selectedMessages.remove(messageId);
       }
-      
+
       if (_selectedMessages.isEmpty) {
         _isSelectionMode = false;
       }
@@ -502,7 +508,9 @@ class _MailboxScreenState extends ConsumerState<MailboxScreen> {
   }
 
   Future<void> _handleRefresh() async {
-    await ref.read(mailboxControllerProvider.notifier).getMessages("dummy_account", _currentFolder);
+    await ref
+        .read(mailboxControllerProvider.notifier)
+        .getMessages("dummy_account", _currentFolder);
   }
 
   void _handleMenuAction(String action) {

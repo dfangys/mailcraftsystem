@@ -5,6 +5,7 @@ import 'package:mailcraftsystem/core/error/failures.dart';
 import 'package:mailcraftsystem/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:mailcraftsystem/shared/forms/app_text_field.dart';
 import 'package:mailcraftsystem/shared/widgets/error_widget.dart';
+import 'package:mailcraftsystem/shared/widgets/app_button.dart';
 
 /// Password reset screen
 class ResetPasswordScreen extends ConsumerStatefulWidget {
@@ -12,7 +13,8 @@ class ResetPasswordScreen extends ConsumerStatefulWidget {
   const ResetPasswordScreen({super.key});
 
   @override
-  ConsumerState<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
+  ConsumerState<ResetPasswordScreen> createState() =>
+      _ResetPasswordScreenState();
 }
 
 class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
@@ -142,21 +144,12 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
           const SizedBox(height: 32),
 
           // Send reset email button
-          FilledButton(
+          AppButton(
+            text: 'Send Reset Instructions',
             onPressed: authState.isLoading ? null : _handleResetRequest,
-            style: FilledButton.styleFrom(
-              minimumSize: const Size.fromHeight(48),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            child: authState.isLoading
-                ? const SizedBox(
-                    height: 20,
-                    width: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Text('Send Reset Instructions'),
+            isLoading: authState.isLoading,
+            style: AppButtonStyle.filled,
+            size: AppButtonSize.large,
           ),
           const SizedBox(height: 24),
 
@@ -292,19 +285,15 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
         const SizedBox(height: 32),
 
         // Resend email button
-        OutlinedButton(
+        AppButton(
+          text: 'Resend Email',
           onPressed: () {
             setState(() {
               _isEmailSent = false;
             });
           },
-          style: OutlinedButton.styleFrom(
-            minimumSize: const Size.fromHeight(48),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-          child: const Text('Resend Email'),
+          style: AppButtonStyle.outlined,
+          size: AppButtonSize.large,
         ),
         const SizedBox(height: 16),
 

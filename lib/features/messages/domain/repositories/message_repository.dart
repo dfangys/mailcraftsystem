@@ -140,4 +140,3 @@ abstract class MessageRepository {
     bool permanent = false,
   });
 }
-

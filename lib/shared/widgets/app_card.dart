@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 class AppCard extends StatelessWidget {
   /// Creates an app card
   const AppCard({
-    super.key,
     required this.child,
-    this.padding = const EdgeInsets.all(16.0),
-    this.margin = const EdgeInsets.all(8.0),
-    this.elevation = 2.0,
+    super.key,
+    this.padding = const EdgeInsets.all(16),
+    this.margin = const EdgeInsets.all(8),
+    this.elevation = 2,
     this.onTap,
     this.color,
   });
@@ -59,10 +59,10 @@ class AppCard extends StatelessWidget {
 class StatCard extends StatelessWidget {
   /// Creates a stat card
   const StatCard({
-    super.key,
     required this.title,
     required this.value,
     required this.icon,
+    super.key,
     this.subtitle,
     this.onTap,
     this.color,
@@ -142,10 +142,10 @@ class StatCard extends StatelessWidget {
 class ActionCard extends StatelessWidget {
   /// Creates an action card
   const ActionCard({
-    super.key,
     required this.title,
     required this.icon,
     required this.onTap,
+    super.key,
     this.subtitle,
     this.color,
   });

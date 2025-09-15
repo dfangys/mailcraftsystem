@@ -169,8 +169,8 @@ class AccountRepositoryImpl implements AccountRepository {
             );
             return Right(preset);
           } catch (e) {
-            return Left(
-                const Failure.unknown(message: 'No preset found for email domain'));
+            return Left(const Failure.unknown(
+                message: 'No preset found for email domain'));
           }
         },
       );
@@ -246,8 +246,8 @@ class AccountRepositoryImpl implements AccountRepository {
       return Left(Failure.notFound(message: 'No default account found'));
     } catch (e, stackTrace) {
       AppLogger.error('Failed to get default account', e, stackTrace);
-      return Left(Failure.storage(message: 'Failed to get default account: $e'));
+      return Left(
+          Failure.storage(message: 'Failed to get default account: $e'));
     }
   }
 }
-

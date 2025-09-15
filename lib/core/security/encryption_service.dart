@@ -9,27 +9,26 @@ import 'package:mailcraftsystem/core/logging/logger.dart';
 
 /// Service for handling encryption and decryption of sensitive data
 class EncryptionService {
-  
   /// Create encryption service instance
   EncryptionService._(this._key, this._encrypter);
   static const int _keyLength = 32; // 256 bits
   static const int _ivLength = 16; // 128 bits
-  
+
   late final Key _key;
   late final Encrypter _encrypter;
-  
+
   /// Create encryption service instance
   static Future<EncryptionService> create(String masterPassword) async {
     try {
       // Generate a salt for key derivation
       final salt = utf8.encode('mailcraft_salt_v1');
-      
+
       // Use PBKDF2 to derive key from master password
       final keyBytes = _deriveKey(masterPassword, salt);
-      
+
       final key = Key(keyBytes);
       final encrypter = Encrypter(AES(key));
-      
+
       AppLogger.info('Encryption service initialized successfully');
       return EncryptionService._(key, encrypter);
     } catch (e) {
@@ -37,28 +36,28 @@ class EncryptionService {
       rethrow;
     }
   }
-  
+
   /// Derive key using PBKDF2
   static Uint8List _deriveKey(String password, List<int> salt) {
     const iterations = 100000;
     final passwordBytes = utf8.encode(password);
-    
+
     var key = passwordBytes + salt;
     for (var i = 0; i < iterations; i++) {
       final hmac = Hmac(sha256, key);
       key = hmac.convert(passwordBytes + salt).bytes;
     }
-    
+
     return Uint8List.fromList(key.take(_keyLength).toList());
   }
-  
+
   /// Encrypt sensitive data
   String encrypt(String plaintext) {
     try {
       // Generate random IV
       final iv = _generateRandomBytes(_ivLength);
       final encrypted = _encrypter.encrypt(plaintext, iv: IV(iv));
-      
+
       // Combine IV and encrypted data
       final combined = iv + encrypted.bytes;
       return base64.encode(combined);
@@ -67,16 +66,16 @@ class EncryptionService {
       rethrow;
     }
   }
-  
+
   /// Decrypt sensitive data
   String decrypt(String encryptedData) {
     try {
       final combined = base64.decode(encryptedData);
-      
+
       // Extract IV and encrypted data
       final iv = combined.sublist(0, _ivLength);
       final encryptedBytes = combined.sublist(_ivLength);
-      
+
       final encrypted = Encrypted(encryptedBytes);
       return _encrypter.decrypt(encrypted, iv: IV(iv));
     } catch (e) {
@@ -84,7 +83,7 @@ class EncryptionService {
       rethrow;
     }
   }
-  
+
   /// Generate random bytes for IV
   Uint8List _generateRandomBytes(int length) {
     final random = Random.secure();
@@ -92,13 +91,13 @@ class EncryptionService {
       List.generate(length, (_) => random.nextInt(256)),
     );
   }
-  
+
   /// Encrypt file data
   Uint8List encryptBytes(Uint8List data) {
     try {
       final iv = _generateRandomBytes(_ivLength);
       final encrypted = _encrypter.encryptBytes(data, iv: IV(iv));
-      
+
       // Combine IV and encrypted data
       return Uint8List.fromList(iv + encrypted.bytes);
     } catch (e) {
@@ -106,14 +105,14 @@ class EncryptionService {
       rethrow;
     }
   }
-  
+
   /// Decrypt file data
   Uint8List decryptBytes(Uint8List encryptedData) {
     try {
       // Extract IV and encrypted data
       final iv = encryptedData.sublist(0, _ivLength);
       final encryptedBytes = encryptedData.sublist(_ivLength);
-      
+
       final encrypted = Encrypted(encryptedBytes);
       final decryptedBytes = _encrypter.decryptBytes(encrypted, iv: IV(iv));
       return Uint8List.fromList(decryptedBytes);
@@ -122,20 +121,20 @@ class EncryptionService {
       rethrow;
     }
   }
-  
+
   /// Generate secure hash for data integrity
   String generateHash(String data) {
     final bytes = utf8.encode(data);
     final digest = sha256.convert(bytes);
     return digest.toString();
   }
-  
+
   /// Verify data integrity using hash
   bool verifyHash(String data, String expectedHash) {
     final actualHash = generateHash(data);
     return actualHash == expectedHash;
   }
-  
+
   /// Securely wipe sensitive data from memory
   void dispose() {
     try {
@@ -151,8 +150,10 @@ class EncryptionService {
 enum EncryptionLevel {
   /// Standard AES-256 encryption
   standard,
+
   /// High security with additional key stretching
   high,
+
   /// Maximum security with multiple encryption rounds
   maximum,
 }
@@ -165,7 +166,7 @@ class EncryptionResult {
     required this.hash,
     required this.timestamp,
   });
-  
+
   /// Create from JSON
   factory EncryptionResult.fromJson(Map<String, dynamic> json) =>
       EncryptionResult(
@@ -173,22 +174,22 @@ class EncryptionResult {
         hash: json['hash'] as String,
         timestamp: DateTime.parse(json['timestamp'] as String),
       );
-  
+
   /// The encrypted data
   final String encryptedData;
-  
+
   /// Hash for integrity verification
   final String hash;
-  
+
   /// Timestamp when encryption was performed
   final DateTime timestamp;
-  
+
   /// Convert to JSON
   Map<String, dynamic> toJson() => {
-    'encryptedData': encryptedData,
-    'hash': hash,
-    'timestamp': timestamp.toIso8601String(),
-  };
+        'encryptedData': encryptedData,
+        'hash': hash,
+        'timestamp': timestamp.toIso8601String(),
+      };
 }
 
 /// Security audit result for encryption operations
@@ -199,13 +200,13 @@ class SecurityAuditResult {
     required this.vulnerabilities,
     required this.recommendations,
   });
-  
+
   /// Whether the encryption setup is secure
   final bool isSecure;
-  
+
   /// List of identified vulnerabilities
   final List<String> vulnerabilities;
-  
+
   /// Security recommendations
   final List<String> recommendations;
 }

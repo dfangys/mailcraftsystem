@@ -11,7 +11,7 @@ void main() {
     'lib/core/utils/extensions.dart',
     'lib/shared/widgets/loading_widget.dart',
   ];
-  
+
   for (final filePath in files) {
     final file = File(filePath);
     if (file.existsSync()) {
@@ -24,10 +24,10 @@ void main() {
 void addDocumentationToFile(File file) {
   final lines = file.readAsLinesSync();
   final newLines = <String>[];
-  
+
   for (var i = 0; i < lines.length; i++) {
     final line = lines[i];
-    
+
     // Check if this line needs documentation
     if (needsDocumentation(line, i > 0 ? lines[i - 1] : '')) {
       // Add documentation comment
@@ -35,29 +35,31 @@ void addDocumentationToFile(File file) {
       final docComment = generateDocComment(line, indent);
       newLines.add(docComment);
     }
-    
+
     newLines.add(line);
   }
-  
+
   file.writeAsStringSync(newLines.join('\n'));
 }
 
 bool needsDocumentation(String line, String previousLine) {
   // Skip if already has documentation
   if (previousLine.trim().startsWith('///')) return false;
-  
+
   // Check for public members that need documentation
   final trimmed = line.trim();
-  
+
   return trimmed.startsWith('class ') ||
-         trimmed.startsWith('enum ') ||
-         trimmed.startsWith('abstract class ') ||
-         trimmed.startsWith('mixin ') ||
-         trimmed.startsWith('extension ') ||
-         (trimmed.startsWith('static ') && !trimmed.contains('_')) ||
-         (trimmed.contains('get ') && !trimmed.contains('_')) ||
-         (trimmed.contains('set ') && !trimmed.contains('_')) ||
-         (trimmed.contains('(') && !trimmed.contains('_') && !trimmed.startsWith('_'));
+      trimmed.startsWith('enum ') ||
+      trimmed.startsWith('abstract class ') ||
+      trimmed.startsWith('mixin ') ||
+      trimmed.startsWith('extension ') ||
+      (trimmed.startsWith('static ') && !trimmed.contains('_')) ||
+      (trimmed.contains('get ') && !trimmed.contains('_')) ||
+      (trimmed.contains('set ') && !trimmed.contains('_')) ||
+      (trimmed.contains('(') &&
+          !trimmed.contains('_') &&
+          !trimmed.startsWith('_'));
 }
 
 String getIndentation(String line) {
@@ -67,7 +69,7 @@ String getIndentation(String line) {
 
 String generateDocComment(String line, String indent) {
   final trimmed = line.trim();
-  
+
   if (trimmed.startsWith('class ')) {
     final className = extractName(trimmed, 'class ');
     return '$indent/// $className class';
@@ -99,13 +101,17 @@ String extractName(String line, String prefix) {
   final extendsIndex = withoutPrefix.indexOf(' extends');
   final implementsIndex = withoutPrefix.indexOf(' implements');
   final withIndex = withoutPrefix.indexOf(' with');
-  
-  final indices = [spaceIndex, braceIndex, extendsIndex, implementsIndex, withIndex]
-      .where((i) => i > 0)
-      .toList();
-  
+
+  final indices = [
+    spaceIndex,
+    braceIndex,
+    extendsIndex,
+    implementsIndex,
+    withIndex
+  ].where((i) => i > 0).toList();
+
   if (indices.isEmpty) return withoutPrefix;
-  
+
   final endIndex = indices.reduce((a, b) => a < b ? a : b);
   return withoutPrefix.substring(0, endIndex);
 }

@@ -28,7 +28,7 @@ abstract class ComposeRepository {
 
   /// Get scheduled messages
   Future<Either<Failure, List<ComposeMessage>>> getScheduledMessages(
-      String accountId,);
+      String accountId);
 
   /// Cancel a scheduled message
   Future<Either<Failure, void>> cancelScheduledMessage(String id);
@@ -71,4 +71,3 @@ abstract class ComposeRepository {
     List<dynamic> contacts,
   );
 }
-

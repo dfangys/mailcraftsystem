@@ -35,7 +35,8 @@ abstract class MailboxRepository {
   Future<Either<Failure, void>> subscribeMailbox(String accountId, String path);
 
   /// Unsubscribe from a mailbox
-  Future<Either<Failure, void>> unsubscribeMailbox(String accountId, String path);
+  Future<Either<Failure, void>> unsubscribeMailbox(
+      String accountId, String path);
 
   /// Get mailbox status (message counts, etc.)
   Future<Either<Failure, MailboxStatus>> getMailboxStatus(
@@ -61,4 +62,3 @@ abstract class MailboxRepository {
     String query,
   );
 }
-

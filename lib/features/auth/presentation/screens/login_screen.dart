@@ -5,6 +5,7 @@ import 'package:mailcraftsystem/core/error/failures.dart';
 import 'package:mailcraftsystem/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:mailcraftsystem/shared/forms/app_text_field.dart';
 import 'package:mailcraftsystem/shared/widgets/error_widget.dart';
+import 'package:mailcraftsystem/shared/widgets/app_button.dart';
 
 /// Login screen with Gmail-like design
 class LoginScreen extends ConsumerStatefulWidget {
@@ -49,7 +50,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       if (next.isAuthenticated) {
         context.go('/home');
       } else if (next.requiresOtp) {
-        context.go('/otp?email=${Uri.encodeComponent(_emailController.text.trim())}');
+        context.go(
+            '/otp?email=${Uri.encodeComponent(_emailController.text.trim())}');
       }
     });
 
@@ -82,7 +84,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 const SizedBox(height: 16),
                                 Text(
                                   'MailCraft System',
-                                  style: theme.textTheme.headlineMedium?.copyWith(
+                                  style:
+                                      theme.textTheme.headlineMedium?.copyWith(
                                     color: colorScheme.onSurface,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -138,12 +141,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       hintText: 'Enter your password',
                       obscureText: _obscurePassword,
                       textInputAction: TextInputAction.done,
-                      prefixIcon: const Icon(Icons.alternate_email),
+                      prefixIcon: const Icon(Icons.lock_outline),
                       suffixIcon: IconButton(
                         icon: Icon(
                           _obscurePassword
-                              ? Icons.email
-                              : Icons.email,
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
                         ),
                         onPressed: () {
                           setState(() {
@@ -195,53 +198,35 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     const SizedBox(height: 32),
 
                     // Login button
-                    FilledButton(
+                    AppButton(
+                      text: 'Sign In',
                       onPressed: authState.isLoading ? null : _handleLogin,
-                      style: FilledButton.styleFrom(
-                        minimumSize: const Size.fromHeight(48),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      child: authState.isLoading
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Text('Sign In'),
+                      isLoading: authState.isLoading,
+                      style: AppButtonStyle.filled,
+                      size: AppButtonSize.large,
                     ),
                     const SizedBox(height: 24),
 
                     // Divider
-                    Row(
+                    const Row(
                       children: [
-                        Expanded(child: Divider(color: colorScheme.outline)),
+                        Expanded(child: Divider()),
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Text(
-                            'or',
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: colorScheme.onSurfaceVariant,
-                            ),
-                          ),
+                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          child: Text('or'),
                         ),
-                        Expanded(child: Divider(color: colorScheme.outline)),
+                        Expanded(child: Divider()),
                       ],
                     ),
                     const SizedBox(height: 24),
 
                     // Setup account button
-                    OutlinedButton.icon(
+                    AppButton(
+                      text: 'Setup New Account',
                       onPressed: () => context.go('/account-setup'),
-                      icon: const Icon(Icons.email),
-                      label: const Text('Setup New Account'),
-                      style: OutlinedButton.styleFrom(
-                        minimumSize: const Size.fromHeight(48),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
+                      icon: Icons.add_circle_outline,
+                      style: AppButtonStyle.outlined,
+                      size: AppButtonSize.large,
                     ),
                   ],
                 ),

@@ -19,7 +19,8 @@ class MessageDetailScreen extends ConsumerStatefulWidget {
   final Message message;
 
   @override
-  ConsumerState<MessageDetailScreen> createState() => _MessageDetailScreenState();
+  ConsumerState<MessageDetailScreen> createState() =>
+      _MessageDetailScreenState();
 }
 
 class _MessageDetailScreenState extends ConsumerState<MessageDetailScreen> {
@@ -35,28 +36,26 @@ class _MessageDetailScreenState extends ConsumerState<MessageDetailScreen> {
 
   Future<void> _loadMessageBody() async {
     setState(() => _isLoading = true);
-    
+
     // Simulate loading message body
     await Future.delayed(const Duration(milliseconds: 500));
-    
+
     setState(() {
-      _messageBody = widget.message.preview ?? 'Message body content would be loaded here...';
+      _messageBody = widget.message.preview ??
+          'Message body content would be loaded here...';
       _isLoading = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
     return Scaffold(
       appBar: _buildAppBar(context),
       body: Column(
         children: [
           // Message header
           _buildMessageHeader(context),
-          
+
           // Message content
           Expanded(
             child: _isLoading
@@ -72,12 +71,12 @@ class _MessageDetailScreenState extends ConsumerState<MessageDetailScreen> {
                         // Attachments section
                         if (widget.message.hasAttachments)
                           _buildAttachmentsSection(context),
-                        
+
                         // Message body
                         _buildMessageBody(context),
-                        
+
                         const SizedBox(height: 24),
-                        
+
                         // Action buttons
                         _buildActionButtons(context),
                       ],
@@ -91,7 +90,7 @@ class _MessageDetailScreenState extends ConsumerState<MessageDetailScreen> {
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return AppBar(
       title: Text(
         widget.message.subject ?? '(No Subject)',
@@ -121,11 +120,11 @@ class _MessageDetailScreenState extends ConsumerState<MessageDetailScreen> {
         PopupMenuButton<String>(
           onSelected: _handleMenuAction,
           itemBuilder: (context) => [
-            PopupMenuItem(
+            const PopupMenuItem(
               value: 'mark_unread',
               child: ListTile(
-                leading: const Icon(Icons.mark_email_unread_outlined),
-                title: const Text('Mark as unread'),
+                leading: Icon(Icons.mark_email_unread_outlined),
+                title: Text('Mark as unread'),
                 contentPadding: EdgeInsets.zero,
               ),
             ),
@@ -183,7 +182,10 @@ class _MessageDetailScreenState extends ConsumerState<MessageDetailScreen> {
                 radius: 24,
                 backgroundColor: colorScheme.primaryContainer,
                 child: Text(
-                  (widget.message.from?.name ?? widget.message.from?.email ?? 'U')[0].toUpperCase(),
+                  (widget.message.from?.name ??
+                          widget.message.from?.email ??
+                          'U')[0]
+                      .toUpperCase(),
                   style: theme.textTheme.titleMedium?.copyWith(
                     color: colorScheme.onPrimaryContainer,
                     fontWeight: FontWeight.bold,
@@ -196,7 +198,9 @@ class _MessageDetailScreenState extends ConsumerState<MessageDetailScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.message.from?.name ?? widget.message.from?.email ?? 'Unknown Sender',
+                      widget.message.from?.name ??
+                          widget.message.from?.email ??
+                          'Unknown Sender',
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
@@ -215,7 +219,7 @@ class _MessageDetailScreenState extends ConsumerState<MessageDetailScreen> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    _formatDateTime(widget.message.receivedDate),
+                    _formatDateTime(widget.message.date),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: colorScheme.onSurfaceVariant,
                     ),
@@ -231,8 +235,9 @@ class _MessageDetailScreenState extends ConsumerState<MessageDetailScreen> {
                           color: colorScheme.onSurfaceVariant,
                         ),
                       if (widget.message.priority == MessagePriority.high) ...[
-                        if (widget.message.hasAttachments) const SizedBox(width: 4),
-                        Icon(
+                        if (widget.message.hasAttachments)
+                          const SizedBox(width: 4),
+                        const Icon(
                           Icons.priority_high_outlined,
                           size: 16,
                           color: Colors.red,
@@ -244,16 +249,16 @@ class _MessageDetailScreenState extends ConsumerState<MessageDetailScreen> {
               ),
             ],
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Recipients
-          _buildRecipientInfo(context, 'To', widget.message.to),
+          _buildRecipientInfo(context, 'To', widget.message.to ?? []),
           if (widget.message.cc?.isNotEmpty == true)
             _buildRecipientInfo(context, 'Cc', widget.message.cc!),
           if (widget.message.bcc?.isNotEmpty == true)
             _buildRecipientInfo(context, 'Bcc', widget.message.bcc!),
-          
+
           // Subject
           const SizedBox(height: 12),
           Text(
@@ -262,15 +267,17 @@ class _MessageDetailScreenState extends ConsumerState<MessageDetailScreen> {
               fontWeight: FontWeight.w600,
             ),
           ),
-          
+
           // Headers toggle
           const SizedBox(height: 12),
           TextButton.icon(
-            onPressed: () => setState(() => _showFullHeaders = !_showFullHeaders),
-            icon: Icon(_showFullHeaders ? Icons.expand_less : Icons.expand_more),
+            onPressed: () =>
+                setState(() => _showFullHeaders = !_showFullHeaders),
+            icon:
+                Icon(_showFullHeaders ? Icons.expand_less : Icons.expand_more),
             label: Text(_showFullHeaders ? 'Hide details' : 'Show details'),
           ),
-          
+
           // Full headers
           if (_showFullHeaders) _buildFullHeaders(context),
         ],
@@ -278,7 +285,8 @@ class _MessageDetailScreenState extends ConsumerState<MessageDetailScreen> {
     );
   }
 
-  Widget _buildRecipientInfo(BuildContext context, String label, List<EmailAddress> recipients) {
+  Widget _buildRecipientInfo(
+      BuildContext context, String label, List<MessageAddress> recipients) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -301,16 +309,18 @@ class _MessageDetailScreenState extends ConsumerState<MessageDetailScreen> {
             child: Wrap(
               spacing: 8,
               runSpacing: 4,
-              children: recipients.map((recipient) => Chip(
-                label: Text(
-                  recipient.name ?? recipient.email ?? 'Unknown',
-                  style: theme.textTheme.bodySmall,
-                ),
-                backgroundColor: colorScheme.surfaceVariant,
-                side: BorderSide.none,
-                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                visualDensity: VisualDensity.compact,
-              )).toList(),
+              children: recipients
+                  .map((recipient) => Chip(
+                        label: Text(
+                          recipient.name ?? recipient.email,
+                          style: theme.textTheme.bodySmall,
+                        ),
+                        backgroundColor: colorScheme.surfaceContainerHighest,
+                        side: BorderSide.none,
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        visualDensity: VisualDensity.compact,
+                      ))
+                  .toList(),
             ),
           ),
         ],
@@ -326,17 +336,17 @@ class _MessageDetailScreenState extends ConsumerState<MessageDetailScreen> {
       margin: const EdgeInsets.only(top: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: colorScheme.surfaceVariant.withOpacity(0.3),
+        color: colorScheme.surfaceContainerHighest.withAlpha(77),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildHeaderRow('Message ID', widget.message.id),
-          _buildHeaderRow('Date', _formatFullDateTime(widget.message.receivedDate)),
+          _buildHeaderRow('Date', _formatFullDateTime(widget.message.date)),
           _buildHeaderRow('Size', _formatSize(widget.message.size ?? 0)),
           if (widget.message.replyTo != null)
-            _buildHeaderRow('Reply-To', widget.message.replyTo!.email ?? ''),
+            _buildHeaderRow('Reply-To', widget.message.replyTo!.first.email),
         ],
       ),
     );
@@ -400,14 +410,16 @@ class _MessageDetailScreenState extends ConsumerState<MessageDetailScreen> {
           ),
           const SizedBox(height: 12),
           // Mock attachments
-          _buildAttachmentItem(context, 'document.pdf', '2.4 MB', Icons.picture_as_pdf),
+          _buildAttachmentItem(
+              context, 'document.pdf', '2.4 MB', Icons.picture_as_pdf),
           _buildAttachmentItem(context, 'image.jpg', '1.2 MB', Icons.image),
         ],
       ),
     );
   }
 
-  Widget _buildAttachmentItem(BuildContext context, String name, String size, IconData icon) {
+  Widget _buildAttachmentItem(
+      BuildContext context, String name, String size, IconData icon) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -453,7 +465,7 @@ class _MessageDetailScreenState extends ConsumerState<MessageDetailScreen> {
             width: double.infinity,
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: colorScheme.surfaceVariant.withOpacity(0.3),
+              color: colorScheme.surfaceContainerHighest.withAlpha(77),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
@@ -504,10 +516,10 @@ class _MessageDetailScreenState extends ConsumerState<MessageDetailScreen> {
   // Helper methods
   String _formatDateTime(DateTime? dateTime) {
     if (dateTime == null) return '';
-    
+
     final now = DateTime.now();
     final difference = now.difference(dateTime);
-    
+
     if (difference.inDays > 0) {
       if (difference.inDays == 1) {
         return 'Yesterday ${_formatTime(dateTime)}';
@@ -543,7 +555,8 @@ class _MessageDetailScreenState extends ConsumerState<MessageDetailScreen> {
     // Toggle message flag
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(widget.message.isFlagged ? 'Flag removed' : 'Message flagged'),
+        content:
+            Text(widget.message.isFlagged ? 'Flag removed' : 'Message flagged'),
       ),
     );
   }
@@ -557,7 +570,7 @@ class _MessageDetailScreenState extends ConsumerState<MessageDetailScreen> {
   }
 
   void _deleteMessage() {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Delete Message'),
@@ -593,7 +606,8 @@ class _MessageDetailScreenState extends ConsumerState<MessageDetailScreen> {
         _showMoveDialog();
         break;
       case 'copy_link':
-        Clipboard.setData(ClipboardData(text: 'mailto:${widget.message.from?.email}'));
+        Clipboard.setData(
+            ClipboardData(text: 'mailto:${widget.message.from?.email}'));
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Link copied to clipboard')),
         );
@@ -612,7 +626,7 @@ class _MessageDetailScreenState extends ConsumerState<MessageDetailScreen> {
   }
 
   void _showMoveDialog() {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Move to Folder'),
@@ -662,3 +676,4 @@ class _MessageDetailScreenState extends ConsumerState<MessageDetailScreen> {
     context.go('/compose?forward=${widget.message.id}');
   }
 }
+

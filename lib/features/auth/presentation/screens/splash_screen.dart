@@ -63,13 +63,13 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   Future<void> _initializeApp() async {
     if (_hasInitialized) return;
     _hasInitialized = true;
-    
+
     // Check authentication status
     await ref.read(authControllerProvider.notifier).checkAuthStatus();
-    
+
     // Wait for animations to complete
     await Future.delayed(const Duration(milliseconds: 2500));
-    
+
     if (mounted) {
       final authState = ref.read(authControllerProvider);
       if (authState.isAuthenticated) {
@@ -185,9 +185,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                         ),
                       ),
                     ),
-                    
+
                     const SizedBox(height: 100),
-                    
+
                     // Loading section
                     Transform.translate(
                       offset: Offset(0, _slideAnimation.value),
@@ -211,9 +211,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                         ),
                       ),
                     ),
-                    
+
                     const SizedBox(height: 60),
-                    
+
                     // Version info
                     FadeTransition(
                       opacity: _fadeAnimation,

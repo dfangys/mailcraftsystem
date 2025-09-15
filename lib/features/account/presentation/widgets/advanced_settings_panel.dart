@@ -206,7 +206,8 @@ class _AdvancedSettingsPanelState extends State<AdvancedSettingsPanel> {
             value: _settings.imapSocketType,
             items: const [
               DropdownMenuItem(value: 'ssl', child: Text('SSL/TLS (993)')),
-              DropdownMenuItem(value: 'starttls', child: Text('STARTTLS (143)')),
+              DropdownMenuItem(
+                  value: 'starttls', child: Text('STARTTLS (143)')),
               DropdownMenuItem(value: 'plain', child: Text('Plain (143)')),
             ],
             onChanged: (value) {
@@ -224,7 +225,8 @@ class _AdvancedSettingsPanelState extends State<AdvancedSettingsPanel> {
             label: 'SMTP Security',
             value: _settings.smtpSocketType,
             items: const [
-              DropdownMenuItem(value: 'starttls', child: Text('STARTTLS (587)')),
+              DropdownMenuItem(
+                  value: 'starttls', child: Text('STARTTLS (587)')),
               DropdownMenuItem(value: 'ssl', child: Text('SSL/TLS (465)')),
               DropdownMenuItem(value: 'plain', child: Text('Plain (25/587)')),
             ],

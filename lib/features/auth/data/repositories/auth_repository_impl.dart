@@ -49,14 +49,16 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Either<Failure, AuthToken>> verifyOtp(OtpChallenge challenge) async {
     try {
-
-      final request = OtpVerificationRequest(email: challenge.email, otp: challenge.code);
+      final request =
+          OtpVerificationRequest(email: challenge.email, otp: challenge.code);
       final response = await apiClient.verifyOtp(request);
-      final token = AuthToken.fromJson(response['data'] as Map<String, dynamic>);
+      final token =
+          AuthToken.fromJson(response['data'] as Map<String, dynamic>);
       await storeToken(token);
       return Right(token);
     } on DioException catch (e) {
-      return Left(Failure.server(message: e.message ?? 'OTP verification failed'));
+      return Left(
+          Failure.server(message: e.message ?? 'OTP verification failed'));
     } catch (e) {
       return Left(Failure.unknown(message: 'An unknown error occurred: $e'));
     }
@@ -70,10 +72,12 @@ class AuthRepositoryImpl implements AuthRepository {
         return const Left(Failure.auth(message: 'Not authenticated'));
       }
       final response = await apiClient.getUserProfile(token.accessToken);
-      final profile = UserProfile.fromJson(response['data'] as Map<String, dynamic>);
+      final profile =
+          UserProfile.fromJson(response['data'] as Map<String, dynamic>);
       return Right(profile);
     } on DioException catch (e) {
-      return Left(Failure.server(message: e.message ?? 'Failed to get user profile'));
+      return Left(
+          Failure.server(message: e.message ?? 'Failed to get user profile'));
     } catch (e) {
       return Left(Failure.unknown(message: 'An unknown error occurred: $e'));
     }
@@ -85,7 +89,8 @@ class AuthRepositoryImpl implements AuthRepository {
       await apiClient.requestPasswordReset(email);
       return const Right(null);
     } on DioException catch (e) {
-      return Left(Failure.server(message: e.message ?? 'Password reset request failed'));
+      return Left(Failure.server(
+          message: e.message ?? 'Password reset request failed'));
     } catch (e) {
       return Left(Failure.unknown(message: 'An unknown error occurred: $e'));
     }
@@ -101,7 +106,8 @@ class AuthRepositoryImpl implements AuthRepository {
       await apiClient.confirmPasswordReset(email, otp, newPassword);
       return const Right(null);
     } on DioException catch (e) {
-      return Left(Failure.server(message: e.message ?? 'Password reset confirmation failed'));
+      return Left(Failure.server(
+          message: e.message ?? 'Password reset confirmation failed'));
     } catch (e) {
       return Left(Failure.unknown(message: 'An unknown error occurred: $e'));
     }
@@ -130,8 +136,10 @@ class AuthRepositoryImpl implements AuthRepository {
       if (currentToken?.refreshToken == null) {
         return const Left(Failure.auth(message: 'No refresh token available'));
       }
-      final response = await apiClient.refreshToken(currentToken!.refreshToken!);
-      final newToken = AuthToken.fromJson(response['data'] as Map<String, dynamic>);
+      final response =
+          await apiClient.refreshToken(currentToken!.refreshToken!);
+      final newToken =
+          AuthToken.fromJson(response['data'] as Map<String, dynamic>);
       await storeToken(newToken);
       return Right(newToken);
     } on DioException catch (e) {
@@ -170,4 +178,3 @@ class AuthRepositoryImpl implements AuthRepository {
     return requestPasswordReset(email);
   }
 }
-

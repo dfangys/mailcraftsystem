@@ -4,29 +4,28 @@ import 'package:mailcraftsystem/core/logging/logger.dart';
 
 /// Privacy service for GDPR compliance and data protection
 class PrivacyService {
-  
   PrivacyService._();
   static PrivacyService? _instance;
-  
+
   /// Get singleton instance
   static PrivacyService get instance {
     _instance ??= PrivacyService._();
     return _instance!;
   }
-  
+
   /// Current privacy settings
   PrivacySettings _settings = const PrivacySettings();
-  
+
   /// Get current privacy settings
   PrivacySettings get settings => _settings;
-  
+
   /// Update privacy settings
   Future<void> updateSettings(PrivacySettings newSettings) async {
     _settings = newSettings;
     await _persistSettings();
     AppLogger.info('Privacy settings updated');
   }
-  
+
   /// Get user consent status
   ConsentStatus getConsentStatus(ConsentType type) {
     switch (type) {
@@ -40,9 +39,10 @@ class PrivacyService {
         return _settings.performanceConsent;
     }
   }
-  
+
   /// Request user consent
-  Future<ConsentStatus> requestConsent(ConsentType type, {
+  Future<ConsentStatus> requestConsent(
+    ConsentType type, {
     required String purpose,
     required String description,
     bool isRequired = false,
@@ -55,12 +55,12 @@ class PrivacyService {
       isRequired: isRequired,
       timestamp: DateTime.now(),
     );
-    
+
     // In a real implementation, this would show a consent dialog
     // For now, we'll return the current status
     return getConsentStatus(type);
   }
-  
+
   /// Record consent decision
   Future<void> recordConsent(ConsentType type, ConsentStatus status) async {
     // Create consent record for audit trail
@@ -70,15 +70,15 @@ class PrivacyService {
       timestamp: DateTime.now(),
       version: _settings.privacyPolicyVersion,
     );
-    
+
     // Update settings
     final updatedSettings = _updateConsentInSettings(type, status);
     await updateSettings(updatedSettings);
-    
+
     // Log consent decision
     AppLogger.info('Consent recorded: ${type.name} = ${status.name}');
   }
-  
+
   /// Get data processing activities
   List<DataProcessingActivity> getDataProcessingActivities() {
     return [
@@ -123,20 +123,20 @@ class PrivacyService {
       ),
     ];
   }
-  
+
   /// Export user data (GDPR Article 20)
   Future<UserDataExport> exportUserData(String userId) async {
     AppLogger.info('Exporting user data for user: $userId');
-    
+
     try {
       final exportData = <String, dynamic>{};
-      
+
       // Collect data from various sources
       exportData['profile'] = await _exportProfileData(userId);
       exportData['emails'] = await _exportEmailData(userId);
       exportData['settings'] = await _exportSettingsData(userId);
       exportData['consent_records'] = await _exportConsentData(userId);
-      
+
       final export = UserDataExport(
         userId: userId,
         exportDate: DateTime.now(),
@@ -144,7 +144,7 @@ class PrivacyService {
         data: exportData,
         checksum: _calculateChecksum(exportData),
       );
-      
+
       AppLogger.info('User data export completed');
       return export;
     } catch (e) {
@@ -152,31 +152,32 @@ class PrivacyService {
       rethrow;
     }
   }
-  
+
   /// Delete user data (GDPR Article 17)
-  Future<DataDeletionResult> deleteUserData(String userId, {
+  Future<DataDeletionResult> deleteUserData(
+    String userId, {
     List<DataType>? specificTypes,
     bool verifyDeletion = true,
   }) async {
     AppLogger.info('Deleting user data for user: $userId');
-    
+
     try {
       final deletionLog = <String>[];
-      
+
       // Delete data by type
       final typesToDelete = specificTypes ?? DataType.values;
-      
+
       for (final dataType in typesToDelete) {
         final result = await _deleteDataByType(userId, dataType);
         deletionLog.add('${dataType.name}: $result');
       }
-      
+
       // Verify deletion if requested
       var verificationPassed = true;
       if (verifyDeletion) {
         verificationPassed = await _verifyDataDeletion(userId, typesToDelete);
       }
-      
+
       final result = DataDeletionResult(
         userId: userId,
         deletionDate: DateTime.now(),
@@ -184,7 +185,7 @@ class PrivacyService {
         verificationPassed: verificationPassed,
         deletionLog: deletionLog,
       );
-      
+
       AppLogger.info('User data deletion completed');
       return result;
     } catch (e) {
@@ -192,44 +193,46 @@ class PrivacyService {
       rethrow;
     }
   }
-  
+
   /// Anonymize user data
   Future<void> anonymizeUserData(String userId) async {
     AppLogger.info('Anonymizing user data for user: $userId');
-    
+
     try {
       // Replace personal identifiers with anonymous IDs
       await _anonymizeProfileData(userId);
       await _anonymizeEmailData(userId);
       await _anonymizeUsageData(userId);
-      
+
       AppLogger.info('User data anonymization completed');
     } catch (e) {
       AppLogger.error('User data anonymization failed', e);
       rethrow;
     }
   }
-  
+
   /// Check data retention compliance
   Future<DataRetentionReport> checkDataRetention() async {
     AppLogger.info('Checking data retention compliance');
-    
+
     final activities = getDataProcessingActivities();
     final violations = <DataRetentionViolation>[];
-    
+
     for (final activity in activities) {
       final expiredData = await _findExpiredData(activity);
       if (expiredData.isNotEmpty) {
-        violations.add(DataRetentionViolation(
-          activityId: activity.id,
-          activityName: activity.name,
-          retentionPeriod: activity.retentionPeriod,
-          expiredDataCount: expiredData.length,
-          oldestExpiredDate: expiredData.first.expiryDate,
-        ),);
+        violations.add(
+          DataRetentionViolation(
+            activityId: activity.id,
+            activityName: activity.name,
+            retentionPeriod: activity.retentionPeriod,
+            expiredDataCount: expiredData.length,
+            oldestExpiredDate: expiredData.first.expiryDate,
+          ),
+        );
       }
     }
-    
+
     return DataRetentionReport(
       checkDate: DateTime.now(),
       totalActivities: activities.length,
@@ -237,12 +240,12 @@ class PrivacyService {
       isCompliant: violations.isEmpty,
     );
   }
-  
+
   /// Generate privacy impact assessment
   Future<PrivacyImpactAssessment> generatePIA(String activityId) async {
-    final activity = getDataProcessingActivities()
-        .firstWhere((a) => a.id == activityId);
-    
+    final activity =
+        getDataProcessingActivities().firstWhere((a) => a.id == activityId);
+
     return PrivacyImpactAssessment(
       activityId: activityId,
       activityName: activity.name,
@@ -252,9 +255,10 @@ class PrivacyService {
       complianceStatus: _checkActivityCompliance(activity),
     );
   }
-  
+
   // Helper methods
-  PrivacySettings _updateConsentInSettings(ConsentType type, ConsentStatus status) {
+  PrivacySettings _updateConsentInSettings(
+      ConsentType type, ConsentStatus status) {
     switch (type) {
       case ConsentType.analytics:
         return _settings.copyWith(analyticsConsent: status);
@@ -266,73 +270,74 @@ class PrivacyService {
         return _settings.copyWith(performanceConsent: status);
     }
   }
-  
+
   Future<void> _persistSettings() async {
     // Persist settings to secure storage
   }
-  
+
   Future<Map<String, dynamic>> _exportProfileData(String userId) async {
     // Export profile data
     return {};
   }
-  
+
   Future<Map<String, dynamic>> _exportEmailData(String userId) async {
     // Export email data
     return {};
   }
-  
+
   Future<Map<String, dynamic>> _exportSettingsData(String userId) async {
     // Export settings data
     return {};
   }
-  
+
   Future<Map<String, dynamic>> _exportConsentData(String userId) async {
     // Export consent records
     return {};
   }
-  
+
   String _calculateChecksum(Map<String, dynamic> data) {
     final jsonString = jsonEncode(data);
     return jsonString.hashCode.toString();
   }
-  
+
   Future<String> _deleteDataByType(String userId, DataType dataType) async {
     // Delete data by type
     return 'Deleted';
   }
-  
+
   Future<bool> _verifyDataDeletion(String userId, List<DataType> types) async {
     // Verify data deletion
     return true;
   }
-  
+
   Future<void> _anonymizeProfileData(String userId) async {
     // Anonymize profile data
   }
-  
+
   Future<void> _anonymizeEmailData(String userId) async {
     // Anonymize email data
   }
-  
+
   Future<void> _anonymizeUsageData(String userId) async {
     // Anonymize usage data
   }
-  
-  Future<List<ExpiredDataRecord>> _findExpiredData(DataProcessingActivity activity) async {
+
+  Future<List<ExpiredDataRecord>> _findExpiredData(
+      DataProcessingActivity activity) async {
     // Find expired data for activity
     return [];
   }
-  
+
   PrivacyRiskLevel _assessPrivacyRisk(DataProcessingActivity activity) {
     // Assess privacy risk
     return PrivacyRiskLevel.medium;
   }
-  
+
   List<String> _getMitigationMeasures(DataProcessingActivity activity) {
     // Get mitigation measures
     return ['Encryption', 'Access controls', 'Regular audits'];
   }
-  
+
   bool _checkActivityCompliance(DataProcessingActivity activity) {
     // Check activity compliance
     return true;
@@ -351,7 +356,7 @@ class PrivacySettings {
     this.enableDataMinimization = true,
     this.enableAutomaticDeletion = true,
   });
-  
+
   final ConsentStatus analyticsConsent;
   final ConsentStatus marketingConsent;
   final ConsentStatus functionalConsent;
@@ -360,7 +365,7 @@ class PrivacySettings {
   final int dataRetentionDays;
   final bool enableDataMinimization;
   final bool enableAutomaticDeletion;
-  
+
   PrivacySettings copyWith({
     ConsentStatus? analyticsConsent,
     ConsentStatus? marketingConsent,
@@ -378,8 +383,10 @@ class PrivacySettings {
       performanceConsent: performanceConsent ?? this.performanceConsent,
       privacyPolicyVersion: privacyPolicyVersion ?? this.privacyPolicyVersion,
       dataRetentionDays: dataRetentionDays ?? this.dataRetentionDays,
-      enableDataMinimization: enableDataMinimization ?? this.enableDataMinimization,
-      enableAutomaticDeletion: enableAutomaticDeletion ?? this.enableAutomaticDeletion,
+      enableDataMinimization:
+          enableDataMinimization ?? this.enableDataMinimization,
+      enableAutomaticDeletion:
+          enableAutomaticDeletion ?? this.enableAutomaticDeletion,
     );
   }
 }
@@ -387,14 +394,36 @@ class PrivacySettings {
 // Enums and models
 /// Enumeration
 enum ConsentType { analytics, marketing, functional, performance }
+
 /// Enumeration
 enum ConsentStatus { granted, denied, notAsked, withdrawn }
+
 /// Enumeration
-enum DataType { personalInfo, emailContent, emailMetadata, attachments, credentials, preferences, usageData, deviceInfo, performanceData }
+enum DataType {
+  personalInfo,
+  emailContent,
+  emailMetadata,
+  attachments,
+  credentials,
+  preferences,
+  usageData,
+  deviceInfo,
+  performanceData
+}
+
 /// Enumeration
-enum LegalBasis { consent, contract, legalObligation, vitalInterests, publicTask, legitimateInterests }
+enum LegalBasis {
+  consent,
+  contract,
+  legalObligation,
+  vitalInterests,
+  publicTask,
+  legitimateInterests
+}
+
 /// Enumeration
 enum DataExportFormat { json, xml, csv }
+
 /// Enumeration
 enum PrivacyRiskLevel { low, medium, high, critical }
 
@@ -407,7 +436,7 @@ class ConsentRequest {
     required this.isRequired,
     required this.timestamp,
   });
-  
+
   final ConsentType type;
   final String purpose;
   final String description;
@@ -423,7 +452,7 @@ class ConsentRecord {
     required this.timestamp,
     required this.version,
   });
-  
+
   final ConsentType type;
   final ConsentStatus status;
   final DateTime timestamp;
@@ -441,7 +470,7 @@ class DataProcessingActivity {
     required this.retentionPeriod,
     required this.isAutomated,
   });
-  
+
   final String id;
   final String name;
   final String purpose;
@@ -460,7 +489,7 @@ class UserDataExport {
     required this.data,
     required this.checksum,
   });
-  
+
   final String userId;
   final DateTime exportDate;
   final DataExportFormat format;
@@ -477,7 +506,7 @@ class DataDeletionResult {
     required this.verificationPassed,
     required this.deletionLog,
   });
-  
+
   final String userId;
   final DateTime deletionDate;
   final List<DataType> deletedTypes;
@@ -493,7 +522,7 @@ class DataRetentionReport {
     required this.violations,
     required this.isCompliant,
   });
-  
+
   final DateTime checkDate;
   final int totalActivities;
   final List<DataRetentionViolation> violations;
@@ -509,7 +538,7 @@ class DataRetentionViolation {
     required this.expiredDataCount,
     required this.oldestExpiredDate,
   });
-  
+
   final String activityId;
   final String activityName;
   final Duration retentionPeriod;
@@ -525,7 +554,7 @@ class ExpiredDataRecord {
     required this.createdDate,
     required this.expiryDate,
   });
-  
+
   final String id;
   final DataType type;
   final DateTime createdDate;
@@ -542,7 +571,7 @@ class PrivacyImpactAssessment {
     required this.mitigationMeasures,
     required this.complianceStatus,
   });
-  
+
   final String activityId;
   final String activityName;
   final DateTime assessmentDate;

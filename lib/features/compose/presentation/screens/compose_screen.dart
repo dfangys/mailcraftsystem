@@ -21,7 +21,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen> {
   final _bccController = TextEditingController();
   final _subjectController = TextEditingController();
   final _bodyController = TextEditingController();
-  
+
   bool _showCc = false;
   bool _showBcc = false;
   bool _isRichText = false;
@@ -52,7 +52,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen> {
           children: [
             // Compose header
             _buildComposeHeader(context),
-            
+
             // Message content
             Expanded(
               child: SingleChildScrollView(
@@ -62,29 +62,30 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen> {
                   children: [
                     // Recipients section
                     _buildRecipientsSection(context),
-                    
+
                     const SizedBox(height: 16),
-                    
+
                     // Subject field
                     _buildSubjectField(context),
-                    
+
                     const SizedBox(height: 16),
-                    
+
                     // Attachments section
-                    if (_attachments.isNotEmpty) _buildAttachmentsSection(context),
-                    
+                    if (_attachments.isNotEmpty)
+                      _buildAttachmentsSection(context),
+
                     // Message body
                     _buildMessageBodyField(context),
-                    
+
                     const SizedBox(height: 24),
-                    
+
                     // Formatting toolbar
                     if (_isRichText) _buildFormattingToolbar(context),
                   ],
                 ),
               ),
             ),
-            
+
             // Bottom action bar
             _buildBottomActionBar(context),
           ],
@@ -95,7 +96,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen> {
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return AppBar(
       title: Text(
         'Compose',
@@ -117,14 +118,14 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen> {
                 _priority == MessagePriority.high ? 'High' : 'Low',
                 style: theme.textTheme.labelSmall,
               ),
-              backgroundColor: _priority == MessagePriority.high 
+              backgroundColor: _priority == MessagePriority.high
                   ? Colors.red.withOpacity(0.1)
                   : Colors.blue.withOpacity(0.1),
               side: BorderSide.none,
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
           ),
-        
+
         // More options
         PopupMenuButton<String>(
           onSelected: _handleMenuAction,
@@ -252,7 +253,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen> {
               ],
             ),
           ),
-          
+
           // Cc field
           if (_showCc) ...[
             const SizedBox(height: 12),
@@ -270,7 +271,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen> {
               ),
             ),
           ],
-          
+
           // Bcc field
           if (_showBcc) ...[
             const SizedBox(height: 12),
@@ -332,7 +333,8 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen> {
             ],
           ),
           const SizedBox(height: 12),
-          ...._attachments.map((attachment) => _buildAttachmentItem(context, attachment)),
+          ..._attachments
+              .map((attachment) => _buildAttachmentItem(context, attachment)),
         ],
       ),
     );
@@ -606,7 +608,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen> {
     try {
       // Simulate sending
       await Future.delayed(const Duration(seconds: 2));
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Message sent successfully')),
@@ -683,15 +685,17 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen> {
         title: const Text('Set Priority'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
-          children: MessagePriority.values.map((priority) => RadioListTile<MessagePriority>(
-            title: Text(priority.name.toUpperCase()),
-            value: priority,
-            groupValue: _priority,
-            onChanged: (value) {
-              setState(() => _priority = value!);
-              Navigator.of(context).pop();
-            },
-          )).toList(),
+          children: MessagePriority.values
+              .map((priority) => RadioListTile<MessagePriority>(
+                    title: Text(priority.name.toUpperCase()),
+                    value: priority,
+                    groupValue: _priority,
+                    onChanged: (value) {
+                      setState(() => _priority = value!);
+                      Navigator.of(context).pop();
+                    },
+                  ))
+              .toList(),
         ),
       ),
     );
@@ -705,9 +709,9 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen> {
 
   bool _hasUnsavedChanges() {
     return _toController.text.isNotEmpty ||
-           _subjectController.text.isNotEmpty ||
-           _bodyController.text.isNotEmpty ||
-           _attachments.isNotEmpty;
+        _subjectController.text.isNotEmpty ||
+        _bodyController.text.isNotEmpty ||
+        _attachments.isNotEmpty;
   }
 }
 

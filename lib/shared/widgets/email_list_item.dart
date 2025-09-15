@@ -5,8 +5,8 @@ import 'package:mailcraftsystem/features/messages/domain/models/message.dart';
 class EmailListItem extends StatelessWidget {
   /// Creates an email list item
   const EmailListItem({
-    super.key,
     required this.message,
+    super.key,
     this.onTap,
     this.onLongPress,
     this.isSelected = false,
@@ -30,7 +30,7 @@ class EmailListItem extends StatelessWidget {
   final bool showCheckbox;
 
   /// Callback when selection state changes
-  final ValueChanged<bool>? onSelectionChanged;
+  final ValueChanged<bool?>? onSelectionChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +40,7 @@ class EmailListItem extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       elevation: isSelected ? 4 : 1,
-      color: isSelected ? colorScheme.primaryContainer.withOpacity(0.3) : null,
+      color: isSelected ? colorScheme.primaryContainer.withAlpha(77) : null,
       child: InkWell(
         onTap: onTap,
         onLongPress: onLongPress,
@@ -58,9 +58,7 @@ class EmailListItem extends StatelessWidget {
                 )
               else
                 _buildAvatar(context),
-              
               const SizedBox(width: 12),
-              
               // Message content
               Expanded(
                 child: Column(
@@ -71,9 +69,13 @@ class EmailListItem extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Text(
-                            message.from?.name ?? message.from?.email ?? 'Unknown',
+                            message.from?.name ??
+                                message.from?.email ??
+                                'Unknown',
                             style: theme.textTheme.titleSmall?.copyWith(
-                              fontWeight: message.isRead ? FontWeight.normal : FontWeight.bold,
+                              fontWeight: message.isRead
+                                  ? FontWeight.normal
+                                  : FontWeight.bold,
                               color: colorScheme.onSurface,
                             ),
                             maxLines: 1,
@@ -82,29 +84,27 @@ class EmailListItem extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          _formatTime(message.receivedDate),
+                          _formatTime(message.date),
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: colorScheme.onSurfaceVariant,
                           ),
                         ),
                       ],
                     ),
-                    
                     const SizedBox(height: 4),
-                    
                     // Subject
                     Text(
                       message.subject ?? '(No Subject)',
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        fontWeight: message.isRead ? FontWeight.normal : FontWeight.w600,
+                        fontWeight: message.isRead
+                            ? FontWeight.normal
+                            : FontWeight.w600,
                         color: colorScheme.onSurface,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    
                     const SizedBox(height: 4),
-                    
                     // Preview text
                     if (message.preview != null)
                       Text(
@@ -115,9 +115,7 @@ class EmailListItem extends StatelessWidget {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
-                    
                     const SizedBox(height: 8),
-                    
                     // Status indicators
                     Row(
                       children: [
@@ -131,90 +129,86 @@ class EmailListItem extends StatelessWidget {
                               shape: BoxShape.circle,
                             ),
                           ),
-                        
                         if (!message.isRead) const SizedBox(width: 8),
-                        
                         // Attachment indicator
                         if (message.hasAttachments)
-                          Icon(
+                          const Icon(
                             Icons.attach_file_outlined,
                             size: 16,
-                            color: colorScheme.onSurfaceVariant,
                           ),
-                        
                         if (message.hasAttachments) const SizedBox(width: 8),
-                        
                         // Priority indicator
                         if (message.priority == MessagePriority.high)
-                          Icon(
+                          const Icon(
                             Icons.priority_high_outlined,
                             size: 16,
                             color: Colors.red,
                           ),
-                        
-                        if (message.priority == MessagePriority.high) const SizedBox(width: 8),
-                        
+                        if (message.priority == MessagePriority.high)
+                          const SizedBox(width: 8),
                         // Flagged indicator
                         if (message.isFlagged)
-                          Icon(
+                          const Icon(
                             Icons.flag_outlined,
                             size: 16,
                             color: Colors.orange,
                           ),
-                        
                         const Spacer(),
-                        
                         // Actions menu
                         PopupMenuButton<String>(
-                          icon: Icon(
+                          icon: const Icon(
                             Icons.more_vert_outlined,
                             size: 16,
-                            color: colorScheme.onSurfaceVariant,
                           ),
                           onSelected: (value) => _handleAction(context, value),
                           itemBuilder: (context) => [
-                            PopupMenuItem(
+                            const PopupMenuItem(
                               value: 'reply',
                               child: Row(
                                 children: [
-                                  const Icon(Icons.reply_outlined, size: 16),
-                                  const SizedBox(width: 8),
-                                  const Text('Reply'),
+                                  Icon(Icons.reply_outlined, size: 16),
+                                  SizedBox(width: 8),
+                                  Text('Reply'),
                                 ],
                               ),
                             ),
-                            PopupMenuItem(
+                            const PopupMenuItem(
                               value: 'forward',
                               child: Row(
                                 children: [
-                                  const Icon(Icons.forward_outlined, size: 16),
-                                  const SizedBox(width: 8),
-                                  const Text('Forward'),
+                                  Icon(Icons.forward_outlined, size: 16),
+                                  SizedBox(width: 8),
+                                  Text('Forward'),
                                 ],
                               ),
                             ),
-                            PopupMenuItem(
+                            const PopupMenuItem(
                               value: 'delete',
                               child: Row(
                                 children: [
-                                  const Icon(Icons.delete_outline, size: 16),
-                                  const SizedBox(width: 8),
-                                  const Text('Delete'),
+                                  Icon(Icons.delete_outline, size: 16),
+                                  SizedBox(width: 8),
+                                  Text('Delete'),
                                 ],
                               ),
                             ),
                             PopupMenuItem(
-                              value: message.isRead ? 'mark_unread' : 'mark_read',
+                              value:
+                                  message.isRead ? 'mark_unread' : 'mark_read',
                               child: Row(
                                 children: [
                                   Icon(
-                                    message.isRead 
-                                        ? Icons.mark_email_unread_outlined 
+                                    message.isRead
+                                        ? Icons.mark_email_unread_outlined
                                         : Icons.mark_email_read_outlined,
                                     size: 16,
                                   ),
                                   const SizedBox(width: 8),
-                                  Text(message.isRead ? 'Mark Unread' : 'Mark Read'),
+                                  Text(
+                                    message.isRead
+                                        ? 'Mark Unread'
+                                        : 'Mark Read',
+                                  ),
                                 ],
                               ),
                             ),
@@ -235,7 +229,7 @@ class EmailListItem extends StatelessWidget {
   Widget _buildAvatar(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    
+
     final senderName = message.from?.name ?? message.from?.email ?? 'U';
     final initial = senderName.isNotEmpty ? senderName[0].toUpperCase() : 'U';
 
@@ -254,10 +248,10 @@ class EmailListItem extends StatelessWidget {
 
   String _formatTime(DateTime? dateTime) {
     if (dateTime == null) return '';
-    
+
     final now = DateTime.now();
     final difference = now.difference(dateTime);
-    
+
     if (difference.inDays > 0) {
       if (difference.inDays == 1) {
         return 'Yesterday';
@@ -299,8 +293,8 @@ class EmailListItem extends StatelessWidget {
 class CompactEmailListItem extends StatelessWidget {
   /// Creates a compact email list item
   const CompactEmailListItem({
-    super.key,
     required this.message,
+    super.key,
     this.onTap,
     this.isSelected = false,
   });
@@ -322,7 +316,7 @@ class CompactEmailListItem extends StatelessWidget {
     return ListTile(
       onTap: onTap,
       selected: isSelected,
-      selectedTileColor: colorScheme.primaryContainer.withOpacity(0.3),
+      selectedTileColor: colorScheme.primaryContainer.withAlpha(77),
       leading: CircleAvatar(
         radius: 16,
         backgroundColor: colorScheme.primaryContainer,
@@ -340,14 +334,15 @@ class CompactEmailListItem extends StatelessWidget {
             child: Text(
               message.from?.name ?? message.from?.email ?? 'Unknown',
               style: theme.textTheme.bodyMedium?.copyWith(
-                fontWeight: message.isRead ? FontWeight.normal : FontWeight.bold,
+                fontWeight:
+                    message.isRead ? FontWeight.normal : FontWeight.bold,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
           ),
           Text(
-            _formatTime(message.receivedDate),
+            _formatTime(message.date),
             style: theme.textTheme.bodySmall?.copyWith(
               color: colorScheme.onSurfaceVariant,
             ),
@@ -376,10 +371,9 @@ class CompactEmailListItem extends StatelessWidget {
             ),
           if (message.hasAttachments) ...[
             const SizedBox(width: 4),
-            Icon(
+            const Icon(
               Icons.attach_file_outlined,
               size: 14,
-              color: colorScheme.onSurfaceVariant,
             ),
           ],
         ],
@@ -389,10 +383,10 @@ class CompactEmailListItem extends StatelessWidget {
 
   String _formatTime(DateTime? dateTime) {
     if (dateTime == null) return '';
-    
+
     final now = DateTime.now();
     final difference = now.difference(dateTime);
-    
+
     if (difference.inDays > 0) {
       return '${difference.inDays}d';
     } else if (difference.inHours > 0) {

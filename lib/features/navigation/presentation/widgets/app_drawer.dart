@@ -1,3 +1,4 @@
+'''
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -23,7 +24,7 @@ class AppDrawer extends ConsumerWidget {
             userEmail: authState.user?.email ?? 'user@example.com',
             userName: authState.user?.name ?? 'User',
           ),
-          
+
           // Navigation items
           Expanded(
             child: ListView(
@@ -61,19 +62,19 @@ class AppDrawer extends ConsumerWidget {
                     _DrawerItem(
                       icon: Icons.drafts_outlined,
                       title: 'Drafts',
-                      onTap: () => _navigateTo(context, '/mailbox?folder=drafts'),
+                      onTap: () =>
+                          _navigateTo(context, '/mailbox?folder=drafts'),
                       badge: '3',
                     ),
                     _DrawerItem(
                       icon: Icons.delete_outline,
                       title: 'Trash',
-                      onTap: () => _navigateTo(context, '/mailbox?folder=trash'),
+                      onTap: () =>
+                          _navigateTo(context, '/mailbox?folder=trash'),
                     ),
                   ],
                 ),
-                
                 const Divider(),
-                
                 _DrawerSection(
                   title: 'Tools',
                   items: [
@@ -89,9 +90,7 @@ class AppDrawer extends ConsumerWidget {
                     ),
                   ],
                 ),
-                
                 const Divider(),
-                
                 _DrawerSection(
                   title: 'Enterprise',
                   items: [
@@ -103,18 +102,18 @@ class AppDrawer extends ConsumerWidget {
                     _DrawerItem(
                       icon: Icons.analytics_outlined,
                       title: 'Analytics',
-                      onTap: () => _navigateTo(context, '/enterprise?tab=analytics'),
+                      onTap: () =>
+                          _navigateTo(context, '/enterprise?tab=analytics'),
                     ),
                     _DrawerItem(
                       icon: Icons.security_outlined,
                       title: 'Security',
-                      onTap: () => _navigateTo(context, '/enterprise?tab=security'),
+                      onTap: () =>
+                          _navigateTo(context, '/enterprise?tab=security'),
                     ),
                   ],
                 ),
-                
                 const Divider(),
-                
                 _DrawerSection(
                   title: 'Account',
                   items: [
@@ -133,11 +132,11 @@ class AppDrawer extends ConsumerWidget {
               ],
             ),
           ),
-          
+
           // Footer section
           const Divider(),
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16),
             child: Column(
               children: [
                 // App version
@@ -148,7 +147,7 @@ class AppDrawer extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 12),
-                
+
                 // Logout button
                 SizedBox(
                   width: double.infinity,
@@ -208,7 +207,7 @@ class _DrawerHeader extends StatelessWidget {
       ),
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(20.0),
+          padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -223,7 +222,7 @@ class _DrawerHeader extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              
+
               // User name
               Text(
                 userName,
@@ -233,24 +232,24 @@ class _DrawerHeader extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 4),
-              
+
               // User email
               Text(
                 userEmail,
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: colorScheme.onPrimary.withOpacity(0.8),
+                  color: colorScheme.onPrimary.withAlpha(204),
                 ),
               ),
-              
+
               const Spacer(),
-              
+
               // Status indicator
               Row(
                 children: [
                   Container(
                     width: 8,
                     height: 8,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: Colors.green,
                       shape: BoxShape.circle,
                     ),
@@ -259,7 +258,7 @@ class _DrawerHeader extends StatelessWidget {
                   Text(
                     'Online',
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onPrimary.withOpacity(0.7),
+                      color: colorScheme.onPrimary.withAlpha(178),
                     ),
                   ),
                 ],
@@ -314,19 +313,21 @@ class _DrawerItem extends StatelessWidget {
     required this.title,
     required this.onTap,
     this.badge,
-    this.isSelected = false,
   });
 
   final IconData icon;
   final String title;
   final VoidCallback onTap;
   final String? badge;
-  final bool isSelected;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final isSelected = GoRouterState.of(context)
+        .uri
+        .toString()
+        .startsWith(title.toLowerCase());
 
     return ListTile(
       leading: Icon(
@@ -357,7 +358,7 @@ class _DrawerItem extends StatelessWidget {
             )
           : null,
       selected: isSelected,
-      selectedTileColor: colorScheme.primaryContainer.withOpacity(0.3),
+      selectedTileColor: colorScheme.primaryContainer.withAlpha(77),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
       ),
@@ -366,3 +367,4 @@ class _DrawerItem extends StatelessWidget {
     );
   }
 }
+'''

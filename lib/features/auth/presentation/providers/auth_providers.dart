@@ -40,7 +40,8 @@ class MockAuthRepository implements AuthRepository {
 
     // Simulate login logic
     if (request.email.isEmpty || request.password.isEmpty) {
-      return const Left(Failure.auth(message: 'Email and password are required'));
+      return const Left(
+          Failure.auth(message: 'Email and password are required'));
     }
 
     // Simulate successful login with OTP required
@@ -98,7 +99,8 @@ class MockAuthRepository implements AuthRepository {
 
   @override
   Future<Either<Failure, AuthToken>> refreshToken() async {
-    return const Right(AuthToken(accessToken: 'refreshed_token', tokenType: 'Bearer', expiresIn: 3600));
+    return const Right(AuthToken(
+        accessToken: 'refreshed_token', tokenType: 'Bearer', expiresIn: 3600));
   }
 
   @override
@@ -107,7 +109,8 @@ class MockAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, void>> confirmPasswordReset(String email, String otp, String newPassword) async {
+  Future<Either<Failure, void>> confirmPasswordReset(
+      String email, String otp, String newPassword) async {
     return const Right(null);
   }
 
@@ -137,4 +140,3 @@ class MockAuthRepository implements AuthRepository {
     return const Right(null);
   }
 }
-

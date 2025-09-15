@@ -26,7 +26,8 @@ class AccountState with _$AccountState {
 }
 
 /// Account controller provider
-final accountControllerProvider = StateNotifierProvider<AccountController, AccountState>(
+final accountControllerProvider =
+    StateNotifierProvider<AccountController, AccountState>(
   (ref) => AccountController(
     accountRepository: ref.read(accountRepositoryProvider),
   ),
@@ -97,9 +98,9 @@ class AccountController extends StateNotifier<AccountState> {
     // Auto-detect provider based on email domain
     if (domain.contains('gmail.com')) {
       detectedProvider = 'gmail';
-    } else if (domain.contains('outlook.com') || 
-               domain.contains('hotmail.com') || 
-               domain.contains('live.com')) {
+    } else if (domain.contains('outlook.com') ||
+        domain.contains('hotmail.com') ||
+        domain.contains('live.com')) {
       detectedProvider = 'outlook';
     } else if (domain.contains('yahoo.com')) {
       detectedProvider = 'yahoo';
@@ -132,9 +133,10 @@ class AccountController extends StateNotifier<AccountState> {
 
     try {
       // Get provider preset or use manual settings
-      final preset = state.selectedProvider != null && state.selectedProvider != 'manual'
-          ? _providerPresets[state.selectedProvider!]
-          : null;
+      final preset =
+          state.selectedProvider != null && state.selectedProvider != 'manual'
+              ? _providerPresets[state.selectedProvider!]
+              : null;
 
       // Create account configuration
       final accountConfig = MailAccountConfig(
@@ -145,19 +147,21 @@ class AccountController extends StateNotifier<AccountState> {
         imapConfig: ImapConfig(
           host: imapHost ?? (preset?['imapHost'] as String?) ?? '',
           port: imapPort ?? (preset?['imapPort'] as int?) ?? 993,
-          socketType: _parseSocketTypeToLocal(preset?['imapSocketType'] as String? ?? 'ssl'),
+          socketType: _parseSocketTypeToLocal(
+              preset?['imapSocketType'] as String? ?? 'ssl'),
         ),
         smtpConfig: SmtpConfig(
           host: smtpHost ?? (preset?['smtpHost'] as String?) ?? '',
           port: smtpPort ?? (preset?['smtpPort'] as int?) ?? 587,
-          socketType: _parseSocketTypeToLocal(preset?['smtpSocketType'] as String? ?? 'starttls'),
+          socketType: _parseSocketTypeToLocal(
+              preset?['smtpSocketType'] as String? ?? 'starttls'),
         ),
         allowInsecureSSL: (preset?['allowInsecureSsl'] as bool?) ?? false,
       );
 
       // Test connection
       final result = await _accountRepository.testConnection(accountConfig);
-      
+
       result.fold(
         (failure) {
           state = state.copyWith(
@@ -169,7 +173,7 @@ class AccountController extends StateNotifier<AccountState> {
           if (connectionResult.isSuccess) {
             // Save account configuration
             await _accountRepository.addAccount(accountConfig);
-            
+
             state = state.copyWith(
               isLoading: false,
               isConnected: true,
@@ -235,11 +239,13 @@ class MockAccountRepository implements AccountRepository {
 
     // Simulate connection test
     if (config.email.isEmpty || config.password.isEmpty) {
-      return const Left(Failure.validation(message: 'Email and password are required'));
+      return const Left(
+          Failure.validation(message: 'Email and password are required'));
     }
 
     if (config.imapConfig.host.isEmpty || config.smtpConfig.host.isEmpty) {
-      return const Left(Failure.validation(message: 'Server configuration is incomplete'));
+      return const Left(
+          Failure.validation(message: 'Server configuration is incomplete'));
     }
 
     // Simulate successful connection
@@ -252,13 +258,15 @@ class MockAccountRepository implements AccountRepository {
     return Right(
       AccountConnectionResult(
         isSuccess: true,
-        details: detailsMap.entries.map((e) => '${e.key}: ${e.value}').join('\n'),
+        details:
+            detailsMap.entries.map((e) => '${e.key}: ${e.value}').join('\n'),
       ),
     );
   }
 
   @override
-  Future<Either<Failure, MailAccountConfig>> addAccount(MailAccountConfig config) async {
+  Future<Either<Failure, MailAccountConfig>> addAccount(
+      MailAccountConfig config) async {
     // Simulate saving to secure storage
     await Future.delayed(const Duration(milliseconds: 500));
     return Right(config);
@@ -276,22 +284,27 @@ class MockAccountRepository implements AccountRepository {
   }
 
   @override
-  Future<Either<Failure, MailAccountConfig>> getAccount(String accountId) async {
+  Future<Either<Failure, MailAccountConfig>> getAccount(
+      String accountId) async {
     return const Left(Failure.validation(message: 'Account not found'));
   }
 
   @override
-  Future<Either<Failure, MailProviderPreset>> findPresetByEmail(String email) async {
+  Future<Either<Failure, MailProviderPreset>> findPresetByEmail(
+      String email) async {
     return const Left(Failure.validation(message: 'No preset found'));
   }
 
   @override
-  Future<Either<Failure, AccountCapabilities>> getAccountCapabilities(String accountId) async {
-    return const Right(AccountCapabilities(supportsMove: true, supportsSort: true));
+  Future<Either<Failure, AccountCapabilities>> getAccountCapabilities(
+      String accountId) async {
+    return const Right(
+        AccountCapabilities(supportsMove: true, supportsSort: true));
   }
 
   @override
-  Future<Either<Failure, MailAccountConfig>> updateAccount(MailAccountConfig config) async {
+  Future<Either<Failure, MailAccountConfig>> updateAccount(
+      MailAccountConfig config) async {
     return Right(config);
   }
 
@@ -301,7 +314,8 @@ class MockAccountRepository implements AccountRepository {
   }
 
   @override
-  Future<Either<Failure, AccountValidationResult>> validateAccount(MailAccountConfig config) async {
+  Future<Either<Failure, AccountValidationResult>> validateAccount(
+      MailAccountConfig config) async {
     return const Right(AccountValidationResult(isValid: true));
   }
 
@@ -315,4 +329,3 @@ class MockAccountRepository implements AccountRepository {
     return const Left(Failure.validation(message: 'No default account'));
   }
 }
-

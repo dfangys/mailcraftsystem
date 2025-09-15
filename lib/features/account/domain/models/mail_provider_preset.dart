@@ -7,6 +7,7 @@ part 'mail_provider_preset.g.dart';
 
 /// Mail provider preset model
 @freezed
+
 /// MailProviderPreset class
 class MailProviderPreset with _$MailProviderPreset {
   const factory MailProviderPreset({
@@ -33,7 +34,7 @@ extension MailProviderPresetExtension on MailProviderPreset {
     final emailDomain = email.split('@').last.toLowerCase();
     return domains.any((domain) => domain.toLowerCase() == emailDomain);
   }
-  
+
   /// Create mail account config from preset
   MailAccountConfig createAccountConfig({
     required String email,
@@ -76,7 +77,7 @@ class MailProviderPresets {
       ),
       requiresInsecureSSL: true,
     ),
-    
+
     // Gmail preset
     MailProviderPreset(
       id: 'gmail',
@@ -95,7 +96,7 @@ class MailProviderPresets {
         socketType: SocketType.starttls,
       ),
     ),
-    
+
     // Outlook preset
     MailProviderPreset(
       id: 'outlook',
@@ -114,7 +115,7 @@ class MailProviderPresets {
         socketType: SocketType.starttls,
       ),
     ),
-    
+
     // Yahoo preset
     MailProviderPreset(
       id: 'yahoo',
@@ -134,15 +135,15 @@ class MailProviderPresets {
       ),
     ),
   ];
-  
+
   /// Find preset by email domain
   static MailProviderPreset? findByEmail(String email) {
     return builtInPresets.cast<MailProviderPreset?>().firstWhere(
-      (preset) => preset?.matchesDomain(email) ?? false,
-      orElse: () => null,
-    );
+          (preset) => preset?.matchesDomain(email) ?? false,
+          orElse: () => null,
+        );
   }
-  
+
   /// Get all active presets
   static List<MailProviderPreset> getActivePresets() {
     return builtInPresets.where((preset) => preset.isActive).toList();

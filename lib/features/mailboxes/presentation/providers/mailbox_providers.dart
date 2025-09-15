@@ -25,4 +25,3 @@ final mailboxControllerProvider =
     ref.watch(messageRepositoryProvider),
   );
 });
-

@@ -8,12 +8,12 @@ import 'package:mailcraftsystem/features/auth/domain/repositories/auth_repositor
 class VerifyOtpUseCase {
   /// Creates a verify OTP use case
   const VerifyOtpUseCase(this._repository);
-  
+
   final AuthRepository _repository;
-  
+
   /// Repository getter
   AuthRepository get repository => _repository;
-  
+
   /// Execute OTP verification
   Future<Either<Failure, AuthToken>> call(OtpChallenge challenge) async {
     // Validate OTP code format
@@ -22,21 +22,20 @@ class VerifyOtpUseCase {
         Failure.validation(message: 'OTP code cannot be empty'),
       );
     }
-    
+
     if (challenge.code.length != 6) {
       return const Left(
         Failure.validation(message: 'OTP code must be 6 digits'),
       );
     }
-    
+
     if (!RegExp(r'^\d{6}$').hasMatch(challenge.code)) {
       return const Left(
         Failure.validation(message: 'OTP code must contain only digits'),
       );
     }
-    
+
     // Perform OTP verification
     return _repository.verifyOtp(challenge);
   }
 }
-

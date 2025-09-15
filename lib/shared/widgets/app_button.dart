@@ -4,12 +4,16 @@ import 'package:flutter/material.dart';
 enum AppButtonStyle {
   /// Primary filled button
   primary,
+
   /// Secondary outlined button
   secondary,
+
   /// Text button
   text,
+
   /// Floating action button
   fab,
+
   /// Icon button
   icon,
 }
@@ -18,9 +22,9 @@ enum AppButtonStyle {
 class AppButton extends StatelessWidget {
   /// Creates an app button
   const AppButton({
-    super.key,
     required this.text,
     required this.onPressed,
+    super.key,
     this.style = AppButtonStyle.primary,
     this.icon,
     this.isLoading = false,
@@ -31,9 +35,9 @@ class AppButton extends StatelessWidget {
 
   /// Creates an icon button
   const AppButton.icon({
-    super.key,
     required this.icon,
     required this.onPressed,
+    super.key,
     this.text,
     this.style = AppButtonStyle.icon,
     this.isLoading = false,
@@ -44,9 +48,9 @@ class AppButton extends StatelessWidget {
 
   /// Creates a floating action button
   const AppButton.fab({
-    super.key,
     required this.icon,
     required this.onPressed,
+    super.key,
     this.text,
     this.style = AppButtonStyle.fab,
     this.isLoading = false,
@@ -122,31 +126,26 @@ class AppButton extends StatelessWidget {
           onPressed: effectiveOnPressed,
           child: buttonChild,
         );
-        break;
       case AppButtonStyle.secondary:
         button = OutlinedButton(
           onPressed: effectiveOnPressed,
           child: buttonChild,
         );
-        break;
       case AppButtonStyle.text:
         button = TextButton(
           onPressed: effectiveOnPressed,
           child: buttonChild,
         );
-        break;
       case AppButtonStyle.fab:
         button = FloatingActionButton(
           onPressed: effectiveOnPressed,
           child: buttonChild,
         );
-        break;
       case AppButtonStyle.icon:
         button = IconButton(
           onPressed: effectiveOnPressed,
           icon: buttonChild,
         );
-        break;
     }
 
     if (width != null || height != null) {
@@ -165,9 +164,9 @@ class AppButton extends StatelessWidget {
 class SubmitButton extends StatelessWidget {
   /// Creates a submit button
   const SubmitButton({
-    super.key,
     required this.text,
     required this.onPressed,
+    super.key,
     this.isLoading = false,
     this.isEnabled = true,
   });
@@ -194,7 +193,6 @@ class SubmitButton extends StatelessWidget {
         onPressed: onPressed,
         isLoading: isLoading,
         isEnabled: isEnabled,
-        style: AppButtonStyle.primary,
       ),
     );
   }
@@ -204,9 +202,9 @@ class SubmitButton extends StatelessWidget {
 class DestructiveButton extends StatelessWidget {
   /// Creates a destructive button
   const DestructiveButton({
-    super.key,
     required this.text,
     required this.onPressed,
+    super.key,
     this.icon,
     this.isLoading = false,
     this.isEnabled = true,

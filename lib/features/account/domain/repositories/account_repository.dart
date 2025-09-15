@@ -13,17 +13,19 @@ abstract class AccountRepository {
   Future<Either<Failure, MailAccountConfig>> getAccount(String id);
 
   /// Add new account
-  Future<Either<Failure, MailAccountConfig>> addAccount(MailAccountConfig config);
+  Future<Either<Failure, MailAccountConfig>> addAccount(
+      MailAccountConfig config);
 
   /// Update existing account
-  Future<Either<Failure, MailAccountConfig>> updateAccount(MailAccountConfig config);
+  Future<Either<Failure, MailAccountConfig>> updateAccount(
+      MailAccountConfig config);
 
   /// Delete account
   Future<Either<Failure, void>> deleteAccount(String id);
 
   /// Test account connection
   Future<Either<Failure, AccountConnectionResult>> testConnection(
-      MailAccountConfig config,);
+      MailAccountConfig config);
 
   /// Get available provider presets
   Future<Either<Failure, List<MailProviderPreset>>> getProviderPresets();
@@ -33,11 +35,11 @@ abstract class AccountRepository {
 
   /// Validate account configuration
   Future<Either<Failure, AccountValidationResult>> validateAccount(
-      MailAccountConfig config,);
+      MailAccountConfig config);
 
   /// Get account capabilities
   Future<Either<Failure, AccountCapabilities>> getAccountCapabilities(
-      String accountId,);
+      String accountId);
 
   /// Set default account
   Future<Either<Failure, void>> setDefaultAccount(String accountId);
@@ -87,4 +89,3 @@ class AccountCapabilities {
   /// Maximum message size in bytes
   final int? maxMessageSize;
 }
-

@@ -99,4 +99,3 @@ class AuthApiClient {
     return response.data as Map<String, dynamic>;
   }
 }
-

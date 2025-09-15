@@ -32,8 +32,10 @@ class MailboxController extends StateNotifier<MailboxState> {
     state = state.copyWith(isLoading: true);
     final result = await mailboxRepository.getMailboxes(accountId);
     result.fold(
-      (Failure failure) => state = state.copyWith(isLoading: false, failure: failure),
-      (List<Mailbox> mailboxes) => state = state.copyWith(isLoading: false, mailboxes: mailboxes),
+      (Failure failure) =>
+          state = state.copyWith(isLoading: false, failure: failure),
+      (List<Mailbox> mailboxes) =>
+          state = state.copyWith(isLoading: false, mailboxes: mailboxes),
     );
   }
 
@@ -41,14 +43,16 @@ class MailboxController extends StateNotifier<MailboxState> {
     state = state.copyWith(isLoading: true);
     final result = await messageRepository.getMessages(accountId, mailboxPath);
     result.fold(
-      (Failure failure) => state = state.copyWith(isLoading: false, failure: failure),
-      (List<Message> messages) => state = state.copyWith(isLoading: false, messages: messages),
+      (Failure failure) =>
+          state = state.copyWith(isLoading: false, failure: failure),
+      (List<Message> messages) =>
+          state = state.copyWith(isLoading: false, messages: messages),
     );
   }
 }
 
-final mailboxControllerProvider = StateNotifierProvider<MailboxController, MailboxState>((ref) {
+final mailboxControllerProvider =
+    StateNotifierProvider<MailboxController, MailboxState>((ref) {
   // This will be properly initialized later with the actual repositories
-  throw UnimplementedError(); 
+  throw UnimplementedError();
 });
-

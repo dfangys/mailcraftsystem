@@ -5,6 +5,7 @@ part 'login_request.g.dart';
 
 /// Login request model
 @freezed
+
 /// LoginRequest class
 class LoginRequest with _$LoginRequest {
   const factory LoginRequest({
@@ -19,6 +20,7 @@ class LoginRequest with _$LoginRequest {
 
 /// Password reset request model
 @freezed
+
 /// PasswordResetRequest class
 class PasswordResetRequest with _$PasswordResetRequest {
   const factory PasswordResetRequest({
@@ -31,6 +33,7 @@ class PasswordResetRequest with _$PasswordResetRequest {
 
 /// Password reset confirmation model
 @freezed
+
 /// PasswordResetConfirmation class
 class PasswordResetConfirmation with _$PasswordResetConfirmation {
   const factory PasswordResetConfirmation({
@@ -45,6 +48,7 @@ class PasswordResetConfirmation with _$PasswordResetConfirmation {
 
 /// Two-factor authentication toggle request
 @freezed
+
 /// TwoFactorToggleRequest class
 class TwoFactorToggleRequest with _$TwoFactorToggleRequest {
   const factory TwoFactorToggleRequest({
