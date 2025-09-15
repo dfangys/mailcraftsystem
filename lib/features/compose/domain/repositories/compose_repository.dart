@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:mailcraftsystem/core/error/failures.dart';
 import 'package:mailcraftsystem/features/compose/domain/models/compose_message.dart';
+import 'package:mailcraftsystem/features/compose/domain/models/compose_validation.dart';
 
 /// Compose repository interface
 abstract class ComposeRepository {
@@ -44,7 +45,7 @@ abstract class ComposeRepository {
   Future<Either<Failure, void>> removeAttachment(String attachmentId);
 
   /// Validate message before sending
-  Future<Either<Failure, ComposeValidationResult>> validateMessage(
+  Future<Either<Failure, MessageValidationResult>> validateMessage(
     ComposeMessage message,
   );
 
