@@ -135,6 +135,17 @@ class AuthController extends _$AuthController {
     state = const AuthState();
   }
 
+  Future<void> resendOtp() async {
+    state = state.copyWith(isLoading: true, error: null);
+    // Simulate resending OTP
+    await Future.delayed(const Duration(seconds: 1));
+    state = state.copyWith(isLoading: false);
+  }
+
+  Future<void> checkAuthStatus() async {
+    await _checkAuthStatus();
+  }
+
   void clearError() {
     state = state.copyWith(error: null);
   }

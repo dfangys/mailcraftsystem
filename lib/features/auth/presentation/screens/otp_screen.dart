@@ -43,7 +43,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
 
   void _handleOtpSubmit() {
     if (_otpCode.length == 6) {
-      ref.read(authControllerProvider.notifier).verifyOtp(_otpCode);
+      ref.read(authControllerProvider.notifier).verifyOtp(widget.email, _otpCode);
     }
   }
 

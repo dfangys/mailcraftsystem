@@ -107,7 +107,7 @@ class MockAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, void>> confirmPasswordReset(String token, String newPassword) async {
+  Future<Either<Failure, void>> confirmPasswordReset(String email, String otp, String newPassword) async {
     return const Right(null);
   }
 

@@ -9,17 +9,13 @@ part of 'otp_verification_request.dart';
 _$OtpVerificationRequestImpl _$$OtpVerificationRequestImplFromJson(
         Map<String, dynamic> json) =>
     _$OtpVerificationRequestImpl(
-      token: json['token'] as String,
-      code: json['code'] as String,
-      deviceId: json['deviceId'] as String?,
-      rememberDevice: json['rememberDevice'] as bool? ?? false,
+      email: json['email'] as String,
+      otp: json['otp'] as String,
     );
 
 Map<String, dynamic> _$$OtpVerificationRequestImplToJson(
         _$OtpVerificationRequestImpl instance) =>
     <String, dynamic>{
-      'token': instance.token,
-      'code': instance.code,
-      'deviceId': instance.deviceId,
-      'rememberDevice': instance.rememberDevice,
+      'email': instance.email,
+      'otp': instance.otp,
     };

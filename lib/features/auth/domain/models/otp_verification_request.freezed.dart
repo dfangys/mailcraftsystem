@@ -21,10 +21,8 @@ OtpVerificationRequest _$OtpVerificationRequestFromJson(
 
 /// @nodoc
 mixin _$OtpVerificationRequest {
-  String get token => throw _privateConstructorUsedError;
-  String get code => throw _privateConstructorUsedError;
-  String? get deviceId => throw _privateConstructorUsedError;
-  bool get rememberDevice => throw _privateConstructorUsedError;
+  String get email => throw _privateConstructorUsedError;
+  String get otp => throw _privateConstructorUsedError;
 
   /// Serializes this OtpVerificationRequest to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -42,7 +40,7 @@ abstract class $OtpVerificationRequestCopyWith<$Res> {
           $Res Function(OtpVerificationRequest) then) =
       _$OtpVerificationRequestCopyWithImpl<$Res, OtpVerificationRequest>;
   @useResult
-  $Res call({String token, String code, String? deviceId, bool rememberDevice});
+  $Res call({String email, String otp});
 }
 
 /// @nodoc
@@ -61,28 +59,18 @@ class _$OtpVerificationRequestCopyWithImpl<$Res,
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? token = null,
-    Object? code = null,
-    Object? deviceId = freezed,
-    Object? rememberDevice = null,
+    Object? email = null,
+    Object? otp = null,
   }) {
     return _then(_value.copyWith(
-      token: null == token
-          ? _value.token
-          : token // ignore: cast_nullable_to_non_nullable
+      email: null == email
+          ? _value.email
+          : email // ignore: cast_nullable_to_non_nullable
               as String,
-      code: null == code
-          ? _value.code
-          : code // ignore: cast_nullable_to_non_nullable
+      otp: null == otp
+          ? _value.otp
+          : otp // ignore: cast_nullable_to_non_nullable
               as String,
-      deviceId: freezed == deviceId
-          ? _value.deviceId
-          : deviceId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      rememberDevice: null == rememberDevice
-          ? _value.rememberDevice
-          : rememberDevice // ignore: cast_nullable_to_non_nullable
-              as bool,
     ) as $Val);
   }
 }
@@ -96,7 +84,7 @@ abstract class _$$OtpVerificationRequestImplCopyWith<$Res>
       __$$OtpVerificationRequestImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String token, String code, String? deviceId, bool rememberDevice});
+  $Res call({String email, String otp});
 }
 
 /// @nodoc
@@ -114,28 +102,18 @@ class __$$OtpVerificationRequestImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? token = null,
-    Object? code = null,
-    Object? deviceId = freezed,
-    Object? rememberDevice = null,
+    Object? email = null,
+    Object? otp = null,
   }) {
     return _then(_$OtpVerificationRequestImpl(
-      token: null == token
-          ? _value.token
-          : token // ignore: cast_nullable_to_non_nullable
+      email: null == email
+          ? _value.email
+          : email // ignore: cast_nullable_to_non_nullable
               as String,
-      code: null == code
-          ? _value.code
-          : code // ignore: cast_nullable_to_non_nullable
+      otp: null == otp
+          ? _value.otp
+          : otp // ignore: cast_nullable_to_non_nullable
               as String,
-      deviceId: freezed == deviceId
-          ? _value.deviceId
-          : deviceId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      rememberDevice: null == rememberDevice
-          ? _value.rememberDevice
-          : rememberDevice // ignore: cast_nullable_to_non_nullable
-              as bool,
     ));
   }
 }
@@ -143,28 +121,19 @@ class __$$OtpVerificationRequestImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$OtpVerificationRequestImpl implements _OtpVerificationRequest {
-  const _$OtpVerificationRequestImpl(
-      {required this.token,
-      required this.code,
-      this.deviceId,
-      this.rememberDevice = false});
+  const _$OtpVerificationRequestImpl({required this.email, required this.otp});
 
   factory _$OtpVerificationRequestImpl.fromJson(Map<String, dynamic> json) =>
       _$$OtpVerificationRequestImplFromJson(json);
 
   @override
-  final String token;
+  final String email;
   @override
-  final String code;
-  @override
-  final String? deviceId;
-  @override
-  @JsonKey()
-  final bool rememberDevice;
+  final String otp;
 
   @override
   String toString() {
-    return 'OtpVerificationRequest(token: $token, code: $code, deviceId: $deviceId, rememberDevice: $rememberDevice)';
+    return 'OtpVerificationRequest(email: $email, otp: $otp)';
   }
 
   @override
@@ -172,18 +141,13 @@ class _$OtpVerificationRequestImpl implements _OtpVerificationRequest {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$OtpVerificationRequestImpl &&
-            (identical(other.token, token) || other.token == token) &&
-            (identical(other.code, code) || other.code == code) &&
-            (identical(other.deviceId, deviceId) ||
-                other.deviceId == deviceId) &&
-            (identical(other.rememberDevice, rememberDevice) ||
-                other.rememberDevice == rememberDevice));
+            (identical(other.email, email) || other.email == email) &&
+            (identical(other.otp, otp) || other.otp == otp));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, token, code, deviceId, rememberDevice);
+  int get hashCode => Object.hash(runtimeType, email, otp);
 
   /// Create a copy of OtpVerificationRequest
   /// with the given fields replaced by the non-null parameter values.
@@ -204,22 +168,16 @@ class _$OtpVerificationRequestImpl implements _OtpVerificationRequest {
 
 abstract class _OtpVerificationRequest implements OtpVerificationRequest {
   const factory _OtpVerificationRequest(
-      {required final String token,
-      required final String code,
-      final String? deviceId,
-      final bool rememberDevice}) = _$OtpVerificationRequestImpl;
+      {required final String email,
+      required final String otp}) = _$OtpVerificationRequestImpl;
 
   factory _OtpVerificationRequest.fromJson(Map<String, dynamic> json) =
       _$OtpVerificationRequestImpl.fromJson;
 
   @override
-  String get token;
+  String get email;
   @override
-  String get code;
-  @override
-  String? get deviceId;
-  @override
-  bool get rememberDevice;
+  String get otp;
 
   /// Create a copy of OtpVerificationRequest
   /// with the given fields replaced by the non-null parameter values.

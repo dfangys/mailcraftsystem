@@ -167,6 +167,9 @@ class AuthRepositoryImpl implements AuthRepository {
     await secureStorage.delete(key: _tokenKey);
   }
 
-
+  @override
+  Future<Either<Failure, void>> resetPassword(String email) async {
+    return requestPasswordReset(email);
+  }
 }
 

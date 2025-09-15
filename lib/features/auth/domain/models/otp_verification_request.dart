@@ -8,10 +8,8 @@ part 'otp_verification_request.g.dart';
 class OtpVerificationRequest with _$OtpVerificationRequest {
   /// Creates OTP verification request
   const factory OtpVerificationRequest({
-    required String token,
-    required String code,
-    String? deviceId,
-    @Default(false) bool rememberDevice,
+    required String email,
+    required String otp,
   }) = _OtpVerificationRequest;
 
   /// Creates from JSON
