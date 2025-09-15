@@ -8,7 +8,7 @@ part 'otp_challenge.g.dart';
 class OtpChallenge with _$OtpChallenge {
   /// Creates an OTP challenge
   const factory OtpChallenge({
-    required String token,
+    required String email,
     required String code,
   }) = _OtpChallenge;
 

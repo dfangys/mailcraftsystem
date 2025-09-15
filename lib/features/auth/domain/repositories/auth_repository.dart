@@ -23,7 +23,7 @@ abstract class AuthRepository {
   Future<Either<Failure, void>> requestPasswordReset(String email);
   
   /// Confirm password reset
-  Future<Either<Failure, void>> confirmPasswordReset(String token, String newPassword);
+  Future<Either<Failure, void>> confirmPasswordReset(String email, String otp, String newPassword);
   
   /// Logout
   Future<Either<Failure, void>> logout();

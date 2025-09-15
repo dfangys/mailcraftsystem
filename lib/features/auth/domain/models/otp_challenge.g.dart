@@ -8,12 +8,12 @@ part of 'otp_challenge.dart';
 
 _$OtpChallengeImpl _$$OtpChallengeImplFromJson(Map<String, dynamic> json) =>
     _$OtpChallengeImpl(
-      token: json['token'] as String,
+      email: json['email'] as String,
       code: json['code'] as String,
     );
 
 Map<String, dynamic> _$$OtpChallengeImplToJson(_$OtpChallengeImpl instance) =>
     <String, dynamic>{
-      'token': instance.token,
+      'email': instance.email,
       'code': instance.code,
     };

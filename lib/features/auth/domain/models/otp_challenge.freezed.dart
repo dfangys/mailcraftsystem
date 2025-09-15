@@ -20,7 +20,7 @@ OtpChallenge _$OtpChallengeFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$OtpChallenge {
-  String get token => throw _privateConstructorUsedError;
+  String get email => throw _privateConstructorUsedError;
   String get code => throw _privateConstructorUsedError;
 
   /// Serializes this OtpChallenge to a JSON map.
@@ -39,7 +39,7 @@ abstract class $OtpChallengeCopyWith<$Res> {
           OtpChallenge value, $Res Function(OtpChallenge) then) =
       _$OtpChallengeCopyWithImpl<$Res, OtpChallenge>;
   @useResult
-  $Res call({String token, String code});
+  $Res call({String email, String code});
 }
 
 /// @nodoc
@@ -57,13 +57,13 @@ class _$OtpChallengeCopyWithImpl<$Res, $Val extends OtpChallenge>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? token = null,
+    Object? email = null,
     Object? code = null,
   }) {
     return _then(_value.copyWith(
-      token: null == token
-          ? _value.token
-          : token // ignore: cast_nullable_to_non_nullable
+      email: null == email
+          ? _value.email
+          : email // ignore: cast_nullable_to_non_nullable
               as String,
       code: null == code
           ? _value.code
@@ -81,7 +81,7 @@ abstract class _$$OtpChallengeImplCopyWith<$Res>
       __$$OtpChallengeImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String token, String code});
+  $Res call({String email, String code});
 }
 
 /// @nodoc
@@ -97,13 +97,13 @@ class __$$OtpChallengeImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? token = null,
+    Object? email = null,
     Object? code = null,
   }) {
     return _then(_$OtpChallengeImpl(
-      token: null == token
-          ? _value.token
-          : token // ignore: cast_nullable_to_non_nullable
+      email: null == email
+          ? _value.email
+          : email // ignore: cast_nullable_to_non_nullable
               as String,
       code: null == code
           ? _value.code
@@ -116,19 +116,19 @@ class __$$OtpChallengeImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$OtpChallengeImpl implements _OtpChallenge {
-  const _$OtpChallengeImpl({required this.token, required this.code});
+  const _$OtpChallengeImpl({required this.email, required this.code});
 
   factory _$OtpChallengeImpl.fromJson(Map<String, dynamic> json) =>
       _$$OtpChallengeImplFromJson(json);
 
   @override
-  final String token;
+  final String email;
   @override
   final String code;
 
   @override
   String toString() {
-    return 'OtpChallenge(token: $token, code: $code)';
+    return 'OtpChallenge(email: $email, code: $code)';
   }
 
   @override
@@ -136,13 +136,13 @@ class _$OtpChallengeImpl implements _OtpChallenge {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$OtpChallengeImpl &&
-            (identical(other.token, token) || other.token == token) &&
+            (identical(other.email, email) || other.email == email) &&
             (identical(other.code, code) || other.code == code));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, token, code);
+  int get hashCode => Object.hash(runtimeType, email, code);
 
   /// Create a copy of OtpChallenge
   /// with the given fields replaced by the non-null parameter values.
@@ -162,14 +162,14 @@ class _$OtpChallengeImpl implements _OtpChallenge {
 
 abstract class _OtpChallenge implements OtpChallenge {
   const factory _OtpChallenge(
-      {required final String token,
+      {required final String email,
       required final String code}) = _$OtpChallengeImpl;
 
   factory _OtpChallenge.fromJson(Map<String, dynamic> json) =
       _$OtpChallengeImpl.fromJson;
 
   @override
-  String get token;
+  String get email;
   @override
   String get code;
 

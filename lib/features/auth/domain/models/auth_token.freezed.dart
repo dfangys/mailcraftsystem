@@ -26,6 +26,7 @@ mixin _$AuthToken {
   String? get refreshToken => throw _privateConstructorUsedError;
   @JsonKey(name: 'requires_otp')
   bool? get requiresOtp => throw _privateConstructorUsedError;
+  String? get delivery => throw _privateConstructorUsedError;
   DateTime? get expiresAt => throw _privateConstructorUsedError;
 
   /// Serializes this AuthToken to a JSON map.
@@ -49,6 +50,7 @@ abstract class $AuthTokenCopyWith<$Res> {
       int expiresIn,
       String? refreshToken,
       @JsonKey(name: 'requires_otp') bool? requiresOtp,
+      String? delivery,
       DateTime? expiresAt});
 }
 
@@ -72,6 +74,7 @@ class _$AuthTokenCopyWithImpl<$Res, $Val extends AuthToken>
     Object? expiresIn = null,
     Object? refreshToken = freezed,
     Object? requiresOtp = freezed,
+    Object? delivery = freezed,
     Object? expiresAt = freezed,
   }) {
     return _then(_value.copyWith(
@@ -95,6 +98,10 @@ class _$AuthTokenCopyWithImpl<$Res, $Val extends AuthToken>
           ? _value.requiresOtp
           : requiresOtp // ignore: cast_nullable_to_non_nullable
               as bool?,
+      delivery: freezed == delivery
+          ? _value.delivery
+          : delivery // ignore: cast_nullable_to_non_nullable
+              as String?,
       expiresAt: freezed == expiresAt
           ? _value.expiresAt
           : expiresAt // ignore: cast_nullable_to_non_nullable
@@ -117,6 +124,7 @@ abstract class _$$AuthTokenImplCopyWith<$Res>
       int expiresIn,
       String? refreshToken,
       @JsonKey(name: 'requires_otp') bool? requiresOtp,
+      String? delivery,
       DateTime? expiresAt});
 }
 
@@ -138,6 +146,7 @@ class __$$AuthTokenImplCopyWithImpl<$Res>
     Object? expiresIn = null,
     Object? refreshToken = freezed,
     Object? requiresOtp = freezed,
+    Object? delivery = freezed,
     Object? expiresAt = freezed,
   }) {
     return _then(_$AuthTokenImpl(
@@ -161,6 +170,10 @@ class __$$AuthTokenImplCopyWithImpl<$Res>
           ? _value.requiresOtp
           : requiresOtp // ignore: cast_nullable_to_non_nullable
               as bool?,
+      delivery: freezed == delivery
+          ? _value.delivery
+          : delivery // ignore: cast_nullable_to_non_nullable
+              as String?,
       expiresAt: freezed == expiresAt
           ? _value.expiresAt
           : expiresAt // ignore: cast_nullable_to_non_nullable
@@ -178,6 +191,7 @@ class _$AuthTokenImpl implements _AuthToken {
       required this.expiresIn,
       this.refreshToken,
       @JsonKey(name: 'requires_otp') this.requiresOtp,
+      this.delivery,
       this.expiresAt});
 
   factory _$AuthTokenImpl.fromJson(Map<String, dynamic> json) =>
@@ -195,11 +209,13 @@ class _$AuthTokenImpl implements _AuthToken {
   @JsonKey(name: 'requires_otp')
   final bool? requiresOtp;
   @override
+  final String? delivery;
+  @override
   final DateTime? expiresAt;
 
   @override
   String toString() {
-    return 'AuthToken(accessToken: $accessToken, tokenType: $tokenType, expiresIn: $expiresIn, refreshToken: $refreshToken, requiresOtp: $requiresOtp, expiresAt: $expiresAt)';
+    return 'AuthToken(accessToken: $accessToken, tokenType: $tokenType, expiresIn: $expiresIn, refreshToken: $refreshToken, requiresOtp: $requiresOtp, delivery: $delivery, expiresAt: $expiresAt)';
   }
 
   @override
@@ -217,6 +233,8 @@ class _$AuthTokenImpl implements _AuthToken {
                 other.refreshToken == refreshToken) &&
             (identical(other.requiresOtp, requiresOtp) ||
                 other.requiresOtp == requiresOtp) &&
+            (identical(other.delivery, delivery) ||
+                other.delivery == delivery) &&
             (identical(other.expiresAt, expiresAt) ||
                 other.expiresAt == expiresAt));
   }
@@ -224,7 +242,7 @@ class _$AuthTokenImpl implements _AuthToken {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, accessToken, tokenType,
-      expiresIn, refreshToken, requiresOtp, expiresAt);
+      expiresIn, refreshToken, requiresOtp, delivery, expiresAt);
 
   /// Create a copy of AuthToken
   /// with the given fields replaced by the non-null parameter values.
@@ -249,6 +267,7 @@ abstract class _AuthToken implements AuthToken {
       required final int expiresIn,
       final String? refreshToken,
       @JsonKey(name: 'requires_otp') final bool? requiresOtp,
+      final String? delivery,
       final DateTime? expiresAt}) = _$AuthTokenImpl;
 
   factory _AuthToken.fromJson(Map<String, dynamic> json) =
@@ -265,6 +284,8 @@ abstract class _AuthToken implements AuthToken {
   @override
   @JsonKey(name: 'requires_otp')
   bool? get requiresOtp;
+  @override
+  String? get delivery;
   @override
   DateTime? get expiresAt;
 

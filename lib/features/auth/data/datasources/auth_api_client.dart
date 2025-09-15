@@ -10,9 +10,9 @@ import 'package:mailcraftsystem/features/auth/domain/models/user_profile.dart';
 /// Auth API client
 class AuthApiClient {
   AuthApiClient({Dio? dio}) : _dio = dio ?? DioClient.instance;
-  
+
   final Dio _dio;
-  
+
   /// Login endpoint
   Future<Map<String, dynamic>> login(LoginRequest request) async {
     final response = await _dio.post(
@@ -21,7 +21,7 @@ class AuthApiClient {
     );
     return response.data as Map<String, dynamic>;
   }
-  
+
   /// Verify OTP endpoint
   Future<Map<String, dynamic>> verifyOtp(
     OtpVerificationRequest request,
@@ -36,7 +36,7 @@ class AuthApiClient {
     );
     return response.data as Map<String, dynamic>;
   }
-  
+
   /// Get user profile endpoint
   Future<Map<String, dynamic>> getUserProfile(String token) async {
     final response = await _dio.get(
@@ -47,44 +47,43 @@ class AuthApiClient {
     );
     return response.data as Map<String, dynamic>;
   }
-  
+
   /// Request password reset endpoint
-  Future<void> requestPasswordReset(PasswordResetRequest request) async {
-    await _dio.post(
+  Future<Map<String, dynamic>> requestPasswordReset(String email) async {
+    final response = await _dio.post(
       '/api/reset-password/request',
-      data: request.toJson(),
-    );
-  }
-  
-  /// Confirm password reset endpoint
-  Future<void> confirmPasswordReset(
-    PasswordResetConfirmation request,
-    String token,
-  ) async {
-    await _dio.post(
-      '/api/reset-password/confirm',
-      data: request.toJson(),
-      options: Options(
-        headers: {'Authorization': 'Bearer $token'},
-      ),
-    );
-  }
-  
-  /// Toggle two-factor authentication endpoint
-  Future<Map<String, dynamic>> toggleTwoFactor(
-    TwoFactorToggleRequest request,
-    String token,
-  ) async {
-    final response = await _dio.patch(
-      '/api/user/two-factor',
-      data: request.toJson(),
-      options: Options(
-        headers: {'Authorization': 'Bearer $token'},
-      ),
+      data: {'email': email},
     );
     return response.data as Map<String, dynamic>;
   }
-  
+
+  /// Confirm password reset endpoint
+  Future<void> confirmPasswordReset(
+    String email,
+    String otp,
+    String newPassword,
+  ) async {
+    await _dio.post(
+      '/api/reset-password/confirm',
+      data: {
+        'email': email,
+        'otp': otp,
+        'new_password': newPassword,
+      },
+    );
+  }
+
+  /// Toggle two-factor authentication endpoint
+  Future<void> toggleTwoFactor(bool enabled, String token) async {
+    await _dio.patch(
+      '/api/user/two-factor',
+      data: {'enabled': enabled},
+      options: Options(
+        headers: {'Authorization': 'Bearer $token'},
+      ),
+    );
+  }
+
   /// Logout endpoint
   Future<void> logout(String token) async {
     await _dio.post(
@@ -94,7 +93,7 @@ class AuthApiClient {
       ),
     );
   }
-  
+
   /// Refresh token endpoint
   Future<Map<String, dynamic>> refreshToken(String refreshToken) async {
     final response = await _dio.post(
@@ -104,3 +103,4 @@ class AuthApiClient {
     return response.data as Map<String, dynamic>;
   }
 }
+

@@ -13,6 +13,7 @@ class AuthToken with _$AuthToken {
     required int expiresIn,
     String? refreshToken,
     @JsonKey(name: 'requires_otp') bool? requiresOtp,
+    String? delivery,
     DateTime? expiresAt,
   }) = _AuthToken;
 
@@ -25,6 +26,10 @@ extension AuthTokenExtension on AuthToken {
   /// Check if token is temporary (requires OTP)
   bool get isTemporary => requiresOtp ?? false;
   
+  /// Check if token is expired
+  bool get isExpired => expiresAt?.isBefore(DateTime.now()) ?? false;
+
   /// Get authorization header value
   String get authorizationHeader => '$tokenType $accessToken';
 }
+
