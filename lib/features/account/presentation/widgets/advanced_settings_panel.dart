@@ -101,7 +101,7 @@ class _AdvancedSettingsPanelState extends State<AdvancedSettingsPanel> {
           Row(
             children: [
               Icon(
-                HugeIcons.strokeRoundedShield01,
+                Icons.settings,
                 size: 20,
                 color: colorScheme.onSurfaceVariant,
               ),
@@ -137,8 +137,8 @@ class _AdvancedSettingsPanelState extends State<AdvancedSettingsPanel> {
                   children: [
                     Icon(
                       _settings.allowInsecureSsl
-                          ? HugeIcons.strokeRoundedAlert02
-                          : HugeIcons.strokeRoundedShieldCheck,
+                          ? Icons.settings
+                          : Icons.settings,
                       size: 20,
                       color: _settings.allowInsecureSsl
                           ? colorScheme.error
@@ -186,7 +186,7 @@ class _AdvancedSettingsPanelState extends State<AdvancedSettingsPanel> {
           Row(
             children: [
               Icon(
-                HugeIcons.strokeRoundedSettings02,
+                Icons.settings,
                 size: 20,
                 color: colorScheme.onSurfaceVariant,
               ),

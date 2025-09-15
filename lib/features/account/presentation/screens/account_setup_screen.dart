@@ -121,13 +121,13 @@ class _AccountSetupScreenState extends ConsumerState<AccountSetupScreen>
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: _currentStep > 0
+                leading: _currentStep > 0
             ? IconButton(
-                icon: const Icon(HugeIcons.strokeRoundedArrowLeft02),
+                icon: const Icon(Icons.arrow_back),
                 onPressed: _previousStep,
               )
             : IconButton(
-                icon: const Icon(HugeIcons.strokeRoundedCancel01),
+                icon: const Icon(Icons.close),
                 onPressed: () => context.go('/login'),
               ),
         title: Text(
@@ -186,7 +186,7 @@ class _AccountSetupScreenState extends ConsumerState<AccountSetupScreen>
                   child: Center(
                     child: isCompleted
                         ? Icon(
-                            HugeIcons.strokeRoundedTick02,
+                            Icons.check,
                             size: 16,
                             color: colorScheme.onPrimary,
                           )
@@ -251,7 +251,7 @@ class _AccountSetupScreenState extends ConsumerState<AccountSetupScreen>
             providerId: 'gmail',
             name: 'Gmail',
             description: 'Google Gmail accounts',
-            icon: HugeIcons.strokeRoundedGoogle,
+            icon: Icons.email,
             onTap: () => _handleProviderSelected('gmail'),
           ),
           const SizedBox(height: 16),
@@ -260,7 +260,7 @@ class _AccountSetupScreenState extends ConsumerState<AccountSetupScreen>
             providerId: 'outlook',
             name: 'Outlook',
             description: 'Microsoft Outlook/Hotmail accounts',
-            icon: HugeIcons.strokeRoundedMicrosoft,
+            icon: Icons.email,
             onTap: () => _handleProviderSelected('outlook'),
           ),
           const SizedBox(height: 16),
@@ -269,7 +269,7 @@ class _AccountSetupScreenState extends ConsumerState<AccountSetupScreen>
             providerId: 'yahoo',
             name: 'Yahoo Mail',
             description: 'Yahoo email accounts',
-            icon: HugeIcons.strokeRoundedYahoo,
+            icon: Icons.email,
             onTap: () => _handleProviderSelected('yahoo'),
           ),
           const SizedBox(height: 16),
@@ -278,7 +278,7 @@ class _AccountSetupScreenState extends ConsumerState<AccountSetupScreen>
             providerId: 'wahda',
             name: 'Wahda Bank',
             description: 'Wahda Bank email accounts',
-            icon: HugeIcons.strokeRoundedBank,
+            icon: Icons.email,
             onTap: () => _handleProviderSelected('wahda'),
           ),
           const SizedBox(height: 32),
@@ -286,7 +286,7 @@ class _AccountSetupScreenState extends ConsumerState<AccountSetupScreen>
           // Manual setup option
           OutlinedButton.icon(
             onPressed: () => _handleProviderSelected('manual'),
-            icon: const Icon(HugeIcons.strokeRoundedSettings02),
+            icon: const Icon(Icons.settings),
             label: const Text('Manual Configuration'),
             style: OutlinedButton.styleFrom(
               minimumSize: const Size.fromHeight(56),
@@ -333,7 +333,7 @@ class _AccountSetupScreenState extends ConsumerState<AccountSetupScreen>
             // Error display
             if (accountState.error != null) ...[
               AppErrorWidget(
-                error: accountState.error!,
+                failure: Failure(accountState.error!),
                 onRetry: _handleAccountSetup,
               ),
               const SizedBox(height: 24),
@@ -342,9 +342,9 @@ class _AccountSetupScreenState extends ConsumerState<AccountSetupScreen>
             // Display name
             AppTextField(
               controller: _displayNameController,
-              labelText: 'Display Name',
+              label: 'Display Name',
               hintText: 'Your name',
-              prefixIcon: const Icon(HugeIcons.strokeRoundedUser),
+              prefixIcon: const Icon(Icons.person),
               validator: (value) {
                 if (value?.isEmpty ?? true) {
                   return 'Please enter your display name';
@@ -357,10 +357,10 @@ class _AccountSetupScreenState extends ConsumerState<AccountSetupScreen>
             // Email
             AppTextField(
               controller: _emailController,
-              labelText: 'Email Address',
+              label: 'Email Address',
               hintText: 'your.email@example.com',
               keyboardType: TextInputType.emailAddress,
-              prefixIcon: const Icon(HugeIcons.strokeRoundedMail01),
+              prefixIcon: const Icon(Icons.email),
               validator: (value) {
                 if (value?.isEmpty ?? true) {
                   return 'Please enter your email address';
@@ -382,15 +382,15 @@ class _AccountSetupScreenState extends ConsumerState<AccountSetupScreen>
             // Password
             AppTextField(
               controller: _passwordController,
-              labelText: 'Password',
+              label: 'Password',
               hintText: 'Your email password',
               obscureText: _obscurePassword,
-              prefixIcon: const Icon(HugeIcons.strokeRoundedLockPassword),
+              prefixIcon: const Icon(Icons.lock),
               suffixIcon: IconButton(
                 icon: Icon(
                   _obscurePassword
-                      ? HugeIcons.strokeRoundedView
-                      : HugeIcons.strokeRoundedViewOff,
+                      ? Icons.visibility
+                      : Icons.visibility_off,
                 ),
                 onPressed: () {
                   setState(() {
@@ -412,7 +412,7 @@ class _AccountSetupScreenState extends ConsumerState<AccountSetupScreen>
               Row(
                 children: [
                   Icon(
-                    HugeIcons.strokeRoundedSettings02,
+                    Icons.settings,
                     size: 20,
                     color: colorScheme.onSurfaceVariant,
                   ),
@@ -432,7 +432,7 @@ class _AccountSetupScreenState extends ConsumerState<AccountSetupScreen>
               const SizedBox(height: 24),
             ] else ...[
               ExpansionTile(
-                leading: const Icon(HugeIcons.strokeRoundedSettings02),
+                leading: const Icon(Icons.settings),
                 title: const Text('Advanced Settings'),
                 subtitle: const Text('Server configuration and security options'),
                 children: [
@@ -482,7 +482,7 @@ class _AccountSetupScreenState extends ConsumerState<AccountSetupScreen>
               flex: 2,
               child: AppTextField(
                 controller: _imapHostController,
-                labelText: 'IMAP Server',
+                label: 'IMAP Server',
                 hintText: 'imap.example.com',
               ),
             ),
@@ -490,7 +490,7 @@ class _AccountSetupScreenState extends ConsumerState<AccountSetupScreen>
             Expanded(
               child: AppTextField(
                 controller: _imapPortController,
-                labelText: 'Port',
+                label: 'Port',
                 hintText: '993',
                 keyboardType: TextInputType.number,
               ),
@@ -506,7 +506,7 @@ class _AccountSetupScreenState extends ConsumerState<AccountSetupScreen>
               flex: 2,
               child: AppTextField(
                 controller: _smtpHostController,
-                labelText: 'SMTP Server',
+                label: 'SMTP Server',
                 hintText: 'smtp.example.com',
               ),
             ),
@@ -514,7 +514,7 @@ class _AccountSetupScreenState extends ConsumerState<AccountSetupScreen>
             Expanded(
               child: AppTextField(
                 controller: _smtpPortController,
-                labelText: 'Port',
+                label: 'Port',
                 hintText: '587',
                 keyboardType: TextInputType.number,
               ),
@@ -548,8 +548,8 @@ class _AccountSetupScreenState extends ConsumerState<AccountSetupScreen>
             ),
             child: Icon(
               accountState.isConnected
-                  ? HugeIcons.strokeRoundedCheckmarkCircle02
-                  : HugeIcons.strokeRoundedCancel01,
+                  ? Icons.settings
+                  : Icons.settings,
               size: 48,
               color: accountState.isConnected
                   ? colorScheme.primary
