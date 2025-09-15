@@ -208,7 +208,7 @@ extension SyncConfigurationExtension on SyncConfiguration {
     final parts = <String>[];
     
     if (autoSync) {
-      parts.add('Auto-sync every $syncIntervalMinutesm');
+      parts.add('Auto-sync every $syncIntervalMinutes minutes');
     } else {
       parts.add('Manual sync only');
     }

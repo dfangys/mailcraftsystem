@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:enough_mail/enough_mail.dart';
+import 'package:enough_mail/enough_mail.dart' as enough_mail;
 import 'package:flutter/foundation.dart';
 
 import 'package:mailcraftsystem/core/logging/logger.dart';
@@ -9,13 +9,13 @@ import 'package:mailcraftsystem/features/account/domain/models/mail_account_conf
 /// Factory for creating mail clients with proper configuration
 class MailClientFactory {
   /// Create a mail client from account configuration
-  static MailClient createClient(
+  static enough_mail.MailClient createClient(
     MailAccountConfig config, {
     bool enableLogging = kDebugMode,
   }) {
     final mailAccount = config.toMailAccount();
     
-    return MailClient(
+    return enough_mail.MailClient(
       /// mailAccount
       mailAccount,
       isLogEnabled: enableLogging,
@@ -25,7 +25,7 @@ class MailClientFactory {
   }
   
   /// Create a client for connection testing
-  static MailClient createTestClient(
+  static enough_mail.MailClient createTestClient(
     MailAccountConfig config, {
     bool enableLogging = kDebugMode,
   }) {
@@ -48,16 +48,17 @@ class MailClientFactory {
       await client.connect();
       
       // Get capabilities
-      final imapClient = client.lowLevelIncomingMailClient as ImapClient;
+      final imapClient = client.lowLevelIncomingMailClient as enough_mail.ImapClient;
       final capabilities = imapClient.serverInfo.capabilities;
       
-      AppLogger.info('IMAP connection successful. Capabilities: ${capabilities.join(', ')}');
+      final capabilityNames = capabilities?.map((c) => c.name).toList() ?? [];
+      AppLogger.info('IMAP connection successful. Capabilities: ${capabilityNames.join(', ')}');
       
       await client.disconnect();
       
       return ImapConnectionResult(
         success: true,
-        capabilities: capabilities,
+        capabilities: capabilityNames,
       );
     } catch (e) {
       AppLogger.error('IMAP connection failed', e);
@@ -82,7 +83,7 @@ class MailClientFactory {
     try {
       AppLogger.info('Testing SMTP connection to ${config.smtpConfig.host}:${config.smtpConfig.port}');
       
-      final smtpClient = SmtpClient(
+      final smtpClient = enough_mail.SmtpClient(
         config.smtpConfig.host,
         isLogEnabled: kDebugMode,
         onBadCertificate: config.allowInsecureSSL ? _allowBadCertificate : null,
@@ -100,7 +101,7 @@ class MailClientFactory {
       await smtpClient.authenticate(
         config.email,
         config.password,
-        AuthMechanism.plain,
+        enough_mail.AuthMechanism.plain,
       );
       
       AppLogger.info('SMTP connection and authentication successful');

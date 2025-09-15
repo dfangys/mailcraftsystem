@@ -1,4 +1,4 @@
-import 'package:enough_mail/enough_mail.dart';
+import 'package:enough_mail/enough_mail.dart' as enough_mail;
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'mail_account_config.freezed.dart';
@@ -73,15 +73,15 @@ enum SocketType {
 
 /// Extension for socket type conversion
 extension SocketTypeExtension on SocketType {
-  /// Convert to enough_mail ConnectionSecurity
-  ConnectionSecurity get connectionSecurity {
+  /// Convert to enough_mail SocketType
+  enough_mail.SocketType get enoughMailSocketType {
     switch (this) {
       case SocketType.plain:
-        return ConnectionSecurity.none;
+        return enough_mail.SocketType.plain;
       case SocketType.ssl:
-        return ConnectionSecurity.ssl;
+        return enough_mail.SocketType.ssl;
       case SocketType.starttls:
-        return ConnectionSecurity.starttls;
+        return enough_mail.SocketType.starttls;
     }
   }
   
@@ -101,21 +101,21 @@ extension SocketTypeExtension on SocketType {
 /// Extension for mail account configuration
 extension MailAccountConfigExtension on MailAccountConfig {
   /// Convert to enough_mail MailAccount
-  MailAccount toMailAccount() {
-    return MailAccount.fromManualSettings(
+  enough_mail.MailAccount toMailAccount() {
+    return enough_mail.MailAccount.fromManualSettings(
       name: name,
       email: email,
       incomingHost: imapConfig.host,
       outgoingHost: smtpConfig.host,
       password: password,
-      incomingType: ServerType.imap,
-      outgoingType: ServerType.smtp,
+      incomingType: enough_mail.ServerType.imap,
+      outgoingType: enough_mail.ServerType.smtp,
       incomingPort: imapConfig.port,
       outgoingPort: smtpConfig.port,
-      incomingSocketType: imapConfig.socketType.connectionSecurity,
-      outgoingSocketType: smtpConfig.socketType.connectionSecurity,
+      incomingSocketType: imapConfig.socketType.enoughMailSocketType,
+      outgoingSocketType: smtpConfig.socketType.enoughMailSocketType,
       userName: imapConfig.username ?? email,
-      outgoingClientDomain: smtpConfig.clientDomain,
+      outgoingClientDomain: smtpConfig.clientDomain ?? 'localhost',
     );
   }
   

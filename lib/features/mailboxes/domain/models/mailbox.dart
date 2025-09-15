@@ -1,4 +1,4 @@
-import 'package:enough_mail/enough_mail.dart';
+import 'package:enough_mail/enough_mail.dart' as enough_mail;
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'mailbox.freezed.dart';
@@ -178,22 +178,29 @@ extension MailboxExtension on Mailbox {
       recentCount: enoughMailbox.messagesRecent ?? 0,
       isSelectable: !enoughMailbox.isNotSelectable,
       hasChildren: enoughMailbox.hasChildren,
-      isSubscribed: enoughMailbox.isSubscribed,
+      isSubscribed: enoughMailbox.hasFlag(enough_mail.MailboxFlag.subscribed),
       flags: _getMailboxFlags(enoughMailbox),
-      parentPath: enoughMailbox.parentPath,
+      parentPath: _getParentPath(enoughMailbox.path),
     );
   }
   
   /// Convert to enough_mail Mailbox
   enough_mail.Mailbox toEnoughMail() {
-    final enoughMailbox = enough_mail.Mailbox();
-    enoughMailbox.name = name;
-    enoughMailbox.path = path;
-    enoughMailbox.messagesExists = messageCount;
-    enoughMailbox.messagesUnseen = unreadCount;
-    enoughMailbox.messagesRecent = recentCount;
-    enoughMailbox.isSubscribed = isSubscribed;
-    enoughMailbox.parentPath = parentPath;
+    final flags = <enough_mail.MailboxFlag>[];
+    if (isSubscribed) {
+      flags.add(enough_mail.MailboxFlag.subscribed);
+    }
+    
+    final enoughMailbox = enough_mail.Mailbox(
+      encodedName: name,
+      encodedPath: path,
+      flags: flags,
+      pathSeparator: '/',
+      messagesExists: messageCount,
+      messagesUnseen: unreadCount,
+      messagesRecent: recentCount,
+    );
+    
     return enoughMailbox;
   }
   
@@ -239,15 +246,22 @@ extension MailboxExtension on Mailbox {
     return MailboxType.custom;
   }
   
+  /// Get parent path from mailbox path
+  static String? _getParentPath(String path) {
+    final lastSeparatorIndex = path.lastIndexOf('/');
+    if (lastSeparatorIndex <= 0) return null;
+    return path.substring(0, lastSeparatorIndex);
+  }
+  
   /// Get mailbox flags from enough_mail Mailbox
   static List<MailboxFlag>? _getMailboxFlags(enough_mail.Mailbox mailbox) {
     final flags = <MailboxFlag>[];
     
     if (mailbox.isNotSelectable) flags.add(MailboxFlag.noselect);
-    if (mailbox.hasNoChildren) flags.add(MailboxFlag.hasnochildren);
+    if (!mailbox.hasChildren) flags.add(MailboxFlag.hasnochildren);
     if (mailbox.hasChildren) flags.add(MailboxFlag.haschildren);
     if (mailbox.isMarked) flags.add(MailboxFlag.marked);
-    if (mailbox.isUnmarked) flags.add(MailboxFlag.unmarked);
+    if (!mailbox.isMarked) flags.add(MailboxFlag.unmarked);
     
     return flags.isNotEmpty ? flags : null;
   }

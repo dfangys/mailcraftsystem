@@ -281,25 +281,25 @@ extension MessageExtension on Message {
       messageId: mimeMessage.decodeHeaderMailAddressValue('message-id')?.first.email,
       subject: mimeMessage.decodeSubject(),
       from: mimeMessage.from?.isNotEmpty == true
-          ? MessageAddress.fromEnoughMail(mimeMessage.from!.first)
+          ? MessageAddressExtension.fromEnoughMail(mimeMessage.from!.first)
           : null,
-      to: mimeMessage.to?.map(MessageAddress.fromEnoughMail).toList(),
-      cc: mimeMessage.cc?.map(MessageAddress.fromEnoughMail).toList(),
-      bcc: mimeMessage.bcc?.map(MessageAddress.fromEnoughMail).toList(),
-      replyTo: mimeMessage.replyTo?.map(MessageAddress.fromEnoughMail).toList(),
+      to: mimeMessage.to?.map((addr) => MessageAddressExtension.fromEnoughMail(addr)).toList(),
+      cc: mimeMessage.cc?.map((addr) => MessageAddressExtension.fromEnoughMail(addr)).toList(),
+      bcc: mimeMessage.bcc?.map((addr) => MessageAddressExtension.fromEnoughMail(addr)).toList(),
+      replyTo: mimeMessage.replyTo?.map((addr) => MessageAddressExtension.fromEnoughMail(addr)).toList(),
       date: mimeMessage.decodeDate(),
       isRead: mimeMessage.isSeen,
       isFlagged: mimeMessage.isFlagged,
       isAnswered: mimeMessage.isAnswered,
-      isDraft: mimeMessage.isDraft,
-      isDeleted: mimeMessage.isDeleted,
-      isRecent: mimeMessage.isRecent,
+      isDraft: mimeMessage.flags?.any((f) => f.toString().toLowerCase() == '\\draft') ?? false,
+      isDeleted: mimeMessage.flags?.any((f) => f.toString().toLowerCase() == '\\deleted') ?? false,
+      isRecent: mimeMessage.flags?.any((f) => f.toString().toLowerCase() == '\\recent') ?? false,
       priority: _getPriorityFromMime(mimeMessage),
       textPlain: mimeMessage.decodeTextPlainPart(),
       textHtml: mimeMessage.decodeTextHtmlPart(),
       attachments: _getAttachmentsFromMime(mimeMessage),
       size: mimeMessage.size,
-      flags: mimeMessage.flags?.map((f) => f.name).toList(),
+      flags: mimeMessage.flags?.map((f) => f.toString()).toList(),
       inReplyTo: mimeMessage.decodeHeaderValue('in-reply-to'),
       references: mimeMessage.decodeHeaderValue('references')?.split(' '),
       receivedAt: DateTime.now(),
@@ -341,16 +341,16 @@ extension MessageExtension on Message {
     final attachments = <MessageAttachment>[];
     
     message.findContentInfo().forEach((contentInfo) {
-      if (contentInfo.isAttachment) {
+      if (contentInfo.fileName != null) {
         attachments.add(
           MessageAttachment(
             id: contentInfo.fetchId ?? '',
             name: contentInfo.fileName ?? 'attachment',
             mimeType: contentInfo.contentType?.mediaType.text,
             size: contentInfo.size,
-            isInline: contentInfo.disposition == enough_mail.ContentDisposition.inline,
+            isInline: contentInfo.contentDisposition?.disposition == 'inline',
             contentId: contentInfo.cid,
-            disposition: contentInfo.disposition?.name,
+            disposition: contentInfo.contentDisposition?.disposition?.toString() ?? 'attachment',
           ),
         );
       }

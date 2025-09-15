@@ -115,7 +115,8 @@ class EncryptionService {
       final encryptedBytes = encryptedData.sublist(_ivLength);
       
       final encrypted = Encrypted(encryptedBytes);
-      return _encrypter.decryptBytes(encrypted, iv: IV(iv));
+      final decryptedBytes = _encrypter.decryptBytes(encrypted, iv: IV(iv));
+      return Uint8List.fromList(decryptedBytes);
     } catch (e) {
       AppLogger.error('Byte decryption failed', e);
       rethrow;
