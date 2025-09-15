@@ -97,7 +97,7 @@ class _$AuthStateCopyWithImpl<$Res, $Val extends AuthState>
           ? _value.user
           : user // ignore: cast_nullable_to_non_nullable
               as UserProfile?,
-      failure: core.Failure( freezed == error
+      error: freezed == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
               as String?,
@@ -202,7 +202,7 @@ class __$$AuthStateImplCopyWithImpl<$Res>
           ? _value.user
           : user // ignore: cast_nullable_to_non_nullable
               as UserProfile?,
-      failure: core.Failure( freezed == error
+      error: freezed == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
               as String?,
@@ -243,7 +243,7 @@ class _$AuthStateImpl implements _AuthState {
 
   @override
   String toString() {
-    return 'AuthState(isLoading: $isLoading, isAuthenticated: $isAuthenticated, requiresOtp: $requiresOtp, resetEmailSent: $resetEmailSent, token: $token, user: $user, failure: core.Failure( $error)';
+    return 'AuthState(isLoading: $isLoading, isAuthenticated: $isAuthenticated, requiresOtp: $requiresOtp, resetEmailSent: $resetEmailSent, token: $token, user: $user, error: $error)';
   }
 
   @override

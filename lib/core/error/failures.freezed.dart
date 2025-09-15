@@ -1274,7 +1274,7 @@ class __$$UnknownFailureImplCopyWithImpl<$Res>
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
               as String,
-      failure: core.Failure( freezed == error ? _value.error : error,
+      error: freezed == error ? _value.error : error,
     ));
   }
 }
@@ -1291,7 +1291,7 @@ class _$UnknownFailureImpl implements UnknownFailure {
 
   @override
   String toString() {
-    return 'Failure.unknown(message: $message, failure: core.Failure( $error)';
+    return 'Failure.unknown(message: $message, error: $error)';
   }
 
   @override

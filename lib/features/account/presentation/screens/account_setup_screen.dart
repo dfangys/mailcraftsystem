@@ -334,7 +334,7 @@ class _AccountSetupScreenState extends ConsumerState<AccountSetupScreen>
             // Error display
             if (accountState.error != null) ...[
               AppErrorWidget(
-                failure: core.Failure(accountState.error!),
+                failure: accountState.error!,
                 onRetry: _handleAccountSetup,
               ),
               const SizedBox(height: 24),

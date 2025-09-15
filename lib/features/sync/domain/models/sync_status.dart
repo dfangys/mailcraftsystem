@@ -118,7 +118,7 @@ extension SyncStateExtension on SyncState {
         return 'Syncing';
       case SyncState.paused:
         return 'Paused';
-      case SyncState.failure: core.Failure(
+      case SyncState.error:
         return 'Error';
       case SyncState.completed:
         return 'Completed';

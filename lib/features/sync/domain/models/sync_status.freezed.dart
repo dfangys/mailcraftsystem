@@ -128,7 +128,7 @@ class _$SyncStatusCopyWithImpl<$Res, $Val extends SyncStatus>
           ? _value.syncedMessages
           : syncedMessages // ignore: cast_nullable_to_non_nullable
               as int?,
-      failure: core.Failure( freezed == error
+      error: freezed == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
               as String?,
@@ -241,7 +241,7 @@ class __$$SyncStatusImplCopyWithImpl<$Res>
           ? _value.syncedMessages
           : syncedMessages // ignore: cast_nullable_to_non_nullable
               as int?,
-      failure: core.Failure( freezed == error
+      error: freezed == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
               as String?,
@@ -297,7 +297,7 @@ class _$SyncStatusImpl implements _SyncStatus {
 
   @override
   String toString() {
-    return 'SyncStatus(accountId: $accountId, state: $state, lastSync: $lastSync, nextSync: $nextSync, currentMailbox: $currentMailbox, totalMailboxes: $totalMailboxes, syncedMailboxes: $syncedMailboxes, totalMessages: $totalMessages, syncedMessages: $syncedMessages, failure: core.Failure( $error, progress: $progress)';
+    return 'SyncStatus(accountId: $accountId, state: $state, lastSync: $lastSync, nextSync: $nextSync, currentMailbox: $currentMailbox, totalMailboxes: $totalMailboxes, syncedMailboxes: $syncedMailboxes, totalMessages: $totalMessages, syncedMessages: $syncedMessages, error: $error, progress: $progress)';
   }
 
   @override

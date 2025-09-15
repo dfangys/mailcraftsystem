@@ -1,34 +1,31 @@
-import 'package:mailcraftsystem/core/error/failures.dart';
-import 'package:mailcraftsystem/features/auth/domain/models/auth_token.dart';
-import 'package:mailcraftsystem/features/auth/domain/models/login_request.dart';
-import 'package:mailcraftsystem/features/auth/domain/models/otp_challenge.dart';
-import 'package:mailcraftsystem/features/auth/domain/models/user_profile.dart';
+import '../models/auth_token.dart';
+import '../models/user_profile.dart';
+import '../models/login_request.dart';
+import '../models/otp_challenge.dart';
+import '../../../../core/error/failures.dart';
 
 /// Authentication repository interface
 abstract class AuthRepository {
   /// Login with email and password
-  Future<Either<Failure, AuthToken>> login(LoginRequest request);
+  Future<({Failure? left, AuthToken? right})> login(LoginRequest request);
   
   /// Verify OTP code
-  Future<Either<Failure, AuthToken>> verifyOtp(OtpVerificationRequest request);
+  Future<({Failure? left, AuthToken? right})> verifyOtp(OtpChallenge challenge);
   
   /// Get current user profile
-  Future<Either<Failure, UserProfile>> getUserProfile();
+  Future<({Failure? left, UserProfile? right})> getUserProfile();
   
   /// Request password reset
-  Future<Either<Failure, void>> requestPasswordReset(PasswordResetRequest request);
+  Future<({Failure? left, void right})> resetPassword(String email);
   
   /// Confirm password reset
-  Future<Either<Failure, void>> confirmPasswordReset(PasswordResetConfirmation request);
-  
-  /// Toggle two-factor authentication
-  Future<Either<Failure, UserProfile>> toggleTwoFactor(TwoFactorToggleRequest request);
+  Future<({Failure? left, void right})> confirmPasswordReset(String token, String newPassword);
   
   /// Logout
-  Future<Either<Failure, void>> logout();
+  Future<({Failure? left, void right})> logout();
   
   /// Refresh access token
-  Future<Either<Failure, AuthToken>> refreshToken();
+  Future<({Failure? left, AuthToken? right})> refreshToken();
   
   /// Check if user is authenticated
   Future<bool> isAuthenticated();
@@ -41,22 +38,4 @@ abstract class AuthRepository {
   
   /// Clear stored token
   Future<void> clearToken();
-}
-
-/// Either type for error handling
-typedef Either<L, R> = ({L? left, R? right});
-
-/// Extension for Either type
-extension EitherExtension<L, R> on Either<L, R> {
-  /// Check if this is a left (error) value
-  bool get isLeft => left != null;
-  
-  /// Check if this is a right (success) value
-  bool get isRight => right != null;
-  
-  /// Fold the either into a single value
-  T fold<T>(T Function(L) onLeft, T Function(R) onRight) {
-    if (isLeft) return onLeft(left as L);
-    return onRight(right as R);
-  }
 }

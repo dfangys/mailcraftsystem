@@ -83,7 +83,7 @@ class AccountController extends StateNotifier<AccountState> {
   void selectProvider(String providerId) {
     state = state.copyWith(
       selectedProvider: providerId,
-      failure: core.Failure( null,
+      error: null,
     );
   }
 
@@ -128,7 +128,7 @@ class AccountController extends StateNotifier<AccountState> {
     String? smtpHost,
     int? smtpPort,
   }) async {
-    state = state.copyWith(isLoading: true, failure: core.Failure( null);
+    state = state.copyWith(isLoading: true, error: null);
 
     try {
       // Get provider preset or use manual settings
@@ -161,7 +161,7 @@ class AccountController extends StateNotifier<AccountState> {
       if (result.left != null) {
         state = state.copyWith(
           isLoading: false,
-          failure: core.Failure( result.left!.message,
+          error: result.left!.message,
         );
       } else if (result.right != null) {
         final connectionResult = result.right!;
@@ -179,21 +179,21 @@ class AccountController extends StateNotifier<AccountState> {
         } else {
           state = state.copyWith(
             isLoading: false,
-            failure: core.Failure( connectionResult.errorMessage ?? 'Connection failed',
+            error: connectionResult.errorMessage ?? 'Connection failed',
           );
         }
       }
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        failure: core.Failure( 'An unexpected error occurred: ${e.toString()}',
+        error: 'An unexpected error occurred: ${e.toString()}',
       );
     }
   }
 
   /// Clear error state
   void clearError() {
-    state = state.copyWith(failure: core.Failure( null);
+    state = state.copyWith(error: null);
   }
 
   /// Reset account setup

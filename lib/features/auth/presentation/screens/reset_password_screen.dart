@@ -115,7 +115,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
           // Error display
           if (authState.error != null) ...[
             AppErrorWidget(
-              failure: core.Failure(authState.error!,
+              error:authState.error!,
               onRetry: _handleResetRequest,
             ),
             const SizedBox(height: 24),

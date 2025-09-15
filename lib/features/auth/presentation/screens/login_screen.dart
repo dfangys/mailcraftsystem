@@ -100,7 +100,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     // Error display
                     if (authState.error != null) ...[
                       AppErrorWidget(
-                        failure: core.Failure(authState.error!),
+                        failure: authState.error!,
                         onRetry: _handleLogin,
                       ),
                       const SizedBox(height: 16),

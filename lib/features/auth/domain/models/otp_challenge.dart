@@ -5,28 +5,14 @@ part 'otp_challenge.g.dart';
 
 /// OTP challenge model
 @freezed
-/// OtpChallenge class
 class OtpChallenge with _$OtpChallenge {
+  /// Creates an OTP challenge
   const factory OtpChallenge({
-    required String challengeId,
-    required String method,
-    required int expiresIn,
-    String? maskedDestination,
+    required String token,
+    required String code,
   }) = _OtpChallenge;
 
+  /// Creates from JSON
   factory OtpChallenge.fromJson(Map<String, dynamic> json) =>
       _$OtpChallengeFromJson(json);
-}
-
-/// OTP verification request
-@freezed
-/// OtpVerificationRequest class
-class OtpVerificationRequest with _$OtpVerificationRequest {
-  const factory OtpVerificationRequest({
-    required String challengeId,
-    required String code,
-  }) = _OtpVerificationRequest;
-
-  factory OtpVerificationRequest.fromJson(Map<String, dynamic> json) =>
-      _$OtpVerificationRequestFromJson(json);
 }

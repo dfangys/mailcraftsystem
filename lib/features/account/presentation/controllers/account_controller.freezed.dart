@@ -98,7 +98,7 @@ class _$AccountStateCopyWithImpl<$Res, $Val extends AccountState>
           ? _value.connectionDetails
           : connectionDetails // ignore: cast_nullable_to_non_nullable
               as Map<String, String>?,
-      failure: core.Failure( freezed == error
+      error: freezed == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
               as String?,
@@ -187,7 +187,7 @@ class __$$AccountStateImplCopyWithImpl<$Res>
           ? _value._connectionDetails
           : connectionDetails // ignore: cast_nullable_to_non_nullable
               as Map<String, String>?,
-      failure: core.Failure( freezed == error
+      error: freezed == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
               as String?,
@@ -237,7 +237,7 @@ class _$AccountStateImpl implements _AccountState {
 
   @override
   String toString() {
-    return 'AccountState(isLoading: $isLoading, isConnected: $isConnected, isSetupComplete: $isSetupComplete, selectedProvider: $selectedProvider, accountConfig: $accountConfig, connectionDetails: $connectionDetails, failure: core.Failure( $error)';
+    return 'AccountState(isLoading: $isLoading, isConnected: $isConnected, isSetupComplete: $isSetupComplete, selectedProvider: $selectedProvider, accountConfig: $accountConfig, connectionDetails: $connectionDetails, error: $error)';
   }
 
   @override

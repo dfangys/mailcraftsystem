@@ -4,6 +4,11 @@ import '../../domain/usecases/login_usecase.dart';
 import '../../domain/usecases/verify_otp_usecase.dart';
 import '../../domain/usecases/logout_usecase.dart';
 import '../../domain/repositories/auth_repository.dart';
+import '../../domain/models/auth_token.dart';
+import '../../domain/models/user_profile.dart';
+import '../../domain/models/login_request.dart';
+import '../../domain/models/otp_challenge.dart';
+import '../../../../core/error/failures.dart';
 
 /// Auth repository provider
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
@@ -29,13 +34,13 @@ final logoutUseCaseProvider = Provider<LogoutUseCase>((ref) {
 /// Mock auth repository implementation
 class MockAuthRepository implements AuthRepository {
   @override
-  Future<({AuthFailure? left, AuthToken? right})> login(LoginRequest request) async {
+  Future<({Failure? left, AuthToken? right})> login(LoginRequest request) async {
     // Simulate network delay
     await Future.delayed(const Duration(seconds: 1));
     
     // Simulate login logic
     if (request.email.isEmpty || request.password.isEmpty) {
-      return (left: AuthFailure('Email and password are required'), right: null);
+      return (left: Failure.auth(message: 'Email and password are required'), right: null);
     }
     
     // Simulate successful login with OTP required
@@ -51,13 +56,13 @@ class MockAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<({AuthFailure? left, AuthToken? right})> verifyOtp(OtpChallenge challenge) async {
+  Future<({Failure? left, AuthToken? right})> verifyOtp(OtpChallenge challenge) async {
     // Simulate network delay
     await Future.delayed(const Duration(seconds: 1));
     
     // Simulate OTP verification
     if (challenge.code.length != 6) {
-      return (left: AuthFailure('Invalid OTP code'), right: null);
+      return (left: Failure.auth(message: 'Invalid OTP code'), right: null);
     }
     
     return (
@@ -72,14 +77,14 @@ class MockAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<({AuthFailure? left, void right})> logout() async {
+  Future<({Failure? left, void right})> logout() async {
     // Simulate logout
     await Future.delayed(const Duration(milliseconds: 500));
     return (left: null, right: null);
   }
 
   @override
-  Future<({AuthFailure? left, UserProfile? right})> getCurrentUser() async {
+  Future<({Failure? left, UserProfile? right})> getUserProfile() async {
     return (
       left: null,
       right: UserProfile(
@@ -91,21 +96,37 @@ class MockAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<({AuthFailure? left, void right})> refreshToken(String refreshToken) async {
+  Future<({Failure? left, AuthToken? right})> refreshToken() async {
     return (left: null, right: null);
   }
 
   @override
-  Future<({AuthFailure? left, void right})> resetPassword(String email) async {
+  Future<({Failure? left, void right})> resetPassword(String email) async {
     return (left: null, right: null);
   }
-}
 
-/// Auth failure class
-class AuthFailure {
-  /// Creates an auth failure
-  const AuthFailure(this.message);
+  @override
+  Future<({Failure? left, void right})> confirmPasswordReset(String token, String newPassword) async {
+    return (left: null, right: null);
+  }
 
-  /// Error message
-  final String message;
+  @override
+  Future<bool> isAuthenticated() async {
+    return false;
+  }
+
+  @override
+  Future<AuthToken?> getStoredToken() async {
+    return null;
+  }
+
+  @override
+  Future<void> storeToken(AuthToken token) async {
+    // Mock implementation
+  }
+
+  @override
+  Future<void> clearToken() async {
+    // Mock implementation
+  }
 }
