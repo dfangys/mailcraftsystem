@@ -8,7 +8,6 @@ environment:
   sdk: ">=3.5.0 <4.0.0"
 
 dependencies:
-  collection: ^1.18.0
   crypto: ^3.0.3
   dartz: ^0.10.1
   device_info_plus: ^9.1.0
@@ -25,7 +24,7 @@ dependencies:
   go_router: ^14.2.0
   hooks_riverpod: ^2.5.1
   hugeicons: ^1.0.2
-  intl: ^0.20.2
+  intl: ^0.19.0
   json_annotation: ^4.9.0
   logger: ^2.0.2+1
   package_info_plus: ^4.2.0

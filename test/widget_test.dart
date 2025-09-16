@@ -7,10 +7,20 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:mailcraftsystem/app/bootstrap.dart';
 
 void main() {
+  setUpAll(() async {
+    // Load environment variables for tests to prevent dotenv NotInitializedError
+    try {
+      await dotenv.load();
+    } catch (_) {
+      await dotenv.load(fileName: '.env.example');
+    }
+  });
+
   testWidgets('MailCraft app smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(
@@ -19,7 +29,8 @@ void main() {
       ),
     );
 
-    // Verify that the app starts correctly
-    expect(find.text('MailCraft System'), findsOneWidget);
+    // Verify that the splash screen renders
+    expect(find.text('MailCraft'), findsOneWidget);
+    expect(find.text('Initializing secure connection...'), findsOneWidget);
   });
 }
