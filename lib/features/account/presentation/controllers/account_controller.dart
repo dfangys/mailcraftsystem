@@ -7,6 +7,8 @@ import 'package:mailcraftsystem/features/account/domain/models/mail_account_conf
 import 'package:mailcraftsystem/features/account/domain/models/mail_provider_preset.dart';
 import 'package:mailcraftsystem/features/account/domain/repositories/account_repository.dart';
 import 'package:mailcraftsystem/features/account/presentation/widgets/advanced_settings_panel.dart';
+import 'package:mailcraftsystem/features/auth/presentation/controllers/auth_controller.dart'
+    show mailClientServiceProvider;
 
 part 'account_controller.freezed.dart';
 
@@ -29,6 +31,7 @@ class AccountState with _$AccountState {
 final accountControllerProvider =
     StateNotifierProvider<AccountController, AccountState>(
   (ref) => AccountController(
+    ref: ref,
     accountRepository: ref.read(accountRepositoryProvider),
   ),
 );
@@ -37,10 +40,12 @@ final accountControllerProvider =
 class AccountController extends StateNotifier<AccountState> {
   /// Creates an account controller
   AccountController({
+    required this.ref,
     required AccountRepository accountRepository,
   })  : _accountRepository = accountRepository,
         super(const AccountState());
 
+  final Ref ref;
   final AccountRepository _accountRepository;
 
   /// Provider presets
@@ -171,16 +176,31 @@ class AccountController extends StateNotifier<AccountState> {
         },
         (connectionResult) async {
           if (connectionResult.isSuccess) {
-            // Save account configuration
-            await _accountRepository.addAccount(accountConfig);
-
-            state = state.copyWith(
-              isLoading: false,
-              isConnected: true,
-              isSetupComplete: true,
-              accountConfig: accountConfig,
-              connectionDetails: connectionResult.details,
+            // Establish real IMAP connection using the new config
+            final mailClientService = ref.read(mailClientServiceProvider);
+            final connected =
+                await mailClientService.initializeAndConnectWithConfig(
+              accountConfig,
             );
+
+            if (connected) {
+              // Save account configuration
+              await _accountRepository.addAccount(accountConfig);
+
+              state = state.copyWith(
+                isLoading: false,
+                isConnected: true,
+                isSetupComplete: true,
+                accountConfig: accountConfig,
+                connectionDetails: connectionResult.details,
+              );
+            } else {
+              state = state.copyWith(
+                isLoading: false,
+                error:
+                    'Connected to server test succeeded, but live connection failed. Please verify credentials and server settings.',
+              );
+            }
           } else {
             state = state.copyWith(
               isLoading: false,

@@ -78,7 +78,7 @@ enum SocketType {
 }
 
 /// Extension for socket type conversion
-extension SocketTypeExtension on SocketType {
+extension LocalSocketTypeExtension on SocketType {
   /// Convert to enough_mail SocketType
   enough_mail.SocketType get enoughMailSocketType {
     switch (this) {

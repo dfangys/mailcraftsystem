@@ -5,6 +5,7 @@ import 'package:mailcraftsystem/features/auth/domain/models/otp_challenge.dart';
 import 'package:mailcraftsystem/features/auth/domain/models/user_profile.dart';
 import 'package:mailcraftsystem/features/auth/presentation/providers/auth_providers.dart';
 import 'package:mailcraftsystem/features/account/data/datasources/mail_client_service.dart';
+import 'package:mailcraftsystem/features/account/domain/models/mail_provider_preset.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'auth_controller.g.dart';
@@ -91,12 +92,26 @@ class AuthController extends _$AuthController {
   Future<void> _initializeMailClient(String email, String password) async {
     try {
       final mailClientService = ref.read(mailClientServiceProvider);
-      final success = await mailClientService.initializeAndConnect(
-        email,
-        password,
-      );
-      if (!success) {
-        throw Exception('Failed to connect to mail server');
+
+      // Prefer provider preset config when available
+      final preset = MailProviderPresets.findByEmail(email);
+      if (preset != null) {
+        final config = preset.createAccountConfig(
+          email: email,
+          password: password,
+          accountName: preset.displayName,
+        );
+        final ok = await mailClientService.initializeAndConnectWithConfig(config);
+        if (!ok) throw Exception('Failed to connect with preset config');
+      } else {
+        // Fallback to heuristic dynamic init
+        final success = await mailClientService.initializeAndConnect(
+          email,
+          password,
+        );
+        if (!success) {
+          throw Exception('Failed to connect to mail server');
+        }
       }
     } catch (e) {
       // Log error but don't fail authentication
