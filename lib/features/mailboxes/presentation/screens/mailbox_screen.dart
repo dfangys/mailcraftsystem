@@ -183,6 +183,11 @@ class _MailboxScreenState extends ConsumerState<MailboxScreen> {
           tooltip: _isCompactView ? 'Detailed view' : 'Compact view',
         ),
         IconButton(
+          icon: const Icon(Icons.refresh_outlined),
+          onPressed: _handleRefresh,
+          tooltip: 'Refresh',
+        ),
+        IconButton(
           icon: const Icon(Icons.search_outlined),
           onPressed: () => context.push('/search'),
           tooltip: 'Search emails',
@@ -392,7 +397,14 @@ class _MailboxScreenState extends ConsumerState<MailboxScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(box.displayName),
-                      if (box.unreadCount > 0) ...[
+                      if (box.path == _currentFolder && state.isLoading) ...[
+                        const SizedBox(width: 8),
+                        const SizedBox(
+                          width: 14,
+                          height: 14,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      ] else if (box.unreadCount > 0) ...[
                         const SizedBox(width: 6),
                         Container(
                           padding: const EdgeInsets.symmetric(
@@ -609,9 +621,14 @@ class _MailboxScreenState extends ConsumerState<MailboxScreen> {
   }
 
   Future<void> _handleRefresh() async {
+    final authState = ref.read(authControllerProvider);
+    final accountId = authState.userEmail ?? 'default';
+    // Refresh mailboxes to update counts
+    await ref.read(mailboxControllerProvider.notifier).getMailboxes(accountId);
+    // Refresh messages for current folder
     await ref
         .read(mailboxControllerProvider.notifier)
-        .getMessages("dummy_account", _currentFolder);
+        .getMessages(accountId, _currentFolder);
   }
 
   void _handleMenuAction(String action) {
