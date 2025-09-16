@@ -22,6 +22,9 @@ class MailboxRepositoryImpl implements MailboxRepository {
             message: 'Mail client not initialized. Please login first.'));
       }
 
+      // Ensure the client is connected before fetching
+      await mailClientService.ensureConnected();
+
       final mailboxes = await mailClientService.listMailboxesCached();
       final mappedMailboxes =
           mailboxes.map((e) => model.Mailbox.fromEnoughMail(e)).toList();
@@ -42,6 +45,8 @@ class MailboxRepositoryImpl implements MailboxRepository {
         return const Left(Failure.auth(
             message: 'Mail client not initialized. Please login first.'));
       }
+
+      await mailClientService.ensureConnected();
 
       final mailboxes = await mailClientService.listMailboxesCached();
       final mailbox = mailboxes.firstWhere((box) => box.path == path);
@@ -89,6 +94,8 @@ class MailboxRepositoryImpl implements MailboxRepository {
             message: 'Mail client not initialized. Please login first.'));
       }
 
+      await mailClientService.ensureConnected();
+
       final mailboxes = await client.listMailboxes();
       final mailbox = mailboxes.firstWhere((box) => box.path == path);
       await client.deleteMailbox(mailbox);
@@ -123,6 +130,8 @@ class MailboxRepositoryImpl implements MailboxRepository {
         return const Left(Failure.auth(
             message: 'Mail client not initialized. Please login first.'));
       }
+
+      await mailClientService.ensureConnected();
 
       final mailboxes = await mailClientService.listMailboxesCached();
       final mailbox = mailboxes.firstWhere((box) => box.path == path);

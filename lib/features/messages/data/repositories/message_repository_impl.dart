@@ -56,6 +56,7 @@ class MessageRepositoryImpl implements MessageRepository {
   }) async {
     try {
       final client = await _requireClient();
+      await mailClientService.ensureConnected();
       await _ensureSelected(mailboxPath);
 
       final count = limit ?? 20;
@@ -66,7 +67,8 @@ class MessageRepositoryImpl implements MessageRepository {
       _messagesCache[mailboxPath] = messages;
       _cacheTime[mailboxPath] = DateTime.now();
 
-      final mapped = messages.map(model.Message.fromEnoughMail).toList();
+      final mapped =
+          messages.map((m) => model.MessageExtension.fromEnoughMail(m, mailboxPath)).toList();
       return Right(mapped);
     } on MailException catch (e) {
       return Left(Failure.server(message: e.message ?? 'Unknown error'));
@@ -83,11 +85,12 @@ class MessageRepositoryImpl implements MessageRepository {
   ) async {
     try {
       final client = await _requireClient();
+      await mailClientService.ensureConnected();
       await _ensureSelected(mailboxPath);
 
       final msg = await _getMessageByUid(mailboxPath, uid, client);
       final full = await client.fetchMessageContents(msg);
-      return Right(model.Message.fromEnoughMail(full));
+      return Right(model.MessageExtension.fromEnoughMail(full, mailboxPath));
     } on MailException catch (e) {
       return Left(Failure.server(message: e.message ?? 'Unknown error'));
     } catch (e) {
@@ -103,6 +106,7 @@ class MessageRepositoryImpl implements MessageRepository {
   ) async {
     try {
       final client = await _requireClient();
+      await mailClientService.ensureConnected();
       await _ensureSelected(mailboxPath);
 
       // Robustly locate the message by UID using cache + fallback fetch
@@ -130,6 +134,7 @@ class MessageRepositoryImpl implements MessageRepository {
   ) async {
     try {
       final client = await _requireClient();
+      await mailClientService.ensureConnected();
       await _ensureSelected(mailboxPath);
 
       final message = await _getMessageByUid(mailboxPath, uid, client);
@@ -151,6 +156,7 @@ class MessageRepositoryImpl implements MessageRepository {
   ) async {
     try {
       final client = await _requireClient();
+      await mailClientService.ensureConnected();
       await _ensureSelected(mailboxPath);
 
       final message = await _getMessageByUid(mailboxPath, uid, client);
@@ -172,6 +178,7 @@ class MessageRepositoryImpl implements MessageRepository {
   ) async {
     try {
       final client = await _requireClient();
+      await mailClientService.ensureConnected();
       await _ensureSelected(mailboxPath);
 
       final message = await _getMessageByUid(mailboxPath, uid, client);
@@ -230,6 +237,7 @@ class MessageRepositoryImpl implements MessageRepository {
   ) async {
     try {
       final client = await _requireClient();
+      await mailClientService.ensureConnected();
       await _ensureSelected(fromMailboxPath);
 
       final mailboxes = await client.listMailboxes();
@@ -273,6 +281,7 @@ class MessageRepositoryImpl implements MessageRepository {
   }) async {
     try {
       final client = await _requireClient();
+      await mailClientService.ensureConnected();
       await _ensureSelected(mailboxPath);
 
       final message = await _getMessageByUid(mailboxPath, uid, client);
@@ -334,6 +343,7 @@ class MessageRepositoryImpl implements MessageRepository {
   ) async {
     try {
       final client = await _requireClient();
+      await mailClientService.ensureConnected();
       await _ensureSelected(mailboxPath);
       for (final uid in uids) {
         final message = await _getMessageByUid(mailboxPath, uid, client);
@@ -356,6 +366,7 @@ class MessageRepositoryImpl implements MessageRepository {
   ) async {
     try {
       final client = await _requireClient();
+      await mailClientService.ensureConnected();
       await _ensureSelected(mailboxPath);
       for (final uid in uids) {
         final message = await _getMessageByUid(mailboxPath, uid, client);
@@ -378,6 +389,7 @@ class MessageRepositoryImpl implements MessageRepository {
   ) async {
     try {
       final client = await _requireClient();
+      await mailClientService.ensureConnected();
       await _ensureSelected(mailboxPath);
       for (final uid in uids) {
         final message = await _getMessageByUid(mailboxPath, uid, client);
@@ -423,6 +435,7 @@ class MessageRepositoryImpl implements MessageRepository {
   ) async {
     try {
       final client = await _requireClient();
+      await mailClientService.ensureConnected();
       await _ensureSelected(fromMailboxPath);
       final mailboxes = await client.listMailboxes();
       final toMailbox = mailboxes.firstWhere(
@@ -454,6 +467,7 @@ class MessageRepositoryImpl implements MessageRepository {
   }) async {
     try {
       final client = await _requireClient();
+      await mailClientService.ensureConnected();
       await _ensureSelected(mailboxPath);
       for (final uid in uids) {
         final message = await _getMessageByUid(mailboxPath, uid, client);
