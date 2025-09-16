@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mailcraftsystem/features/auth/domain/models/auth_token.dart';
 import 'package:mailcraftsystem/features/auth/domain/models/login_request.dart';
 import 'package:mailcraftsystem/features/auth/domain/models/otp_challenge.dart';

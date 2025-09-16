@@ -167,8 +167,8 @@ class AccountController extends StateNotifier<AccountState> {
       // Test connection
       final result = await _accountRepository.testConnection(accountConfig);
 
-      result.fold(
-        (failure) {
+      await result.fold(
+        (failure) async {
           state = state.copyWith(
             isLoading: false,
             error: failure.message,
