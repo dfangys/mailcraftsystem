@@ -9,6 +9,7 @@ import 'package:mailcraftsystem/shared/widgets/loading_widget.dart';
 import 'package:mailcraftsystem/shared/widgets/app_button.dart';
 import 'package:mailcraftsystem/features/messages/domain/models/message.dart';
 import 'package:mailcraftsystem/features/mailboxes/presentation/controllers/mailbox_controller.dart';
+import 'package:mailcraftsystem/features/mailboxes/domain/models/mailbox.dart' as model;
 
 
 /// Enterprise-grade mailbox screen with comprehensive email management
@@ -82,6 +83,9 @@ class _MailboxScreenState extends ConsumerState<MailboxScreen> {
           children: [
             // Folder selector
             _buildFolderSelector(context, state),
+
+            // Mailboxes (horizontal chips)
+            _buildMailboxChips(context, state),
 
             // Email list
             Expanded(
@@ -359,6 +363,67 @@ class _MailboxScreenState extends ConsumerState<MailboxScreen> {
     );
   }
 
+  Widget _buildMailboxChips(BuildContext context, MailboxState state) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    if (state.mailboxes.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Container(
+      height: 56,
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      decoration: BoxDecoration(
+        color: colorScheme.surface,
+        border: Border(
+          bottom: BorderSide(color: colorScheme.outline.withOpacity(0.1)),
+        ),
+      ),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: [
+            for (final box in state.mailboxes)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: ChoiceChip(
+                  label: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(box.displayName),
+                      if (box.unreadCount > 0) ...[
+                        const SizedBox(width: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: colorScheme.primary,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(
+                            box.unreadCount > 999
+                                ? '999+'
+                                : box.unreadCount.toString(),
+                            style: theme.textTheme.labelSmall?.copyWith(
+                              color: colorScheme.onPrimary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                  selected: box.path == _currentFolder,
+                  onSelected: (_) => _onMailboxSelected(box),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildEmptyState(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
@@ -482,6 +547,15 @@ class _MailboxScreenState extends ConsumerState<MailboxScreen> {
   }
 
   // Event handlers
+  void _onMailboxSelected(model.Mailbox box) {
+    setState(() {
+      _currentFolder = box.path;
+    });
+    final authState = ref.read(authControllerProvider);
+    final accountId = authState.userEmail ?? 'default';
+    ref.read(mailboxControllerProvider.notifier).getMessages(accountId, box.path);
+  }
+
   void _handleMessageTap(Message message) {
     if (_isSelectionMode) {
       _handleMessageSelection(
