@@ -1,11 +1,17 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mailcraftsystem/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:mailcraftsystem/features/mailboxes/presentation/providers/mailbox_providers.dart';
 import 'package:mailcraftsystem/features/messages/domain/models/message.dart';
+import 'package:mailcraftsystem/features/messages/domain/models/message_content.dart';
 import 'package:mailcraftsystem/shared/widgets/app_button.dart';
 import 'package:mailcraftsystem/shared/widgets/app_card.dart';
 import 'package:mailcraftsystem/shared/widgets/loading_widget.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 /// Enterprise-grade message detail screen with comprehensive email viewing
 class MessageDetailScreen extends ConsumerStatefulWidget {
@@ -27,6 +33,9 @@ class _MessageDetailScreenState extends ConsumerState<MessageDetailScreen> {
   bool _showFullHeaders = false;
   bool _isLoading = false;
   String? _messageBody;
+  String? _error;
+  MessageContent? _content;
+  WebViewController? _webViewController;
 
   @override
   void initState() {
@@ -34,17 +43,64 @@ class _MessageDetailScreenState extends ConsumerState<MessageDetailScreen> {
     _loadMessageBody();
   }
 
-  Future<void> _loadMessageBody() async {
-    setState(() => _isLoading = true);
-
-    // Simulate loading message body
-    await Future.delayed(const Duration(milliseconds: 500));
-
+  Future<void> _initWebView(String html) async {
+    final controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setBackgroundColor(Colors.transparent);
+    final dataUri = Uri.dataFromString(
+      html,
+      mimeType: 'text/html',
+      encoding: utf8,
+    );
+    await controller.loadRequest(dataUri);
     setState(() {
-      _messageBody = widget.message.preview ??
-          'Message body content would be loaded here...';
-      _isLoading = false;
+      _webViewController = controller;
     });
+  }
+
+  Future<void> _loadMessageBody() async {
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+
+    try {
+      final authState = ref.read(authControllerProvider);
+      final accountId = authState.userEmail ?? 'default';
+      final mailboxPath = widget.message.mailboxPath;
+      final uid = widget.message.uid;
+
+      final repo = ref.read(messageRepositoryProvider);
+      final result = await repo.getMessageContent(accountId, mailboxPath, uid);
+
+      result.fold((failure) {
+        setState(() {
+          _error = failure.message;
+          _messageBody = widget.message.preview ?? '';
+          _isLoading = false;
+        });
+      }, (content) async {
+        String bodyText = content.textPlain;
+        setState(() {
+          _content = content;
+          _messageBody = bodyText.isNotEmpty
+              ? bodyText
+              : (widget.message.preview ?? '');
+        });
+        if ((content.textHtml ?? '').trim().isNotEmpty) {
+          await _initWebView(content.textHtml!);
+        }
+        setState(() {
+          _isLoading = false;
+        });
+      });
+    } catch (e) {
+      setState(() {
+        _error = e.toString();
+        _messageBody = widget.message.preview ?? '';
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -68,7 +124,19 @@ class _MessageDetailScreenState extends ConsumerState<MessageDetailScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Attachments section
+                        if (_error != null)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: Text(
+                              _error!,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(color: Theme.of(context).colorScheme.error),
+                            ),
+                          ),
+
+                        // Attachments section (TODO: wire real attachments)
                         if (widget.message.hasAttachments)
                           _buildAttachmentsSection(context),
 
@@ -450,6 +518,9 @@ class _MessageDetailScreenState extends ConsumerState<MessageDetailScreen> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
+    final hasHtml = (_content?.textHtml ?? '').trim().isNotEmpty &&
+        _webViewController != null;
+
     return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -461,20 +532,32 @@ class _MessageDetailScreenState extends ConsumerState<MessageDetailScreen> {
             ),
           ),
           const SizedBox(height: 12),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: colorScheme.surfaceContainerHighest.withAlpha(77),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              _messageBody ?? 'Loading message content...',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                height: 1.5,
+          if (hasHtml)
+            // When HTML is available, show it inside a WebView with its own scroll
+            SizedBox(
+              height: 600,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: WebViewWidget(controller: _webViewController!),
+              ),
+            )
+          else
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: colorScheme.surfaceContainerHighest.withAlpha(77),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: SelectableText(
+                (_messageBody?.isNotEmpty ?? false)
+                    ? _messageBody!
+                    : 'No content',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  height: 1.5,
+                ),
               ),
             ),
-          ),
         ],
       ),
     );
@@ -665,15 +748,15 @@ class _MessageDetailScreenState extends ConsumerState<MessageDetailScreen> {
   }
 
   void _replyToMessage() {
-    context.go('/compose?reply=${widget.message.id}');
+    context.push('/compose?reply=${widget.message.id}');
   }
 
   void _replyAllToMessage() {
-    context.go('/compose?replyAll=${widget.message.id}');
+    context.push('/compose?replyAll=${widget.message.id}');
   }
 
   void _forwardMessage() {
-    context.go('/compose?forward=${widget.message.id}');
+    context.push('/compose?forward=${widget.message.id}');
   }
 }
 

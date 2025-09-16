@@ -50,8 +50,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       if (next.isAuthenticated) {
         context.go('/home');
       } else if (next.requiresOtp) {
-        context.go(
-            '/otp?email=${Uri.encodeComponent(_emailController.text.trim())}');
+        context.push(
+          '/otp?email=${Uri.encodeComponent(_emailController.text.trim())}',
+        );
       }
     });
 

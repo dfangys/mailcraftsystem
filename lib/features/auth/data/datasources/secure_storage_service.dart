@@ -13,6 +13,8 @@ class SecureStorageService {
 
   static const String _tokenKey = 'auth_token';
   static const String _refreshTokenKey = 'refresh_token';
+  static const String _mailEmailKey = 'mail_email';
+  static const String _mailPasswordKey = 'mail_password';
 
   /// Store auth token securely
   Future<void> storeToken(AuthToken token) async {
@@ -55,6 +57,26 @@ class SecureStorageService {
     await _storage.delete(key: _refreshTokenKey);
   }
 
+  /// Persist IMAP/SMTP email/password for restoring MailClient after restart
+  Future<void> storeMailCredentials(String email, String password) async {
+    await _storage.write(key: _mailEmailKey, value: email);
+    await _storage.write(key: _mailPasswordKey, value: password);
+  }
+
+  /// Retrieve stored IMAP/SMTP credentials
+  Future<MailCredentials?> getMailCredentials() async {
+    final email = await _storage.read(key: _mailEmailKey);
+    final password = await _storage.read(key: _mailPasswordKey);
+    if (email == null || password == null) return null;
+    return MailCredentials(email: email, password: password);
+  }
+
+  /// Clear stored mail credentials
+  Future<void> clearMailCredentials() async {
+    await _storage.delete(key: _mailEmailKey);
+    await _storage.delete(key: _mailPasswordKey);
+  }
+
   /// Check if token exists
   Future<bool> hasToken() async {
     final token = await _storage.read(key: _tokenKey);
@@ -65,4 +87,12 @@ class SecureStorageService {
   Future<void> clearAll() async {
     await _storage.deleteAll();
   }
+}
+
+/// Simple mail credentials value object
+class MailCredentials {
+  const MailCredentials({required this.email, required this.password});
+
+  final String email;
+  final String password;
 }

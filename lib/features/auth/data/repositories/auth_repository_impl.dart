@@ -29,16 +29,11 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       final response = await apiClient.login(request);
       final data = response['data'] as Map<String, dynamic>;
-      final requiresOtp = data['requires_otp'] as bool;
 
       final token = AuthToken.fromJson(data);
-      if (token.requiresOtp) {
-        // Don't store the temporary token, just return it
-        return Right(token);
-      } else {
-        await storeToken(token);
-        return Right(token);
-      }
+      // Store token even if requiresOtp=true to allow Authorization header usage in verify-otp
+      await storeToken(token);
+      return Right(token);
     } on DioException catch (e) {
       return Left(Failure.server(message: e.message ?? 'Login failed'));
     } catch (e) {
@@ -51,7 +46,11 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       final request =
           OtpVerificationRequest(email: challenge.email, otp: challenge.code);
-      final response = await apiClient.verifyOtp(request);
+      final temp = await getStoredToken();
+      final response = await apiClient.verifyOtp(
+        request,
+        tempToken: temp?.accessToken,
+      );
       final token =
           AuthToken.fromJson(response['data'] as Map<String, dynamic>);
       await storeToken(token);

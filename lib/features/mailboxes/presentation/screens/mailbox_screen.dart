@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mailcraftsystem/features/mailboxes/presentation/providers/mailbox_providers.dart';
+import 'package:mailcraftsystem/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:mailcraftsystem/features/navigation/presentation/widgets/app_drawer.dart';
 import 'package:mailcraftsystem/shared/widgets/email_list_item.dart';
 import 'package:mailcraftsystem/shared/widgets/loading_widget.dart';
@@ -13,7 +14,10 @@ import 'package:mailcraftsystem/features/mailboxes/presentation/controllers/mail
 /// Enterprise-grade mailbox screen with comprehensive email management
 class MailboxScreen extends ConsumerStatefulWidget {
   /// Creates a mailbox screen
-  const MailboxScreen({super.key});
+  const MailboxScreen({super.key, this.initialFolder});
+
+  /// Optional initial folder to show (e.g., INBOX, sent, drafts, archive)
+  final String? initialFolder;
 
   @override
   ConsumerState<MailboxScreen> createState() => _MailboxScreenState();
@@ -25,20 +29,41 @@ class _MailboxScreenState extends ConsumerState<MailboxScreen> {
   String _currentFolder = 'INBOX';
   bool _isCompactView = false;
 
+  String _normalizeFolder(String? folder) {
+    if (folder == null || folder.isEmpty) return 'INBOX';
+    final f = folder.toLowerCase();
+    switch (f) {
+      case 'inbox':
+        return 'INBOX';
+      case 'sent':
+        return 'Sent';
+      case 'draft':
+      case 'drafts':
+        return 'Drafts';
+      case 'archive':
+      case 'archived':
+        return 'Archive';
+      default:
+        return folder;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    // Initialize folder from route if provided
+    _currentFolder = _normalizeFolder(widget.initialFolder);
     _loadInitialData();
   }
 
   void _loadInitialData() {
     Future.microtask(() {
+      final authState = ref.read(authControllerProvider);
+      final accountId = authState.userEmail ?? 'default';
+      ref.read(mailboxControllerProvider.notifier).getMailboxes(accountId);
       ref
           .read(mailboxControllerProvider.notifier)
-          .getMailboxes("dummy_account");
-      ref
-          .read(mailboxControllerProvider.notifier)
-          .getMessages("dummy_account", _currentFolder);
+          .getMessages(accountId, _currentFolder);
     });
   }
 
@@ -71,7 +96,7 @@ class _MailboxScreenState extends ConsumerState<MailboxScreen> {
       floatingActionButton: _isSelectionMode
           ? null
           : FloatingActionButton(
-              onPressed: () => context.go('/compose'),
+              onPressed: () => context.push('/compose'),
               child: const Icon(Icons.edit_outlined),
               tooltip: 'Compose email',
             ),
@@ -155,7 +180,7 @@ class _MailboxScreenState extends ConsumerState<MailboxScreen> {
         ),
         IconButton(
           icon: const Icon(Icons.search_outlined),
-          onPressed: () => context.go('/search'),
+          onPressed: () => context.push('/search'),
           tooltip: 'Search emails',
         ),
         PopupMenuButton<String>(

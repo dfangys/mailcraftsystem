@@ -40,10 +40,17 @@ class AuthToken {
 
   /// Creates an authentication token from a JSON object
   factory AuthToken.fromJson(Map<String, dynamic> json) {
+    final token = (json['access_token'] as String?) ?? (json['token'] as String?) ?? '';
+    final type = (json['token_type'] as String?) ?? 'Bearer';
+    final expires = json['expires_in'];
+    final int expiresIn = expires is int
+        ? expires
+        : (expires is String ? int.tryParse(expires) ?? 3600 : 3600);
+
     return AuthToken(
-      accessToken: json['access_token'] as String,
-      tokenType: json['token_type'] as String,
-      expiresIn: json['expires_in'] as int,
+      accessToken: token,
+      tokenType: type,
+      expiresIn: expiresIn,
       refreshToken: json['refresh_token'] as String?,
       requiresOtp: json['requires_otp'] as bool? ?? false,
       delivery: json['delivery'] as String?,

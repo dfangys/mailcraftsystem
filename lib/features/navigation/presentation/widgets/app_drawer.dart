@@ -73,25 +73,25 @@ class AppDrawer extends ConsumerWidget {
                   context,
                   icon: Icons.inbox_outlined,
                   title: 'Inbox',
-                  route: '/mailboxes',
+                  route: '/home',
                 ),
                 _buildDrawerItem(
                   context,
                   icon: Icons.send_outlined,
                   title: 'Sent',
-                  route: '/mailboxes/sent',
+                  route: '/home?folder=sent',
                 ),
                 _buildDrawerItem(
                   context,
                   icon: Icons.drafts_outlined,
                   title: 'Drafts',
-                  route: '/mailboxes/drafts',
+                  route: '/home?folder=drafts',
                 ),
                 _buildDrawerItem(
                   context,
                   icon: Icons.archive_outlined,
                   title: 'Archive',
-                  route: '/mailboxes/archive',
+                  route: '/home?folder=archive',
                 ),
                 const Divider(),
                 _buildDrawerItem(
@@ -143,8 +143,12 @@ class AppDrawer extends ConsumerWidget {
   }) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final currentLocation = GoRouter.of(context).routeInformationProvider.value.uri.path;
-    final isSelected = currentLocation == route;
+    final currentUri = GoRouter.of(context).routeInformationProvider.value.uri;
+    final routeUri = Uri.parse(route);
+    final isSelected = currentUri.path == routeUri.path &&
+        (routeUri.queryParameters.isEmpty ||
+            routeUri.queryParameters.entries
+                .every((e) => currentUri.queryParameters[e.key] == e.value));
 
     return ListTile(
       leading: Icon(

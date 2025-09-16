@@ -26,8 +26,11 @@ class EnvConfig {
 
   /// SMTP socket type
   static String get smtpSocket => dotenv.env['SMTP_SOCKET'] ?? 'plain';
-
   /// Allow insecure SSL
-  static bool get allowInsecureSSL =>
+  static bool get allowInsecureSSL => 
       dotenv.env['ALLOW_INSECURE_SSL']?.toLowerCase() == 'true';
+
+  /// OTP length (digits), defaults to 5
+  static int get otpLength =>
+      int.tryParse(dotenv.env['OTP_LENGTH'] ?? '5') ?? 5;
 }

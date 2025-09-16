@@ -22,7 +22,7 @@ class MailboxRepositoryImpl implements MailboxRepository {
             message: 'Mail client not initialized. Please login first.'));
       }
 
-      final mailboxes = await client.listMailboxes();
+      final mailboxes = await mailClientService.listMailboxesCached();
       final mappedMailboxes =
           mailboxes.map((e) => model.Mailbox.fromEnoughMail(e)).toList();
       return Right(mappedMailboxes);
@@ -43,7 +43,7 @@ class MailboxRepositoryImpl implements MailboxRepository {
             message: 'Mail client not initialized. Please login first.'));
       }
 
-      final mailboxes = await client.listMailboxes();
+      final mailboxes = await mailClientService.listMailboxesCached();
       final mailbox = mailboxes.firstWhere((box) => box.path == path);
       return Right(model.Mailbox.fromEnoughMail(mailbox));
     } on MailException catch (e) {
@@ -124,7 +124,7 @@ class MailboxRepositoryImpl implements MailboxRepository {
             message: 'Mail client not initialized. Please login first.'));
       }
 
-      final mailboxes = await client.listMailboxes();
+      final mailboxes = await mailClientService.listMailboxesCached();
       final mailbox = mailboxes.firstWhere((box) => box.path == path);
 
       return Right(MailboxStatus(
@@ -184,48 +184,6 @@ class MailboxRepositoryImpl implements MailboxRepository {
       String accountId) async {
     return const Left(Failure.notImplemented(
         message: 'Get mailbox hierarchy not implemented'));
-  }
-
-  @override
-  Future<Either<Failure, void>> setMailboxQuota(
-    String accountId,
-    String path,
-    int quotaBytes,
-  ) async {
-    return const Left(
-        Failure.notImplemented(message: 'Set mailbox quota not implemented'));
-  }
-
-  @override
-  Future<Either<Failure, int>> getMailboxQuota(
-      String accountId, String path) async {
-    return const Left(
-        Failure.notImplemented(message: 'Get mailbox quota not implemented'));
-  }
-
-  @override
-  Future<Either<Failure, void>> enableMailboxNotifications(
-    String accountId,
-    String path,
-  ) async {
-    return const Left(Failure.notImplemented(
-        message: 'Enable mailbox notifications not implemented'));
-  }
-
-  @override
-  Future<Either<Failure, void>> disableMailboxNotifications(
-    String accountId,
-    String path,
-  ) async {
-    return const Left(Failure.notImplemented(
-        message: 'Disable mailbox notifications not implemented'));
-  }
-
-  @override
-  Future<Either<Failure, List<model.Mailbox>>> getSharedMailboxes(
-      String accountId) async {
-    return const Left(Failure.notImplemented(
-        message: 'Get shared mailboxes not implemented'));
   }
 
   @override

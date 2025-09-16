@@ -1,6 +1,10 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mailcraftsystem/core/error/failures.dart';
+import 'package:mailcraftsystem/features/auth/data/datasources/auth_api_client.dart';
+import 'package:mailcraftsystem/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:mailcraftsystem/features/auth/data/datasources/secure_storage_service.dart';
 import 'package:mailcraftsystem/features/auth/domain/models/auth_token.dart';
 import 'package:mailcraftsystem/features/auth/domain/models/login_request.dart';
 import 'package:mailcraftsystem/features/auth/domain/models/otp_challenge.dart';
@@ -12,8 +16,15 @@ import 'package:mailcraftsystem/features/auth/domain/usecases/verify_otp_usecase
 
 /// Auth repository provider
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
-  // This would be replaced with actual implementation
-  return MockAuthRepository();
+  return AuthRepositoryImpl(
+    apiClient: AuthApiClient(),
+    secureStorage: const FlutterSecureStorage(),
+  );
+});
+
+/// Secure storage service provider (for mail credentials and tokens)
+final secureStorageServiceProvider = Provider<SecureStorageService>((ref) {
+  return SecureStorageService();
 });
 
 /// Login use case provider
@@ -31,7 +42,7 @@ final logoutUseCaseProvider = Provider<LogoutUseCase>((ref) {
   return LogoutUseCase(ref.read(authRepositoryProvider));
 });
 
-/// Mock auth repository implementation
+/// Mock auth repository implementation (replaced by real implementation above)
 class MockAuthRepository implements AuthRepository {
   @override
   Future<Either<Failure, AuthToken>> login(LoginRequest request) async {

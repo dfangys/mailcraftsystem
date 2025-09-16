@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mailcraftsystem/core/error/failures.dart';
+import 'package:mailcraftsystem/core/env/env_config.dart';
 import 'package:mailcraftsystem/features/auth/presentation/controllers/auth_controller.dart';
-import 'package:mailcraftsystem/shared/widgets/error_widget.dart';
 import 'package:mailcraftsystem/shared/widgets/app_button.dart';
+import 'package:mailcraftsystem/shared/widgets/error_widget.dart';
+import 'package:pinput/pinput.dart';
 
 /// OTP verification screen
 class OtpScreen extends ConsumerStatefulWidget {
   /// Creates an OTP verification screen
   const OtpScreen({
-    super.key,
     required this.email,
+    super.key,
   });
 
   /// The email address for OTP verification
@@ -23,32 +24,29 @@ class OtpScreen extends ConsumerStatefulWidget {
 }
 
 class _OtpScreenState extends ConsumerState<OtpScreen> {
-  final List<TextEditingController> _controllers = List.generate(
-    6,
-    (index) => TextEditingController(),
-  );
-  final List<FocusNode> _focusNodes = List.generate(
-    6,
-    (index) => FocusNode(),
-  );
+  late int _otpLength;
+  final TextEditingController _otpController = TextEditingController();
+  final FocusNode _otpFocusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _otpLength = EnvConfig.otpLength;
+  }
 
   @override
   void dispose() {
-    for (final controller in _controllers) {
-      controller.dispose();
-    }
-    for (final focusNode in _focusNodes) {
-      focusNode.dispose();
-    }
+    _otpController.dispose();
+    _otpFocusNode.dispose();
     super.dispose();
   }
 
   String get _otpCode {
-    return _controllers.map((controller) => controller.text).join();
+    return _otpController.text;
   }
 
   void _handleOtpSubmit() {
-    if (_otpCode.length == 6) {
+    if (_otpCode.length == _otpLength) {
       ref
           .read(authControllerProvider.notifier)
           .verifyOtp(widget.email, _otpCode);
@@ -59,23 +57,6 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
     ref.read(authControllerProvider.notifier).resendOtp();
   }
 
-  void _onOtpChanged(String value, int index) {
-    if (value.isNotEmpty) {
-      if (index < 5) {
-        _focusNodes[index + 1].requestFocus();
-      } else {
-        _focusNodes[index].unfocus();
-        _handleOtpSubmit();
-      }
-    }
-  }
-
-  void _onOtpBackspace(int index) {
-    if (index > 0) {
-      _controllers[index - 1].clear();
-      _focusNodes[index - 1].requestFocus();
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,8 +77,8 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.email),
-          onPressed: () => context.go('/login'),
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.pop(),
         ),
       ),
       body: SafeArea(
@@ -127,7 +108,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Enter the 6-digit code sent to your email',
+            'Enter the $_otpLength-digit code sent to your email',
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: colorScheme.onSurfaceVariant,
                     ),
@@ -145,70 +126,65 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                   ],
 
                   // OTP input fields
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: List.generate(6, (index) {
-                      return SizedBox(
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Pinput(
+                      length: _otpLength,
+                      controller: _otpController,
+                      focusNode: _otpFocusNode,
+                      keyboardType: TextInputType.number,
+                      autofocus: true,
+                      androidSmsAutofillMethod:
+                          AndroidSmsAutofillMethod.smsUserConsentApi,
+                      listenForMultipleSmsOnAndroid: true,
+                      onCompleted: (String code) {
+                        ref
+                            .read(authControllerProvider.notifier)
+                            .verifyOtp(widget.email, code);
+                      },
+                      defaultPinTheme: PinTheme(
                         width: 48,
                         height: 56,
-                        child: TextFormField(
-                          controller: _controllers[index],
-                          focusNode: _focusNodes[index],
-                          textAlign: TextAlign.center,
-                          keyboardType: TextInputType.number,
-                          maxLength: 1,
-                          style: theme.textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                          decoration: InputDecoration(
-                            counterText: '',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(
-                                color: colorScheme.outline,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(
-                                color: colorScheme.primary,
-                                width: 2,
-                              ),
-                            ),
-                            filled: true,
-                            fillColor: colorScheme.surfaceContainerHighest
-                                .withOpacity(0.3),
-                          ),
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly,
-                          ],
-                          onChanged: (value) => _onOtpChanged(value, index),
-                          onTap: () {
-                            _controllers[index].selection =
-                                TextSelection.fromPosition(
-                              TextPosition(
-                                  offset: _controllers[index].text.length),
-                            );
-                          },
-                          onEditingComplete: () {
-                            if (_controllers[index].text.isEmpty && index > 0) {
-                              _onOtpBackspace(index);
-                            }
-                          },
+                        textStyle: theme.textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
                         ),
-                      );
-                    }),
+                        decoration: BoxDecoration(
+                          color: colorScheme.surfaceContainerHighest
+                              .withValues(alpha: 0.3),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: colorScheme.outline),
+                        ),
+                      ),
+                      focusedPinTheme: PinTheme(
+                        width: 48,
+                        height: 56,
+                        textStyle: theme.textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                        decoration: BoxDecoration(
+                          color: colorScheme.surfaceContainerHighest
+                              .withValues(alpha: 0.3),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: colorScheme.primary,
+                            width: 2,
+                          ),
+                        ),
+                      ),
+                      separatorBuilder: (index) => const SizedBox(width: 10),
+                    ),
                   ),
                   const SizedBox(height: 32),
 
                   // Verify button
                   AppButton(
                     text: 'Verify Code',
-                    onPressed: authState.isLoading || _otpCode.length != 6
-                        ? null
-                        : _handleOtpSubmit,
+                    onPressed:
+                        authState.isLoading || _otpCode.length != _otpLength
+                            ? null
+                            : _handleOtpSubmit,
                     isLoading: authState.isLoading,
-style: AppButtonStyle.primary,
+                    style: AppButtonStyle.primary,
                   ),
                   const SizedBox(height: 24),
 
@@ -241,11 +217,11 @@ style: AppButtonStyle.primary,
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color:
-                          colorScheme.surfaceContainerHighest.withOpacity(0.3),
+                      color: colorScheme.surfaceContainerHighest
+                          .withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: colorScheme.outline.withOpacity(0.2),
+                        color: colorScheme.outline.withValues(alpha: 0.2),
                       ),
                     ),
                     child: Row(

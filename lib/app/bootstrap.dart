@@ -130,7 +130,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/home',
-        builder: (context, state) => const MailboxScreen(),
+        builder: (context, state) {
+          final folder = state.uri.queryParameters['folder'];
+          return MailboxScreen(initialFolder: folder);
+        },
       ),
       GoRoute(
         path: '/mailbox',

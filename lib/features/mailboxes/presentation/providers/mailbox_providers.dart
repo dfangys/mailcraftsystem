@@ -1,12 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mailcraftsystem/features/account/data/datasources/mail_client_service.dart';
+import 'package:mailcraftsystem/features/auth/presentation/controllers/auth_controller.dart' show mailClientServiceProvider;
 import 'package:mailcraftsystem/features/mailboxes/data/repositories/mailbox_repository_impl.dart';
 import 'package:mailcraftsystem/features/mailboxes/domain/repositories/mailbox_repository.dart';
 import 'package:mailcraftsystem/features/mailboxes/presentation/controllers/mailbox_controller.dart';
 import 'package:mailcraftsystem/features/messages/data/repositories/message_repository_impl.dart';
 import 'package:mailcraftsystem/features/messages/domain/repositories/message_repository.dart';
-
-final mailClientServiceProvider = Provider((ref) => MailClientService());
 
 final mailboxRepositoryProvider = Provider<MailboxRepository>((ref) {
   final mailClientService = ref.watch(mailClientServiceProvider);

@@ -78,21 +78,38 @@ class AuthController extends _$AuthController {
     final isAuthenticated = await authRepository.isAuthenticated();
     if (isAuthenticated) {
       final token = await authRepository.getStoredToken();
-      state = state.copyWith(isAuthenticated: true, token: token, user: token?.user);
+      state = state.copyWith(
+        isAuthenticated: true,
+        token: token,
+        user: token?.user,
+      );
+      // Try to restore MailClient using stored credentials on app start
+      await _restoreMailClientFromStorage();
     }
   }
 
   Future<void> _initializeMailClient(String email, String password) async {
     try {
       final mailClientService = ref.read(mailClientServiceProvider);
-      final success =
-          await mailClientService.initializeAndConnect(email, password);
+      final success = await mailClientService.initializeAndConnect(
+        email,
+        password,
+      );
       if (!success) {
         throw Exception('Failed to connect to mail server');
       }
     } catch (e) {
       // Log error but don't fail authentication
+      // ignore: avoid_print
       print('Warning: Mail client initialization failed: $e');
+    }
+  }
+
+  Future<void> _restoreMailClientFromStorage() async {
+    final storage = ref.read(secureStorageServiceProvider);
+    final creds = await storage.getMailCredentials();
+    if (creds != null) {
+      await _initializeMailClient(creds.email, creds.password);
     }
   }
 
@@ -107,30 +124,37 @@ class AuthController extends _$AuthController {
     final result =
         await loginUseCase(LoginRequest(email: email, password: password));
 
+    AuthToken? token;
     result.fold(
       (failure) =>
           state = state.copyWith(isLoading: false, error: failure.message),
-      (token) {
-        if (token.requiresOtp ?? false) {
-          state = state.copyWith(
-            isLoading: false,
-            requiresOtp: true,
-            otpDelivery: token.delivery,
-            token: token, // Store temporary token
-            user: token.user,
-          );
-        } else {
-          // Initialize mail client after successful authentication
-          _initializeMailClient(email, password);
-          state = state.copyWith(
-            isLoading: false,
-            isAuthenticated: true,
-            token: token,
-            user: token.user,
-          );
-        }
-      },
+      (t) => token = t,
     );
+
+    if (token != null) {
+      if (token!.requiresOtp ?? false) {
+        state = state.copyWith(
+          isLoading: false,
+          requiresOtp: true,
+          otpDelivery: token!.delivery,
+          token: token, // Store temporary token
+          user: token!.user,
+        );
+      } else {
+        // Initialize mail client after successful authentication
+        await _initializeMailClient(email, password);
+        // Persist credentials for future automatic initialization after restart
+        await ref
+            .read(secureStorageServiceProvider)
+            .storeMailCredentials(email, password);
+        state = state.copyWith(
+          isLoading: false,
+          isAuthenticated: true,
+          token: token,
+          user: token!.user,
+        );
+      }
+    }
   }
 
   Future<void> verifyOtp(String email, String otp) async {
@@ -139,23 +163,29 @@ class AuthController extends _$AuthController {
     final result =
         await verifyOtpUseCase(OtpChallenge(email: email, code: otp));
 
+    AuthToken? token;
     result.fold(
       (failure) =>
           state = state.copyWith(isLoading: false, error: failure.message),
-      (token) async {
-        // Initialize mail client after successful OTP verification
-        if (state.userEmail != null && state.userPassword != null) {
-          await _initializeMailClient(state.userEmail!, state.userPassword!);
-        }
-        state = state.copyWith(
-          isLoading: false,
-          isAuthenticated: true,
-          token: token,
-          requiresOtp: false,
-          user: token.user,
-        );
-      },
+      (t) => token = t,
     );
+
+    if (token != null) {
+      // Initialize mail client after successful OTP verification
+      if (state.userEmail != null && state.userPassword != null) {
+        await _initializeMailClient(state.userEmail!, state.userPassword!);
+        await ref
+            .read(secureStorageServiceProvider)
+            .storeMailCredentials(state.userEmail!, state.userPassword!);
+      }
+      state = state.copyWith(
+        isLoading: false,
+        isAuthenticated: true,
+        token: token,
+        requiresOtp: false,
+        user: token!.user,
+      );
+    }
   }
 
   Future<void> requestPasswordReset(String email) async {
@@ -195,6 +225,10 @@ class AuthController extends _$AuthController {
 
     final logoutUseCase = ref.read(logoutUseCaseProvider);
     await logoutUseCase();
+
+    // Clear stored mail credentials as well
+    await ref.read(secureStorageServiceProvider).clearMailCredentials();
+
     state = const AuthState();
   }
 

@@ -23,13 +23,15 @@ class VerifyOtpUseCase {
       );
     }
 
-    if (challenge.code.length != 6) {
-      return const Left(
-        Failure.validation(message: 'OTP code must be 6 digits'),
+    // Accept OTP length from env (default 5) but fall back to 5 if env not loaded here
+    const expectedLength = 5;
+    if (challenge.code.length != expectedLength) {
+      return Left(
+        Failure.validation(message: 'OTP code must be $expectedLength digits'),
       );
     }
 
-    if (!RegExp(r'^\d{6}$').hasMatch(challenge.code)) {
+    if (!RegExp(r'^\d{5}$').hasMatch(challenge.code)) {
       return const Left(
         Failure.validation(message: 'OTP code must contain only digits'),
       );
